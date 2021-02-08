@@ -1,9 +1,9 @@
 # /login/
 GET:
-- body에 'username', 'password' -> 회원생성
+- body에 'username', 'password' -> JWT 반환(유효 30분)
 
 POST:
-- body에 'username', 'password' -> JWT 반환(유효 30분)
+- body에 'username', 'password' -> 회원생성
 
 # /scan/
 
