@@ -81,10 +81,7 @@ class ReportsAPIView(APIView):
             urlList = asyncio.run(asyncCrawl.main(target))
             print("doing scan...")
         if fuzz:
-            for url in urlList:
-                result += asyncio.run(
-                    shmlackShmidow.wrapperMain(url, username=verification.username)
-                )
+            result = asyncio.run(shmlackShmidow.wrapperMain(urlList, username=verification.username))
 
             for json in result:
                 serializers = ReportsSerializer(data=json)

