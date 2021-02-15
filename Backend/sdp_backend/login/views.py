@@ -14,8 +14,8 @@ import jwt, datetime
 
 class UsersAPIView(APIView):
     def get(self, request):
-        username = request.data["username"]
-        password = request.data["password"]
+        username = request.GET["username"]
+        password = request.GET["password"]
         hasher = BCrypt()
         try:
             user = Users.objects.get(username=username)
