@@ -38,7 +38,6 @@ class UsersAPIView(APIView):
     def post(self, request):
         username = request.data["username"]
         password = request.data["password"]
-
         hasher = BCrypt()
 
         salt = hasher.salt()
