@@ -21,6 +21,7 @@ djangorestframework-simplejwt==4.6.0
 djoser==2.1.0
 gitdb2==4.0.2
 GitPython==3.0.6
+html5lib==1.1
 idna==2.8
 itypes==1.2.0
 multidict==5.1.0
