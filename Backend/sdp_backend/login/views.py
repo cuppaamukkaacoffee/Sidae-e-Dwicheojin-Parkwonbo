@@ -53,3 +53,27 @@ class UsersAPIView(APIView):
         except ValidationError as e:
             data = str(e.__dict__["detail"]["username"][0])
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+class UsersLoginAPIView(APIView):
+
+    def post(self, request):
+        username = request.data["username"]
+        password = request.data["password"]
+        hasher = BCrypt()
+        try:
+            user = Users.objects.get(username=username)
+        except Users.DoesNotExist:
+            return Response(
+                data="username does not exists", status=status.HTTP_400_BAD_REQUEST
+            )
+        if hasher.verify(password, user.password):
+            timestamp = datetime.datetime.utcnow()
+            jwt = JwtHelper()
+            data = {
+                "JWT": jwt.tokenize(user=user, timestamp=timestamp),
+                "timestamp": timestamp,
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+        return Response(
+            data="password does not match", status=status.HTTP_400_BAD_REQUEST
+        )
