@@ -7,6 +7,7 @@ const initialState = {
   id: '',
   pw: '',
   url: '',
+  vul: '',
   content:'',
   results:[],
   sidebarShow : 'responsive',
@@ -22,6 +23,7 @@ const user = handleActions(
         draft.id = '';
         draft.pw = '';
         draft.url = '';
+        draft.vul = '';
         draft.content = '';
         draft.results = [];
         draft.errorCode = '';
@@ -71,6 +73,12 @@ const user = handleActions(
         draft.url = action.payload;
       })
     },
+    [USER.SET_VUL]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('vul in reducer => ', action.payload)
+        draft.vul = action.payload;
+      })
+    },
     [USER.URL_CHECK_SUCCESS]: (state, action) => {
       console.log('URL_CHECK_SUCCESS => ', action.payload);
       return produce(state, (draft) => {
@@ -89,7 +97,6 @@ const user = handleActions(
     [USER.RESULTS_CHECK_SUCCESS]: (state, action) => {
       console.log('RESULTS_CHECK_SUCCESS => ', action.payload);
       return produce(state, (draft) => {
-        draft.content = '';
         draft.results = action.payload
       });
     },

@@ -16,6 +16,9 @@ export const set_pw = createAction(SET_PW);
 export const SET_URL = 'user/SET_URL';
 export const set_url = createAction(SET_URL);
 
+export const SET_VUL = 'user/SET_VUL';
+export const set_vul = createAction(SET_VUL);
+
 export const SET_SIDEBAR = 'user/SET_SIDEBAR';
 export const set_sidebar = createAction(SET_SIDEBAR);
 

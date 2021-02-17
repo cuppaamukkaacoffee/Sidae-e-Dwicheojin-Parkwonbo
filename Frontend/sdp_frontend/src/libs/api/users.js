@@ -7,7 +7,7 @@ export const login_api = async (info) => {
     username : info.id,
     password : info.pw
   }
-  const response = await axios.get('/auth/login/', {headers: {"Content-Type": `application/json`,}, params: data});
+  const response = await axios.post('/auth/login/',JSON.stringify(data) ,{headers: {"Content-Type": `application/json`,}});
   return response.data;
 };
 
@@ -16,7 +16,7 @@ export const register_api = async (info) => {
     username : info.id,
     password : info.pw
   }
-  const response = await axios.post('/auth/login/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,}});
+  const response = await axios.post('/auth/register/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,}});
   return response.data;
 };
 
@@ -30,10 +30,17 @@ export const urlCheck_api = async (url) => {
   return response.data;
 };
 
-export const results_api = async () => {
+export const results_api = async (info) => {
+  const id = window.sessionStorage.getItem('id'); 
   const token = window.sessionStorage.getItem('token');
-  console.log(token)
-  const response = await axios.get('/api/url/',{headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
+  const data = {
+    username : id,
+    target : info.url,
+    sub_path : "",
+    vulnerability : info.vul,
+    result_string : ""
+  }
+  const response = await axios.post('/scan/query/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
   return response.data;
 };
 

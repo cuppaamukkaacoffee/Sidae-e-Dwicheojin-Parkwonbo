@@ -30,6 +30,12 @@ const _nav =  [
       },
     ],
   },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Result',
+    icon: 'cil-puzzle',
+    to: '/result',
+  },
 
 ]
 
