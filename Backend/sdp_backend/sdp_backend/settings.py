@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "scan",
     "login",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "sdp_backend.urls"
-# ASGI_APPLICATION = "sdp_backend.asgi.application"
+ASGI_APPLICATION = "sdp_backend.asgi.application"
 
 TEMPLATES = [
     {

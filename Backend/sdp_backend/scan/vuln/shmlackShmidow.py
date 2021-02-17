@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 import urllib.request, sys, os, optparse
 from socket import timeout
 import asyncio, csv, json
-from aiohttp import ClientSession
+from aiohttp import ClientSession, client_exceptions
 from ..serializers import ReportsSerializer
 from datetime import datetime
 from asgiref.sync import sync_to_async
@@ -20,10 +20,17 @@ VERBOSE = "1"
 
 
 async def active_scan(
-    session, full_url, base_url, http_length_base, payload, username=None
+    session,
+    full_url,
+    base_url,
+    http_length_base,
+    payload,
+    username=None,
+    result_list=None,
 ):
     verbose = "y"
     new_url = base_url
+    result_list = []
 
     # Open Redirect 1 ######################################################################################
     result_string = "benign"
@@ -48,7 +55,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Open Redirect",
@@ -56,7 +63,7 @@ async def active_scan(
             "url": redirect_url,
             "result_string": result_string,
         }
-        jsonData = json.dumps(result)
+        # jsonData = json.dumps(result)
         result_list.append(result)
 
     # Open Redirect 2 ######################################################################################
@@ -80,7 +87,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Open Redirect",
@@ -88,7 +95,7 @@ async def active_scan(
             "url": redirect_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        # data = json.dumps(result)
         result_list.append(result)
 
     # Open Redirect 3 ######################################################################################
@@ -112,7 +119,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Open Redirect",
@@ -120,7 +127,7 @@ async def active_scan(
             "url": redirect_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        # data = json.dumps(result)
         result_list.append(result)
 
     # XSS ######################################################################################
@@ -153,6 +160,7 @@ async def active_scan(
                 http_status = res_reflect.status
 
             except:
+                print("XSS Exception")
                 pass
 
             # CONTINUE TO XSS EXPLOITATION
@@ -164,7 +172,7 @@ async def active_scan(
                 current_time = now.strftime("%Y-%m-%dT%H:%M")
                 result = {
                     "timestamp": current_time,
-                    "user": username,
+                    "username": username,
                     "target": target,
                     "sub_path": sub_path,
                     "vulnerability": "XSS",
@@ -172,7 +180,7 @@ async def active_scan(
                     "url": xss_url2,
                     "result_string": result_string,
                 }
-                data = json.dumps(result)
+                # data = json.dumps(result)
                 result_list.append(result)
 
                 sub_path = xss_url2.split(target)[1]
@@ -191,7 +199,7 @@ async def active_scan(
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "XSS",
@@ -199,9 +207,10 @@ async def active_scan(
                         "url": xss_url2,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    # data = json.dumps(result)
                     result_list.append(result)
                 except:
+                    print("XSS Exception")
                     pass
         else:
             sub_path = new_url.split(target)[1]
@@ -209,7 +218,7 @@ async def active_scan(
             current_time = now.strftime("%Y-%m-%dT%H:%M")
             result = {
                 "timestamp": current_time,
-                "user": username,
+                "username": username,
                 "target": target,
                 "sub_path": sub_path,
                 "vulnerability": "XSS",
@@ -217,9 +226,10 @@ async def active_scan(
                 "url": new_url,
                 "result_string": result_string,
             }
-            data = json.dumps(result)
+            # data = json.dumps(result)
             result_list.append(result)
     except:
+        print("XSS Exception")
         pass
 
     # SQLi ######################################################################################
@@ -244,7 +254,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "SQL Injection",
@@ -256,6 +266,7 @@ async def active_scan(
         result_list.append(result)
 
     except:
+        print("SQLi 1 Exception")
         pass
 
     # SQLi 2 ######################################################################################
@@ -280,7 +291,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "SQL Injection",
@@ -292,6 +303,7 @@ async def active_scan(
         result_list.append(result)
 
     except:
+        print("SQLi 2 Exception")
         pass
 
     # Windows Directory Traversal ######################################################################################
@@ -316,7 +328,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Windows Directory Traversal",
@@ -354,7 +366,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Windows Directory Traversal",
@@ -394,7 +406,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Windows Directory Traversal",
@@ -430,7 +442,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Windows Directory Traversal",
@@ -446,20 +458,18 @@ async def active_scan(
 
     # Linux Directory Traversal ######################################################################################
     result_string = "benign"
-    traversal_exploit = (
-            "/../../../../../../../../../../../../../../../../../etc/passwd"
-        )
+    traversal_exploit = "/../../../../../../../../../../../../../../../../../etc/passwd"
 
     traversal_url = new_url.replace("INJECTX", traversal_exploit)
     sub_path = traversal_url.split(target)[1]
 
-    res_direc_traversal = await session.get(traversal_url)
+    # res_direc_traversal = await session.get(traversal_url)
     try:
-        
-        http_response = str(await res_direc_traversal.read())
+        http_request = urllib.request.urlopen(traversal_url)
+        http_response = str(http_request.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = res_direc_traversal.status
+        http_status = http_request.getcode()
 
         if "root:" in http_response:
             result_string = "vulnerable"
@@ -468,7 +478,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Linux Directory Traversall",
@@ -485,19 +495,19 @@ async def active_scan(
     # Linux Directory Traversal 2 ######################################################################################
     result_string = "benign"
     traversal_exploit = (
-            "/../../../../../../../../../../../../../../../../../etc/passwd%00"
-        )
+        "/../../../../../../../../../../../../../../../../../etc/passwd%00"
+    )
 
     traversal_url = new_url.replace("INJECTX", traversal_exploit)
     sub_path = traversal_url.split(target)[1]
-    
-    res_direc_traversal = await session.get(traversal_url)
+
+    # res_direc_traversal = await session.get(traversal_url)
     try:
-        
-        http_response = str(await res_direc_traversal.read())
+        http_request = urllib.request.urlopen(traversal_url)
+        http_response = str(http_request.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = res_direc_traversal.status
+        http_status = http_request.getcode()
 
         if "root:" in http_response:
             result_string = "vulnerable"
@@ -506,7 +516,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "Linux Directory Traversall",
@@ -544,7 +554,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
@@ -581,7 +591,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
@@ -617,7 +627,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
@@ -653,7 +663,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
@@ -689,7 +699,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "RFI Check",
@@ -725,7 +735,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "RFI Check",
@@ -804,7 +814,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "SSTI Check",
@@ -840,7 +850,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "SSTI Check",
@@ -876,7 +886,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "RCE Linux Check",
@@ -912,7 +922,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "RCE Linux Check",
@@ -948,7 +958,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "RCE PHP Check",
@@ -986,7 +996,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "RCE PHP Check",
@@ -1023,7 +1033,7 @@ async def active_scan(
         current_time = now.strftime("%Y-%m-%dT%H:%M")
         result = {
             "timestamp": current_time,
-            "user": username,
+            "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "RCE PHP Check",
@@ -1037,16 +1047,18 @@ async def active_scan(
     except:
         pass
 
+    return result_list
 
 
 async def main(url, cookies="", session=None, username=None):
-    print("scanning {} ...".format(url))
+    # print("scanning {} ...".format(url))
     full_url = str(url)
     payload = "INJECTX"
     http_status_base = "404"
     http_length_base = "0"
     parsed = urlparse(url)
     target = "{uri.scheme}://{uri.netloc}".format(uri=parsed)
+    result_list = []
 
     async with session.get(full_url) as res:
         http_response_base = str(await res.read())
@@ -1098,7 +1110,7 @@ async def main(url, cookies="", session=None, username=None):
                         base_url += param_list[i - 1] + payload
                         active_fuzz = active_fuzz + 1
                         i = i + 1
-                        await active_scan(
+                        result_list += await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1112,7 +1124,7 @@ async def main(url, cookies="", session=None, username=None):
                         base_url += param_list[i - 1] + param_vals[i - 1]
                         active_fuzz = active_fuzz + 1
                         i = 1
-                        await active_scan(
+                        result_list += await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1126,7 +1138,7 @@ async def main(url, cookies="", session=None, username=None):
                         base_url += param_list[i - 1] + param_vals[i - 1]
                         active_fuzz = active_fuzz + 1
                         i = 1
-                        await active_scan(
+                        result_list += await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1162,7 +1174,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Open Redirect",
@@ -1198,7 +1210,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Open Redirect",
@@ -1234,7 +1246,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Open Redirect",
@@ -1270,7 +1282,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Open Redirect",
@@ -1306,7 +1318,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Open Redirect",
@@ -1330,8 +1342,9 @@ async def main(url, cookies="", session=None, username=None):
                 traversal_url = new_url.replace("INJECTX", traversal_exploit)
                 sub_path = traversal_url.split(target)[1]
 
-                trav_res = await session.get(traversal_url)
+                # trav_res = await session.get(traversal_url)
                 try:
+                    trav_res = await session.get(traversal_url)
                     http_response = str(await trav_res.read())
                     http_length = len(http_response)
                     http_status = red_res.status
@@ -1344,7 +1357,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Windows Directory Traversal",
@@ -1355,7 +1368,8 @@ async def main(url, cookies="", session=None, username=None):
                     data = json.dumps(result)
                     result_list.append(result)
 
-                except:
+                except UnicodeError:
+                    print("Unicode Error at {}".format(traversal_url))
                     pass
 
                 # Windows Directory Traversal 2 ######################################################################################
@@ -1368,8 +1382,9 @@ async def main(url, cookies="", session=None, username=None):
                 traversal_url = new_url.replace("INJECTX", traversal_exploit)
                 sub_path = traversal_url.split(target)[1]
 
-                trav_res = await session.get(traversal_url)
+                # trav_res = await session.get(traversal_url)
                 try:
+                    trav_res = await session.get(traversal_url)
                     http_response = str(await trav_res.read())
                     http_length = len(http_response)
                     http_status = red_res.status
@@ -1382,7 +1397,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Windows Directory Traversal",
@@ -1393,7 +1408,8 @@ async def main(url, cookies="", session=None, username=None):
                     data = json.dumps(result)
                     result_list.append(result)
 
-                except:
+                except UnicodeError:
+                    print("Unicode Error at {}".format(traversal_url))
                     pass
 
                 # Windows Directory Traversal 3 ######################################################################################
@@ -1406,8 +1422,9 @@ async def main(url, cookies="", session=None, username=None):
                 traversal_url = new_url.replace("INJECTX", traversal_exploit)
                 sub_path = traversal_url.split(target)[1]
 
-                trav_res = await session.get(traversal_url)
+                # trav_res = await session.get(traversal_url)
                 try:
+                    trav_res = await session.get(traversal_url)
                     http_response = str(await trav_res.read())
                     http_length = len(http_response)
                     http_status = red_res.status
@@ -1420,7 +1437,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Windows Directory Traversal",
@@ -1431,7 +1448,8 @@ async def main(url, cookies="", session=None, username=None):
                     data = json.dumps(result)
                     result_list.append(result)
 
-                except:
+                except UnicodeError:
+                    print("Unicode Error at {}".format(traversal_url))
                     pass
 
                 # Linux Directory Traversal ######################################################################################
@@ -1443,13 +1461,12 @@ async def main(url, cookies="", session=None, username=None):
                 traversal_url = new_url.replace("INJECTX", traversal_exploit)
                 sub_path = traversal_url.split(target)[1]
 
-                
                 try:
-                    trav_res = await session.get(traversal_url)
-                    http_response = str(trav_res.read())
+                    http_request = urllib.request.urlopen(traversal_url)
+                    http_response = str(http_request.read())
                     http_length = len(http_response)
                     http_length_diff = str(http_length_base - http_length)
-                    http_status = trav_res.status
+                    http_status = http_request.getcode()
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
@@ -1458,7 +1475,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Linux Directory Traversal",
@@ -1470,6 +1487,7 @@ async def main(url, cookies="", session=None, username=None):
                     result_list.append(result)
 
                 except:
+                    print("Unicode Error at {}".format(traversal_url))
                     pass
 
                 new_url = full_url + "INJECTX"
@@ -1484,11 +1502,11 @@ async def main(url, cookies="", session=None, username=None):
                 sub_path = traversal_url.split(target)[1]
 
                 try:
-                    trav_res = await session.get(traversal_url)
-                    http_response = str(trav_res.read())
+                    http_request = urllib.request.urlopen(traversal_url)
+                    http_response = str(http_request.read())
                     http_length = len(http_response)
                     http_length_diff = str(http_length_base - http_length)
-                    http_status = trav_res.status
+                    http_status = http_request.getcode()
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
@@ -1497,7 +1515,7 @@ async def main(url, cookies="", session=None, username=None):
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     result = {
                         "timestamp": current_time,
-                        "user": username,
+                        "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Linux Directory Traversal",
@@ -1509,14 +1527,17 @@ async def main(url, cookies="", session=None, username=None):
                     result_list.append(result)
 
                 except:
+                    print("Unicode Error at {}".format(traversal_url))
                     pass
 
+    return result_list
 
-async def wrapperMain(urlList, cookies="", session=None, username=None):
-    async with ClientSession() as session:
-        global result_list
-        result_list = []
-        futures = [asyncio.ensure_future(main(url=url, session=session, username=username))
-                   for url in urlList]
-        res = await asyncio.gather(*futures)
-        return result_list
+
+# async def wrapperMain(urlList, cookies="", session=None, username=None):
+#     async with ClientSession() as session:
+#         global result_list_global
+#         result_list_global = []
+#         futures = [asyncio.ensure_future(main(url=url, session=session, username=username))
+#                    for url in urlList]
+#         res = await asyncio.gather(*futures)
+#         return result_list_global

@@ -130,7 +130,7 @@ class ReportsQueryAPIView(APIView):
             return Response(data="token user and query user does not match", status=status.HTTP_400_BAD_REQUEST)
 
         reports = Reports.objects.filter(
-            user__contains=username,
+            username__contains=username,
             target__contains=target,
             sub_path__contains=sub_path,
             vulnerability__contains=vulnerability,

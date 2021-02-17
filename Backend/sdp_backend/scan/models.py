@@ -5,7 +5,7 @@ from django.db import models
 
 class Reports(models.Model):
     timestamp = models.DateTimeField()
-    user = models.TextField(max_length=15)
+    username = models.TextField(max_length=15, default="")
     target = models.TextField(default="")
     sub_path = models.TextField(default="")
     url = models.TextField(default="")
