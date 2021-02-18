@@ -57,13 +57,13 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             print("doing scan...")
 
         if fuzz:
-            task = []
             async with ClientSession() as session:
-                for url in urlList:
-                    result = await shmlackShmidow.main(
+                tasks = [asyncio.create_task(shmlackShmidow.main(
                         url, session=session, username=verification.username
-                    )
+                    )) for url in urlList]
 
+                for coro in (asyncio.as_completed(tasks)):
+                    result = await asyncio.shield(coro)
                     serializers = ReportsSerializer(data=result, many=True)
                     if serializers.is_valid(raise_exception=True):
                         await database_sync_to_async(serializers.save)()
