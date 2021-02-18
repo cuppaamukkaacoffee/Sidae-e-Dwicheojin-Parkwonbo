@@ -1529,7 +1529,8 @@ async def main(url, cookies="", session=None, username=None):
                 except:
                     print("Unicode Error at {}".format(traversal_url))
                     pass
-
+    
+    await session.close()
     return result_list
 
 

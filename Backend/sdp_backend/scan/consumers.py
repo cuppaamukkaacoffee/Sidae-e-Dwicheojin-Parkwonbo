@@ -57,18 +57,21 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             print("doing scan...")
 
         if fuzz:
-            async with ClientSession() as session:
-                tasks = [asyncio.create_task(shmlackShmidow.main(
-                        url, session=session, username=verification.username
-                    )) for url in urlList]
+            tasks = []
+            for url in urlList:
+                session = ClientSession()
+                task = asyncio.create_task(shmlackShmidow.main(
+                    url, session=session, username=verification.username
+                ))
+                tasks.append(task)
+                
+            for coro in (asyncio.as_completed(tasks)):
+                result = await asyncio.shield(coro)
+                serializers = ReportsSerializer(data=result, many=True)
+                if serializers.is_valid(raise_exception=True):
+                    await database_sync_to_async(serializers.save)()
 
-                for coro in (asyncio.as_completed(tasks)):
-                    result = await asyncio.shield(coro)
-                    serializers = ReportsSerializer(data=result, many=True)
-                    if serializers.is_valid(raise_exception=True):
-                        await database_sync_to_async(serializers.save)()
-
-                    await self.send(text_data=JSON.dumps({"result": result}))
+                await self.send(text_data=JSON.dumps({"result": result}))
 
         await self.send(text_data=JSON.dumps({"status": "200"}))
         await self.disconnect(message="all good")

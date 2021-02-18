@@ -79,6 +79,7 @@ const Result = () => {
                     <CCol xs="12" md="9">
                         <CSelect custom name="select" id="select" onChange = {handleInputvul}>
                         <option value="">All</option>
+                        <option value="Open Redirect">Open Redirect</option>
                         <option value="SQL Injection">SQL Injection</option>
                         <option value="XSS">XSS</option>
                         <option value="Windows Directory Traversal">Windows Directory Traversal</option>
