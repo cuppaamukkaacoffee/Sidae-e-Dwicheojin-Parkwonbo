@@ -22,7 +22,7 @@ import CIcon from '@coreui/icons-react'
 import * as loadingActions from 'src/store/modules/loading/actions';
 import * as userActions from 'src/store/modules/user/actions';
 
-const fields = ['vulnerability','result_string','sub_path', 'url', 'status']
+const fields = ['vulnerability','result_string','url','sub_path', 'status']
 
 const Webscan = () => {
   const dispatch = useDispatch();
@@ -100,68 +100,75 @@ const Webscan = () => {
     dispatch(userActions.set_fuzz(e.target.value))
   }
 
+  const handleRowclick = (e) =>{
+    alert(e)
+  }
   return (
     <>
       <CRow>
             <CCol xs="10" md="5">
-            <CCard>
+              <CCard>
+                  <CCardHeader>
+                  Web Scan
+                  </CCardHeader>
+                  <CCardBody>
+                  <CForm action="" method="post" encType="multipart/form-data" className="form-horizontal">
+                      <CFormGroup row>
+                      <CCol md="3">
+                          <CLabel htmlFor="text-input">Target URL</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                          <CInput id="text-input" name="text-input" placeholder="URL"  onChange={handleInputurl}/>
+                          <CFormText>ex) https://www.naver.com</CFormText>
+                      </CCol>
+                      </CFormGroup>
+                      
+                      <CFormGroup row>
+                      <CCol md="3">
+                          <CLabel htmlFor="select">Fuzz</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                          <CSelect custom name="select" id="select" onChange = {handleInputfuzz}>
+                          <option value="true">True</option>
+                          <option value="false">False</option>
+                          </CSelect>
+                      </CCol>
+                      </CFormGroup>
+                  </CForm>
+                  </CCardBody>
+                  <CCardFooter>
+                  <CButton type="button" size="sm" color="primary" onClick={handleClickSendMessage} 
+                    disabled={readyState !== ReadyState.OPEN || loading}><CIcon name="cil-scrubber" /> Scan
+                  </CButton>
+                  </CCardFooter>
+              </CCard>
+              <CCard>
                 <CCardHeader>
-                Web Scan
+                  Url List
                 </CCardHeader>
-                <CCardBody>
-                <CForm action="" method="post" encType="multipart/form-data" className="form-horizontal">
-                    <CFormGroup row>
-                    <CCol md="3">
-                        <CLabel htmlFor="text-input">Target URL</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                        <CInput id="text-input" name="text-input" placeholder="URL"  onChange={handleInputurl}/>
-                        <CFormText>ex) https://www.naver.com</CFormText>
-                    </CCol>
-                    </CFormGroup>
-                    
-                    <CFormGroup row>
-                    <CCol md="3">
-                        <CLabel htmlFor="select">Fuzz</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="9">
-                        <CSelect custom name="select" id="select" onChange = {handleInputfuzz}>
-                        <option value="true">True</option>
-                        <option value="false">False</option>
-                        </CSelect>
-                    </CCol>
-                    </CFormGroup>
-                </CForm>
+                <CCardBody style={{maxHeight:"200px",overflow: 'auto'}}>
+                  {urls.current.map((url,idx) => (<li key={idx}>{url}</li>))}
                 </CCardBody>
-                <CCardFooter>
-                <CButton type="button" size="sm" color="primary" onClick={handleClickSendMessage} 
-                  disabled={readyState !== ReadyState.OPEN || loading}><CIcon name="cil-scrubber" /> Scan
-                </CButton>
-                </CCardFooter>
-            </CCard>
+              </CCard> 
+            </CCol>
+            <CCol>
+              <CCard style={{height:"540px",overflow: 'auto'}}>
+                {loading ? <CSpinner
+                  color="primary"
+                  style={{width:'4rem', height:'4rem', marginTop:"25%",marginLeft: '45%'}}
+                />  : null}
+              </CCard>
             </CCol>
         </CRow>
-        <CRow></CRow>
+    
       
-      <CRow>
-        <CCol xs="10" md="5">
-        <CCard>
-            <CCardHeader>
-              Url List
-            </CCardHeader>
-            <CCardBody style={{maxHeight:"200px",overflow: 'auto'}}>
-              {urls.current.map((url,idx) => (<li key={idx}>{url}</li>))}
-            </CCardBody>
-        </CCard> 
-        </CCol>
-      </CRow>
+      
       <CRow>
         <CCol xs="12" md="12">
           <CCard>
               <CCardHeader>
                   Results
               </CCardHeader>
-              <div style={{maxHeight:"300px",overflow: 'auto'}}>
                 <CCardBody>
                   <CDataTable
                   items={messageHistory.current}
@@ -169,19 +176,14 @@ const Webscan = () => {
                   hover
                   striped
                   bordered
+                  pagination
                   size="sm"
-                  
+                  onRowClick ={handleRowclick}
                   />
                 </CCardBody>
-              </div>
           </CCard> 
         </CCol>
       </CRow>
-      {loading ? <CSpinner
-        color="primary"
-        style={{width:'4rem', height:'4rem', marginLeft: '50%'}}
-      />  : null}
-         
     </>
   );
 };
