@@ -63,3 +63,7 @@ POST:
 - 스캔 요청/응답 헤더 모델 추가
 
 - UnicodeError 대응 개선
+
+- ClientSession 다수 사용
+
+- 크롤링 읍답 속도 향상
