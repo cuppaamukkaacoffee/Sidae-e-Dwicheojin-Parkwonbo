@@ -22,6 +22,8 @@ export const set_vul = createAction(SET_VUL);
 export const SET_SIDEBAR = 'user/SET_SIDEBAR';
 export const set_sidebar = createAction(SET_SIDEBAR);
 
+export const SET_FUZZ = 'user/SET_FUZZ';
+export const set_fuzz = createAction(SET_FUZZ);
 // API 호출 시
 
 export const [

@@ -15,18 +15,18 @@ const _nav =  [
   {
     _tag: 'CSidebarNavDropdown',
     name: 'Scanner',
-    route: '/scan',
+    route: '/scans',
     icon: 'cil-puzzle',
     _children: [
       {
         _tag: 'CSidebarNavItem',
         name: 'Web scan',
-        to: '/scan/webscan',
+        to: '/scans/webscan',
       },
       {
         _tag: 'CSidebarNavItem',
         name: 'Network scan',
-        to: '/scan/netscan',
+        to: '/scans/netscan',
       },
     ],
   },

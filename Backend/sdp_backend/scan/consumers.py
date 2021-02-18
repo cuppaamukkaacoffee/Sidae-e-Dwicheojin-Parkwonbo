@@ -70,5 +70,5 @@ class ReportsConsumer(AsyncWebsocketConsumer):
 
                     await self.send(text_data=JSON.dumps({"result": result}))
 
-            await self.send(text_data=JSON.dumps({"status": "200"}))
-            await self.disconnect(message="all good")
+        await self.send(text_data=JSON.dumps({"status": "200"}))
+        await self.disconnect(message="all good")

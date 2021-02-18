@@ -13,8 +13,8 @@ const routes = [
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/users', exact: true,  name: 'Users', component: Users },
   { path: '/users/:id', exact: true, name: 'User Details', component: User },
-  { path: '/scan/webscan', exact: true,  name: 'Web scanner', component: Webscan },
-  { path: '/scan/netscan', exact: true, name: 'Network scanner', component: Netscan },
+  { path: '/scans/webscan', exact: true,  name: 'Web scanner', component: Webscan },
+  { path: '/scans/netscan', exact: true, name: 'Network scanner', component: Netscan },
   { path: '/result', exact: true, name: 'Results', component: Result },
 ];
 

@@ -8,6 +8,7 @@ const initialState = {
   pw: '',
   url: '',
   vul: '',
+  fuzz: true,
   content:'',
   results:[],
   sidebarShow : 'responsive',
@@ -24,6 +25,7 @@ const user = handleActions(
         draft.pw = '';
         draft.url = '';
         draft.vul = '';
+        draft.fuzz = true;
         draft.content = '';
         draft.results = [];
         draft.errorCode = '';
@@ -77,6 +79,17 @@ const user = handleActions(
       return produce(state, (draft) => {
         console.log('vul in reducer => ', action.payload)
         draft.vul = action.payload;
+      })
+    },
+    [USER.SET_FUZZ]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('fuzz in reducer => ', action.payload)
+        if (action.payload == "false"){
+          draft.fuzz = false
+        }
+        else{
+          draft.fuzz = true
+        }
       })
     },
     [USER.URL_CHECK_SUCCESS]: (state, action) => {
