@@ -52,15 +52,10 @@ const Webscan = () => {
 
   const urls = useRef([]);
   const messageHistory = useRef([]);
-  const fieldRef = useRef(null);
 
   useEffect(() => {
     if(lastMessage != null){
       const results = JSON.parse(lastMessage.data);
-      fieldRef.current.scrollIntoView({
-        block: "end",
-        behavior: "smooth",
-      });
       if(results.urlList){
           urls.current = urls.current.concat(results.urlList)
       }
@@ -106,7 +101,7 @@ const Webscan = () => {
   }
 
   return (
-    <div ref={fieldRef}>
+    <>
       <CRow>
             <CCol xs="10" md="5">
             <CCard>
@@ -154,7 +149,7 @@ const Webscan = () => {
             <CCardHeader>
               Url List
             </CCardHeader>
-            <CCardBody>
+            <CCardBody style={{maxHeight:"200px",overflow: 'auto'}}>
               {urls.current.map((url,idx) => (<li key={idx}>{url}</li>))}
             </CCardBody>
         </CCard> 
@@ -166,17 +161,19 @@ const Webscan = () => {
               <CCardHeader>
                   Results
               </CCardHeader>
-              <CCardBody>
-                <CDataTable
-                items={messageHistory.current}
-                fields={fields}
-                hover
-                striped
-                bordered
-                size="sm"
-                
-                />
-              </CCardBody>
+              <div style={{maxHeight:"300px",overflow: 'auto'}}>
+                <CCardBody>
+                  <CDataTable
+                  items={messageHistory.current}
+                  fields={fields}
+                  hover
+                  striped
+                  bordered
+                  size="sm"
+                  
+                  />
+                </CCardBody>
+              </div>
           </CCard> 
         </CCol>
       </CRow>
@@ -185,7 +182,7 @@ const Webscan = () => {
         style={{width:'4rem', height:'4rem', marginLeft: '50%'}}
       />  : null}
          
-    </div>
+    </>
   );
 };
 
