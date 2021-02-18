@@ -64,6 +64,6 @@ POST:
 
 - UnicodeError 대응 개선
 
-- ClientSession 다수 사용
+- ClientSession 다수 사용 :white_check_mark:
 
 - 크롤링 읍답 속도 향상
