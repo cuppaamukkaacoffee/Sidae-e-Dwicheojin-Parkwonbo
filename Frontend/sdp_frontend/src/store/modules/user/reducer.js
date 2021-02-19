@@ -8,6 +8,7 @@ const initialState = {
   pw: '',
   url: '',
   vul: '',
+  result_string:'',
   fuzz: true,
   content:'',
   results:[],
@@ -25,6 +26,7 @@ const user = handleActions(
         draft.pw = '';
         draft.url = '';
         draft.vul = '';
+        draft.result_string = '';
         draft.fuzz = true;
         draft.content = '';
         draft.results = [];
@@ -79,6 +81,12 @@ const user = handleActions(
       return produce(state, (draft) => {
         console.log('vul in reducer => ', action.payload)
         draft.vul = action.payload;
+      })
+    },
+    [USER.SET_RESULT_STRING]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('url in result_string => ', action.payload)
+        draft.result_string = action.payload;
       })
     },
     [USER.SET_FUZZ]: (state, action) => {

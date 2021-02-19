@@ -19,6 +19,9 @@ export const set_url = createAction(SET_URL);
 export const SET_VUL = 'user/SET_VUL';
 export const set_vul = createAction(SET_VUL);
 
+export const SET_RESULT_STRING = 'user/SET_RESULT_STRING';
+export const set_result_string = createAction(SET_RESULT_STRING);
+
 export const SET_SIDEBAR = 'user/SET_SIDEBAR';
 export const set_sidebar = createAction(SET_SIDEBAR);
 

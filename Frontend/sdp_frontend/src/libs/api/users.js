@@ -31,14 +31,13 @@ export const urlCheck_api = async (url) => {
 };
 
 export const results_api = async (info) => {
-  const id = window.sessionStorage.getItem('id'); 
   const token = window.sessionStorage.getItem('token');
   const data = {
-    username : id,
+    username : info.id,
     target : info.url,
     sub_path : "",
     vulnerability : info.vul,
-    result_string : ""
+    result_string : info.result_string
   }
   const response = await axios.post('/scan/query/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
   return response.data;
