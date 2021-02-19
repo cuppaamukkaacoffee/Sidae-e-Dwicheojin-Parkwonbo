@@ -54,6 +54,7 @@ async def crawl(url, session):
             try:
                 if response.headers["content-type"].startswith("application/"):
                     urlseen.add(url)
+                    yield url
                     continue
             except KeyError:
                 continue
@@ -64,16 +65,12 @@ async def crawl(url, session):
                 continue
 
             urlseen.add(url)
+            yield url
 
             for href in get_links(html, domain):
                 joinlink = urljoin(seedurl, href)
                 if joinlink not in urlseen:
                     await url_frontier.put(joinlink)
-    for url in urlseen:
-        row = [id, url]
-        id = id + 1
-    return urlseen
-
 
 async def main(url):
     tasks = []

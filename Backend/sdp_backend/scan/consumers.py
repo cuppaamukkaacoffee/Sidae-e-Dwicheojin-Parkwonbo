@@ -49,12 +49,15 @@ class ReportsConsumer(AsyncWebsocketConsumer):
         result = []
 
         if target:
-            urlList = await asyncCrawl.main(target)
-            # print(urlList)
-            await self.send(
-                text_data=JSON.dumps({"status": "200", "urlList": list(urlList)})
-            )
+            urlList = []
+            session = ClientSession()
+            async for url in asyncCrawl.crawl(target, session):
+                urlList.append(url)
+                await self.send(
+                    text_data=JSON.dumps({"status": "200", "urlList": url})
+                )
             print("doing scan...")
+            await session.close()
 
         if fuzz:
             tasks = []
