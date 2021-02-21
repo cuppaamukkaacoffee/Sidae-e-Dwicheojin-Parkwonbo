@@ -16,6 +16,12 @@ import {
   CLabel,
   CSelect,
   CRow,
+  CNav,
+  CNavItem,
+  CNavLink,
+  CTabContent,
+  CTabPane,
+  CTabs,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as userActions from 'src/store/modules/user/actions';
@@ -124,7 +130,11 @@ const Result = () => {
                             <CLabel htmlFor="text-input">Result_string</CLabel>
                         </CCol>
                         <CCol xs="12" md="9">
-                            <CInput id="text-input" name="text-input"  onChange = {handleInputresult_string}/>
+                          <CSelect custom name="select" id="select" onChange = {handleInputresult_string}>
+                            <option value="">All</option>
+                            <option value="vulnerable">Vulnerable</option>
+                            <option value="benign">Benign</option>
+                          </CSelect>
                         </CCol>
                     </CFormGroup>
                 </CForm>
@@ -137,6 +147,30 @@ const Result = () => {
             </CCol>
             <CCol>
               <CCard style={{height:"540px",overflow: 'auto'}}>
+                <CCardBody>
+                <CTabs>
+                    <CNav variant="tabs">
+                        <CNavItem>
+                        <CNavLink>
+                            Request
+                        </CNavLink>
+                        </CNavItem>
+                        <CNavItem>
+                        <CNavLink>
+                            Response
+                        </CNavLink>
+                        </CNavItem>
+                    </CNav>
+                    <CTabContent>
+                        <CTabPane>
+                         request
+                        </CTabPane>
+                        <CTabPane>
+                         response
+                        </CTabPane>
+                    </CTabContent>
+                </CTabs>
+                </CCardBody>
               </CCard>
             </CCol>
         </CRow>

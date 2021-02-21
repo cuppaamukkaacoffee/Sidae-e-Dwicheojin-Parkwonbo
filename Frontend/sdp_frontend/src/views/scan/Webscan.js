@@ -17,6 +17,14 @@ import {
   CInput,
   CLabel,
   CSelect,
+  CListGroupItem,
+  CListGroup,
+  CNav,
+  CNavItem,
+  CNavLink,
+  CTabContent,
+  CTabPane,
+  CTabs,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as loadingActions from 'src/store/modules/loading/actions';
@@ -147,16 +155,44 @@ const Webscan = () => {
                   Url List
                 </CCardHeader>
                 <CCardBody style={{maxHeight:"200px",overflow: 'auto'}}>
-                  {urls.current.map((url,idx) => (<li key={idx}>{url}</li>))}
+                  <CListGroup>
+                   {urls.current.map((url,idx) => (<CListGroupItem href = {url} target="_blank" key={idx}>{url}</CListGroupItem>))}
+                  </CListGroup>
                 </CCardBody>
               </CCard> 
             </CCol>
             <CCol>
               <CCard style={{height:"540px",overflow: 'auto'}}>
-                {loading ? <CSpinner
-                  color="primary"
-                  style={{width:'4rem', height:'4rem', marginTop:"25%",marginLeft: '45%'}}
-                />  : null}
+                <CCardBody>
+                  <CTabs>
+                      <CNav variant="tabs">
+                          <CNavItem>
+                          <CNavLink>
+                              Request
+                          </CNavLink>
+                          </CNavItem>
+                          <CNavItem>
+                          <CNavLink>
+                              Response
+                          </CNavLink>
+                          </CNavItem>
+                      </CNav>
+                      <CTabContent>
+                          <CTabPane>
+                            {loading ? <CSpinner
+                              color="primary"
+                              style={{width:'4rem', height:'4rem', marginTop:"25%",marginLeft: '45%'}}
+                            />  : null}
+                          </CTabPane>
+                          <CTabPane>
+                            {loading ? <CSpinner
+                              color="primary"
+                              style={{width:'4rem', height:'4rem', marginTop:"25%",marginLeft: '45%'}}
+                            />  : null}
+                          </CTabPane>
+                      </CTabContent>
+                  </CTabs>
+                  </CCardBody>
               </CCard>
             </CCol>
         </CRow>
