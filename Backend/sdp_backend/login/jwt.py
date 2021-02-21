@@ -33,7 +33,6 @@ class JwtHelper:
             print("all good")
             timestamp = datetime.datetime.utcnow()
             return user
-        print("fekking cunt")
         return
 
     def tokenize(self, user, timestamp):
@@ -67,7 +66,6 @@ class AsyncJwtHelper(JwtHelper):
             print("all good")
             timestamp = datetime.datetime.utcnow()
             return user
-        print("fekking cunt")
         return
 
     def get_user(self, username):
