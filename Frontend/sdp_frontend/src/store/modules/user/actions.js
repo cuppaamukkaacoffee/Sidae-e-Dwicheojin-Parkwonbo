@@ -16,11 +16,17 @@ export const set_pw = createAction(SET_PW);
 export const SET_URL = 'user/SET_URL';
 export const set_url = createAction(SET_URL);
 
+export const SET_URL_LIST = 'user/SET_URL_LIST';
+export const set_url_list = createAction(SET_URL_LIST);
+
 export const SET_VUL = 'user/SET_VUL';
 export const set_vul = createAction(SET_VUL);
 
 export const SET_RESULT_STRING = 'user/SET_RESULT_STRING';
 export const set_result_string = createAction(SET_RESULT_STRING);
+
+export const SET_WS_RESULTS = 'user/SET_WS_RESULTS';
+export const set_ws_results = createAction(SET_WS_RESULTS);
 
 export const SET_SIDEBAR = 'user/SET_SIDEBAR';
 export const set_sidebar = createAction(SET_SIDEBAR);
@@ -43,12 +49,6 @@ export const [
 ] = createRequestActionTypes('user/REGISTER');
 export const register = createAction(REGISTER);
 
-export const [
-  URL_CHECK,
-  URL_CHECK_SUCCESS,
-  URL_CHECK_FAILED,
-] = createRequestActionTypes('user/URL_CHECK');
-export const url_check = createAction(URL_CHECK);
 
 export const [
   RESULTS_CHECK,

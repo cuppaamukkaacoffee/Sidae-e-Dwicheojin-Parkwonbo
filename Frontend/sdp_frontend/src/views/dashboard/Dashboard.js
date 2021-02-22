@@ -12,7 +12,8 @@ import {
   CDropdownToggle,
   CRow,
   CCol,
-  CWidgetProgressIcon
+  CWidgetProgressIcon,
+  CProgress
 } from '@coreui/react'
 import {
   CChartBar,
@@ -154,6 +155,25 @@ const Dashboards = () => {
             </CDropdownMenu>
           </CDropdown>
         </CWidgetDropdown>
+
+        <div className="text-uppercase mb-1">
+          <small><b>CPU Usage</b></small>
+        </div>
+        <CProgress size="xs" color="info" value={25} />
+        <small className="text-muted">348 Processes. 1/4 Cores.</small>
+
+        <div className="text-uppercase mb-1">
+          <small><b>Memory Usage</b></small>
+        </div>
+        <CProgress size="xs" color="warning" value={70} />
+        <small className="text-muted">11444GB/16384MB</small>
+
+        <div className="text-uppercase mb-1">
+          <small><b>SSD 1 Usage</b></small>
+        </div>
+        <CProgress size="xs" color="danger" value={90} />
+        <small className="text-muted">243GB/256GB</small>
+
       </CCol>
       <CCol md = "4">
         <CWidgetProgressIcon

@@ -7,11 +7,13 @@ const initialState = {
   id: '',
   pw: '',
   url: '',
+  url_list:[],
   vul: '',
   result_string:'',
   fuzz: true,
   content:'',
   results:[],
+  ws_results:[],
   sidebarShow : 'responsive',
   errorMsg : '',
   errorCode : '',
@@ -25,11 +27,13 @@ const user = handleActions(
         draft.id = '';
         draft.pw = '';
         draft.url = '';
+        draft.url_list = [];
         draft.vul = '';
         draft.result_string = '';
         draft.fuzz = true;
         draft.content = '';
         draft.results = [];
+        draft.ws_results = [];
         draft.errorCode = '';
         draft.errorMsg = '';
         draft.sidebarShow = 'responsive';
@@ -77,6 +81,12 @@ const user = handleActions(
         draft.url = action.payload;
       })
     },
+    [USER.SET_URL_LIST]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('url_list in reducer => ', action.payload)
+        draft.url_list.unshift(action.payload);
+      })
+    },
     [USER.SET_VUL]: (state, action) => {
       return produce(state, (draft) => {
         console.log('vul in reducer => ', action.payload)
@@ -87,6 +97,12 @@ const user = handleActions(
       return produce(state, (draft) => {
         console.log('url in result_string => ', action.payload)
         draft.result_string = action.payload;
+      })
+    },
+    [USER.SET_WS_RESULTS]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('ws_results in reducer => ', action.payload)
+        draft.ws_results.unshift(...action.payload);
       })
     },
     [USER.SET_FUZZ]: (state, action) => {
@@ -100,21 +116,7 @@ const user = handleActions(
         }
       })
     },
-    [USER.URL_CHECK_SUCCESS]: (state, action) => {
-      console.log('URL_CHECK_SUCCESS => ', action.payload);
-      return produce(state, (draft) => {
-        draft.results = [];
-        draft.news = [];
-        draft.content = action.payload.content;
-      });
-    },
-    [USER.URL_CHECK_FAILED]: (state, action) => {
-      console.log('URL_CHECK_Failed => ', action.payload);
-      return produce(state, (draft) => {
-        draft.errorMsg = '탐색 오류';
-        draft.errorCode = '404';
-      });
-    },
+    
     [USER.RESULTS_CHECK_SUCCESS]: (state, action) => {
       console.log('RESULTS_CHECK_SUCCESS => ', action.payload);
       return produce(state, (draft) => {

@@ -20,15 +20,6 @@ export const register_api = async (info) => {
   return response.data;
 };
 
-export const urlCheck_api = async (url) => {
-  let data = {
-    url : url
-  }
-  const token = window.sessionStorage.getItem('token');
-  console.log(token)
-  const response = await axios.post('/api/url/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
-  return response.data;
-};
 
 export const results_api = async (info) => {
   const token = window.sessionStorage.getItem('token');

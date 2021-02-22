@@ -37,10 +37,14 @@ const Webscan = () => {
   const {
     loading,
     url,
+    url_list,
+    ws_results,
     fuzz,
     } = useSelector((state) => ({
       loading: state.loading.loading,
       url : state.user.url,
+      url_list : state.user.url_list,
+      ws_results : state.user.ws_results,
       fuzz : state.user.fuzz
     }), shallowEqual)
 
@@ -58,17 +62,15 @@ const Webscan = () => {
     [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
   }[readyState];
 
-  const urls = useRef([]);
-  const messageHistory = useRef([]);
 
   useEffect(() => {
     if(lastMessage != null){
       const results = JSON.parse(lastMessage.data);
       if(results.urlList){
-          urls.current = urls.current.concat(results.urlList)
+          dispatch(userActions.set_url_list(results.urlList))
       }
       else if(results.result){
-        messageHistory.current = messageHistory.current.concat(results.result)
+        dispatch(userActions.set_ws_results(results.result))
       }
       else if(results.message == "all good"){
         alert("스캔끝")
@@ -156,7 +158,7 @@ const Webscan = () => {
                 </CCardHeader>
                 <CCardBody style={{maxHeight:"200px",overflow: 'auto'}}>
                   <CListGroup>
-                   {urls.current.map((url,idx) => (<CListGroupItem href = {url} target="_blank" key={idx}>{url}</CListGroupItem>))}
+                   {url_list.map((url,idx) => (<CListGroupItem href = {url} target="_blank" key={idx}>{url}</CListGroupItem>))}
                   </CListGroup>
                 </CCardBody>
               </CCard> 
@@ -207,7 +209,7 @@ const Webscan = () => {
               </CCardHeader>
                 <CCardBody>
                   <CDataTable
-                  items={messageHistory.current}
+                  items={ws_results}
                   fields={fields}
                   hover
                   striped
