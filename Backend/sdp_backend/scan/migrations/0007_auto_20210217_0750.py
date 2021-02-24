@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('scan', '0006_auto_20210207_1016'),
+        ("scan", "0006_auto_20210207_1016"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='reports',
-            name='user',
+            model_name="reports",
+            name="user",
         ),
         migrations.AddField(
-            model_name='reports',
-            name='username',
-            field=models.TextField(default='', max_length=15),
+            model_name="reports",
+            name="username",
+            field=models.TextField(default="", max_length=15),
         ),
     ]

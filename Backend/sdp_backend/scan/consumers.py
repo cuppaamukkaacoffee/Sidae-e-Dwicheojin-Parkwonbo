@@ -11,7 +11,7 @@ import asyncio
 from aiohttp import ClientSession
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
-from .serializers import ReportsSerializer
+from .serializers import ReportsSerializer, RequestHeadersSerializer, ResponseHeadersSerializer
 
 
 class ReportsConsumer(AsyncWebsocketConsumer):
@@ -46,16 +46,12 @@ class ReportsConsumer(AsyncWebsocketConsumer):
         elif type(verification) == str:
             await self.disconnect(message=verification)
 
-        result = []
-
         if target:
             urlList = []
             session = ClientSession()
             async for url in asyncCrawl.crawl(target, session):
                 urlList.append(url)
-                await self.send(
-                    text_data=JSON.dumps({"status": "200", "urlList": url})
-                )
+                await self.send(text_data=JSON.dumps({"status": "200", "urlList": url}))
             print("doing scan...")
             await session.close()
 
@@ -63,18 +59,39 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             tasks = []
             for url in urlList:
                 session = ClientSession()
-                task = asyncio.create_task(shmlackShmidow.main(
-                    url, session=session, username=verification.username
-                ))
+                task = asyncio.create_task(
+                    shmlackShmidow.main(
+                        url, session=session, username=verification.username
+                    )
+                )
                 tasks.append(task)
-                
-            for coro in (asyncio.as_completed(tasks)):
-                result = await asyncio.shield(coro)
-                serializers = ReportsSerializer(data=result, many=True)
-                if serializers.is_valid(raise_exception=True):
-                    await database_sync_to_async(serializers.save)()
 
-                await self.send(text_data=JSON.dumps({"result": result}))
+            for coro in asyncio.as_completed(tasks):
+                reports, requests, responses = await asyncio.shield(coro)
+                
+                reports_serializers = ReportsSerializer(data=reports, many=True)
+                requests_serializers = RequestHeadersSerializer(data=requests, many=True)
+                responses_serializers = ResponseHeadersSerializer(data=responses, many=True)
+                
+                if await sync_to_async(reports_serializers.is_valid)(raise_exception=True) and \
+                    await sync_to_async(requests_serializers.is_valid)(raise_exception=True) and \
+                    await sync_to_async(responses_serializers.is_valid)(raise_exception=True):
+                    await database_sync_to_async(reports_serializers.save)()
+                    await database_sync_to_async(requests_serializers.save)()
+                    await database_sync_to_async(responses_serializers.save)()
+                
+                # if requests_serializers.is_valid(raise_exception=True):
+                #     await database_sync_to_async(requests_serializers.save)()
+                
+                # if responses_serializers.is_valid(raise_exception=True):
+                #     await database_sync_to_async(responses_serializers.save)()
+
+                result = {}
+                result['reports'] = reports
+                result['requests'] = requests
+                result['responses'] = responses
+
+                await self.send(text_data=JSON.dumps(result))
 
         await self.send(text_data=JSON.dumps({"status": "200"}))
         await self.disconnect(message="all good")

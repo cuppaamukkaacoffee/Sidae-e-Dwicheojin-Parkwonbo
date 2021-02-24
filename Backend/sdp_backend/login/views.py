@@ -54,8 +54,8 @@ class UsersAPIView(APIView):
             data = str(e.__dict__["detail"]["username"][0])
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-class UsersLoginAPIView(APIView):
 
+class UsersLoginAPIView(APIView):
     def post(self, request):
         username = request.data["username"]
         password = request.data["password"]

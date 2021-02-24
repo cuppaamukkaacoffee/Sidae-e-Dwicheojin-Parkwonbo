@@ -7,6 +7,7 @@ from aiohttp import ClientSession, client_exceptions
 from ..serializers import ReportsSerializer
 from datetime import datetime
 from asgiref.sync import sync_to_async
+import hashlib, random
 
 OKBLUE = "\033[94m"
 OKRED = "\033[91m"
@@ -17,6 +18,7 @@ COLOR2 = "\033[96m"
 COLOR3 = "\033[90m"
 RESET = "\x1b[0m"
 VERBOSE = "1"
+
 
 
 async def active_scan(
@@ -31,6 +33,8 @@ async def active_scan(
     verbose = "y"
     new_url = base_url
     result_list = []
+    request_list = []
+    response_list = []
 
     # Open Redirect 1 ######################################################################################
     result_string = "benign"
@@ -53,7 +57,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -63,8 +69,18 @@ async def active_scan(
             "url": redirect_url,
             "result_string": result_string,
         }
-        # jsonData = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(redirect_res.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     # Open Redirect 2 ######################################################################################
     result_string = "benign"
@@ -85,7 +101,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -95,8 +113,18 @@ async def active_scan(
             "url": redirect_url,
             "result_string": result_string,
         }
-        # data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "","host": target,
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(redirect_res.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     # Open Redirect 3 ######################################################################################
     result_string = "benign"
@@ -117,7 +145,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -127,8 +157,18 @@ async def active_scan(
             "url": redirect_url,
             "result_string": result_string,
         }
-        # data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(redirect_res.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     # XSS ######################################################################################
     result_string = "benign"
@@ -160,7 +200,7 @@ async def active_scan(
                 http_status = res_reflect.status
 
             except:
-                print("XSS Exception")
+                print("XSS Exception1")
                 pass
 
             # CONTINUE TO XSS EXPLOITATION
@@ -168,9 +208,12 @@ async def active_scan(
                 payload_exploit2 = urllib.parse.quote('"><iframe/onload=alert(1)>')
                 xss_url2 = new_url.replace("INJECTX", payload_exploit2)
                 result_string = "vulnerable"
+
                 now = datetime.now()
                 current_time = now.strftime("%Y-%m-%dT%H:%M")
+                id = hashlib.md5((xss_url2 + current_time + str(random.random())).encode("utf-8")).hexdigest()
                 result = {
+                    "id": id,
                     "timestamp": current_time,
                     "username": username,
                     "target": target,
@@ -180,8 +223,21 @@ async def active_scan(
                     "url": xss_url2,
                     "result_string": result_string,
                 }
-                # data = json.dumps(result)
+                request = {
+                    "id": id,
+                    "host": target,
+                    "Accept": "*/*",
+                    "Accept-Encoding": "gzip, deflate",
+                    "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                    "body": "",
+                }
+                response = {
+                    "id": id,
+                    "headers_string": json.dumps(dict(res_xss.headers)),
+                }
                 result_list.append(result)
+                request_list.append(request)
+                response_list.append(response)
 
                 sub_path = xss_url2.split(target)[1]
 
@@ -197,7 +253,11 @@ async def active_scan(
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (xss_url2 + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -207,16 +267,32 @@ async def active_scan(
                         "url": xss_url2,
                         "result_string": result_string,
                     }
-                    # data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(res_xss.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
                 except:
-                    print("XSS Exception")
+                    print("XSS Exception2")
                     pass
         else:
             sub_path = new_url.split(target)[1]
+
             now = datetime.now()
             current_time = now.strftime("%Y-%m-%dT%H:%M")
+            id = hashlib.md5((new_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
             result = {
+                "id": id,
                 "timestamp": current_time,
                 "username": username,
                 "target": target,
@@ -226,10 +302,21 @@ async def active_scan(
                 "url": new_url,
                 "result_string": result_string,
             }
-            # data = json.dumps(result)
+            request = {
+                "id": id,
+                "host": target,
+                "Accept": "*/*",
+                "Accept-Encoding": "gzip, deflate",
+                "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                "body": "",
+            }
+            response = {"id": id, "headers_string": json.dumps(dict(res_xss.headers))}
             result_list.append(result)
-    except:
-        print("XSS Exception")
+            request_list.append(request)
+            response_list.append(response)
+    except Exception as e:
+        print(e)
+        print("XSS Exception3")
         pass
 
     # SQLi ######################################################################################
@@ -252,7 +339,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((sqli_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -262,9 +351,18 @@ async def active_scan(
             "url": sqli_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_sql.headers))}
         result_list.append(result)
-
+        request_list.append(request)
+        response_list.append(response)
     except:
         print("SQLi 1 Exception")
         pass
@@ -289,7 +387,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((sqli_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -299,8 +399,18 @@ async def active_scan(
             "url": sqli_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_sql.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         print("SQLi 2 Exception")
@@ -326,7 +436,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -336,8 +448,21 @@ async def active_scan(
             "url": traversal_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {
+            "id": id,
+            "headers_string": json.dumps(dict(res_direc_traversal.headers)),
+        }
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -364,7 +489,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -374,8 +501,21 @@ async def active_scan(
             "url": traversal_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {
+            "id": id,
+            "headers_string": json.dumps(dict(res_direc_traversal.headers)),
+        }
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -404,7 +544,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -414,8 +556,21 @@ async def active_scan(
             "url": traversal_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {
+            "id": id,
+            "headers_string": json.dumps(dict(res_direc_traversal.headers)),
+        }
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -440,7 +595,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -450,8 +607,21 @@ async def active_scan(
             "url": traversal_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {
+            "id": id,
+            "headers_string": json.dumps(dict(res_direc_traversal.headers)),
+        }
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -476,18 +646,30 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
             "sub_path": sub_path,
-            "vulnerability": "Linux Directory Traversall",
+            "vulnerability": "Linux Directory Traversal",
             "status": http_status,
             "url": traversal_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(http_request.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -514,165 +696,225 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
             "sub_path": sub_path,
-            "vulnerability": "Linux Directory Traversall",
+            "vulnerability": "Linux Directory Traversal",
             "status": http_status,
             "url": traversal_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(http_request.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
 
     # LFI Check ######################################################################################
     result_string = "benign"
-    rfi_exploit = "/etc/passwd"
+    lfi_exploit = "/etc/passwd"
 
-    rfi_url = new_url.replace("INJECTX", rfi_exploit)
-    sub_path = rfi_url.split(target)[1]
+    lfi_url = new_url.replace("INJECTX", lfi_exploit)
+    sub_path = lfi_url.split(target)[1]
 
-    res_rfi = await session.get(rfi_url)
+    res_lfi = await session.get(lfi_url)
 
     try:
 
         # http_request = urllib.request.urlopen(rfi_url)
-        http_response = str(await res_rfi.read())
+        http_response = str(await res_lfi.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = res_rfi.status
+        http_status = res_lfi.status
 
         if "root:" in http_response:
             result_string = "vulnerable"
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
             "status": http_status,
-            "url": rfi_url,
+            "url": lfi_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_lfi.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
 
     # LFI Check 2 ######################################################################################
     result_string = "benign"
-    rfi_exploit = "/etc/passwd%00"
+    lfi_exploit = "/etc/passwd%00"
 
-    rfi_url = new_url.replace("INJECTX", rfi_exploit)
-    sub_path = rfi_url.split(target)[1]
+    lfi_url = new_url.replace("INJECTX", lfi_exploit)
+    sub_path = lfi_url.split(target)[1]
 
-    res_rfi = await session.get(rfi_url)
+    res_lfi = await session.get(lfi_url)
     try:
 
         # http_request = urllib.request.urlopen(rfi_url)
-        http_response = str(await res_rfi.read())
+        http_response = str(await res_lfi.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = res_rfi.status
+        http_status = res_lfi.status
 
         if "root:" in http_response:
             result_string = "vulnerable"
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
             "status": http_status,
-            "url": rfi_url,
+            "url": lfi_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_lfi.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
 
     # LFI Check 3 ######################################################################################
     result_string = "benign"
-    rfi_exploit = "C:\\boot.ini"
+    lfi_exploit = "C:\\boot.ini"
 
-    rfi_url = new_url.replace("INJECTX", rfi_exploit)
-    sub_path = rfi_url.split(target)[1]
+    lfi_url = new_url.replace("INJECTX", lfi_exploit)
+    sub_path = lfi_url.split(target)[1]
 
-    res_rfi = await session.get(rfi_url)
+    res_rfi = await session.get(lfi_url)
     try:
 
-        http_response = str(await res_rfi.read())
+        http_response = str(await res_lfi.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = res_rfi.status
+        http_status = res_lfi.status
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
             "status": http_status,
-            "url": rfi_url,
+            "url": lfi_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_lfi.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
 
     # LFI Check 4 ######################################################################################
     result_string = "benign"
-    rfi_exploit = "C:\\boot.ini%00"
+    lfi_exploit = "C:\\boot.ini%00"
 
-    rfi_url = new_url.replace("INJECTX", rfi_exploit)
-    sub_path = rfi_url.split(target)[1]
+    lfi_url = new_url.replace("INJECTX", lfi_exploit)
+    sub_path = lfi_url.split(target)[1]
 
-    res_rfi = await session.get(rfi_url)
+    res_rfi = await session.get(lfi_url)
     try:
 
-        http_response = str(await res_rfi.read())
+        http_response = str(await res_lfi.read())
         http_length = len(http_response)
         http_length_diff = str(http_length_base - http_length)
-        http_status = res_rfi.status
+        http_status = res_lfi.status
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
             "sub_path": sub_path,
             "vulnerability": "LFI Check",
             "status": http_status,
-            "url": rfi_url,
+            "url": lfi_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_lfi.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -697,7 +939,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((rfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -707,8 +951,18 @@ async def active_scan(
             "url": rfi_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_rfi.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -733,7 +987,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((rfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -743,8 +999,18 @@ async def active_scan(
             "url": rfi_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_rfi.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -812,7 +1078,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((ssti_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -822,8 +1090,18 @@ async def active_scan(
             "url": ssti_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_ssti.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -848,7 +1126,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((ssti_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -858,8 +1138,18 @@ async def active_scan(
             "url": ssti_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_ssti.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -884,7 +1174,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -894,8 +1186,18 @@ async def active_scan(
             "url": rce_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_rce.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -920,7 +1222,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -930,8 +1234,18 @@ async def active_scan(
             "url": rce_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_rce.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -956,7 +1270,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -966,8 +1282,18 @@ async def active_scan(
             "url": rce_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_rce.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -994,7 +1320,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -1004,8 +1332,18 @@ async def active_scan(
             "url": rce_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_rce.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
@@ -1031,7 +1369,9 @@ async def active_scan(
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
+        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
+            "id": id,
             "timestamp": current_time,
             "username": username,
             "target": target,
@@ -1041,13 +1381,23 @@ async def active_scan(
             "url": rce_url,
             "result_string": result_string,
         }
-        data = json.dumps(result)
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {"id": id, "headers_string": json.dumps(dict(res_rce.headers))}
         result_list.append(result)
+        request_list.append(request)
+        response_list.append(response)
 
     except:
         pass
 
-    return result_list
+    return result_list, request_list, response_list
 
 
 async def main(url, cookies="", session=None, username=None):
@@ -1059,6 +1409,9 @@ async def main(url, cookies="", session=None, username=None):
     parsed = urlparse(url)
     target = "{uri.scheme}://{uri.netloc}".format(uri=parsed)
     result_list = []
+    request_list = []
+    response_list = []
+    random.seed(datetime.now())
 
     async with session.get(full_url) as res:
         http_response_base = str(await res.read())
@@ -1110,7 +1463,7 @@ async def main(url, cookies="", session=None, username=None):
                         base_url += param_list[i - 1] + payload
                         active_fuzz = active_fuzz + 1
                         i = i + 1
-                        result_list += await active_scan(
+                        results, requests, responses = await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1118,13 +1471,16 @@ async def main(url, cookies="", session=None, username=None):
                             payload,
                             username,
                         )
+                        result_list += results
+                        request_list += requests
+                        response_list += responses
                         base_url = str(full_url[: dynamic_url + 1])
 
                     elif i == param_length and i != active_fuzz:
                         base_url += param_list[i - 1] + param_vals[i - 1]
                         active_fuzz = active_fuzz + 1
                         i = 1
-                        result_list += await active_scan(
+                        results, requests, responses = await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1132,13 +1488,16 @@ async def main(url, cookies="", session=None, username=None):
                             payload,
                             username,
                         )
+                        result_list += results
+                        request_list += requests
+                        response_list += responses
                         base_url = str(full_url[: dynamic_url + 1])
 
                     elif i == param_length:
                         base_url += param_list[i - 1] + param_vals[i - 1]
                         active_fuzz = active_fuzz + 1
                         i = 1
-                        result_list += await active_scan(
+                        results, requests, responses = await active_scan(
                             session,
                             full_url,
                             base_url,
@@ -1146,6 +1505,9 @@ async def main(url, cookies="", session=None, username=None):
                             payload,
                             username,
                         )
+                        result_list += results
+                        request_list += requests
+                        response_list += responses
                         base_url = str(full_url[: dynamic_url + 1])
 
                     else:
@@ -1172,7 +1534,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1182,8 +1548,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": redirect_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(red_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except:
                     pass
@@ -1208,7 +1587,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1218,8 +1601,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": redirect_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(red_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except:
                     pass
@@ -1244,7 +1640,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1254,8 +1654,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": redirect_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(red_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except:
                     pass
@@ -1280,7 +1693,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1290,8 +1707,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": redirect_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(red_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except:
                     pass
@@ -1316,7 +1746,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1326,8 +1760,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": redirect_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(red_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except:
                     pass
@@ -1347,7 +1794,7 @@ async def main(url, cookies="", session=None, username=None):
                     trav_res = await session.get(traversal_url)
                     http_response = str(await trav_res.read())
                     http_length = len(http_response)
-                    http_status = red_res.status
+                    http_status = trav_res.status
                     http_length_diff = str(http_length_base - http_length)
 
                     if "boot loader" in http_response or "16-bit" in http_response:
@@ -1355,7 +1802,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1365,8 +1816,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": traversal_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(trav_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except UnicodeError:
                     print("Unicode Error at {}".format(traversal_url))
@@ -1395,7 +1859,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1405,8 +1873,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": traversal_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(trav_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except UnicodeError:
                     print("Unicode Error at {}".format(traversal_url))
@@ -1435,7 +1916,11 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
@@ -1445,8 +1930,21 @@ async def main(url, cookies="", session=None, username=None):
                         "url": traversal_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(trav_res.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except UnicodeError:
                     print("Unicode Error at {}".format(traversal_url))
@@ -1473,18 +1971,35 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Linux Directory Traversal",
-                        "status": trav_res.status,
+                        "status": http_status,
                         "url": traversal_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(http_request.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except:
                     print("Unicode Error at {}".format(traversal_url))
@@ -1513,25 +2028,42 @@ async def main(url, cookies="", session=None, username=None):
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
+                    id = hashlib.md5(
+                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                    ).hexdigest()
                     result = {
+                        "id": id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
                         "sub_path": sub_path,
                         "vulnerability": "Linux Directory Traversal",
-                        "status": trav_res.status,
+                        "status": http_status,
                         "url": traversal_url,
                         "result_string": result_string,
                     }
-                    data = json.dumps(result)
+                    request = {
+                        "id": id,
+                        "host": target,
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate",
+                        "User-Agent": "Python/3.9 aiohttp/3.7.3",
+                        "body": "",
+                    }
+                    response = {
+                        "id": id,
+                        "headers_string": json.dumps(dict(http_request.headers)),
+                    }
                     result_list.append(result)
+                    request_list.append(request)
+                    response_list.append(response)
 
                 except:
                     print("Unicode Error at {}".format(traversal_url))
                     pass
-    
+
     await session.close()
-    return result_list
+    return result_list, request_list, response_list
 
 
 # async def wrapperMain(urlList, cookies="", session=None, username=None):

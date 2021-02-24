@@ -72,6 +72,7 @@ async def crawl(url, session):
                 if joinlink not in urlseen:
                     await url_frontier.put(joinlink)
 
+
 async def main(url):
     tasks = []
     async with ClientSession() as session:

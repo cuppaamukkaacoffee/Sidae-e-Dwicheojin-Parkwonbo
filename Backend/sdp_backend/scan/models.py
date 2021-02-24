@@ -4,6 +4,7 @@ from django.db import models
 
 
 class Reports(models.Model):
+    id = models.TextField(primary_key=True)
     timestamp = models.DateTimeField()
     username = models.TextField(max_length=15, default="")
     target = models.TextField(default="")
@@ -17,13 +18,17 @@ class Reports(models.Model):
 
 
 class RequestHeaders(models.Model):
+    id = models.TextField(primary_key=True)
+    "('Host': 'www.daum.net', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'User-Agent': 'Python/3.9 aiohttp/3.7.3')"
     timestamp = models.DateTimeField(auto_now_add=True)
-    location = models.TextField(default="")
-    urls_path = models.TextField(default="")
+    host = models.TextField(default="")
+    accept = models.TextField(default="*/*")
+    accept_encoding = models.TextField(default="gzip, deflate")
+    user_agent = models.TextField(default="Python/3.9 aiohttp/3.7.3")
+    body = models.TextField(default="", blank=True)
 
 
 class ResponseHeaders(models.Model):
+    id = models.TextField(primary_key=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    location = models.TextField(default="")
-    csv_path = models.TextField(default="")
-    json_path = models.TextField(default="")
+    headers_string = models.TextField(default="")
