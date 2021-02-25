@@ -18,6 +18,7 @@ class ReportsAPIView(APIView):
         sub_path = ""
         result_string = ""
         vulnerability = ""
+        with_headers = True
 
         try:
             token = request.META["HTTP_AUTHORIZATION"]
