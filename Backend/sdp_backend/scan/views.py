@@ -172,7 +172,7 @@ class ReportsQueryAPIView(APIView):
         report_serializers = ReportsSerializer(reports, many=True)
         
         if not with_headers:
-            return Response(data=report_serializers.data)
+            return Response(data={"reports": report_serializers.data})
         
         requests = RequestHeaders.objects.none()
         responses = ResponseHeaders.objects.none()
