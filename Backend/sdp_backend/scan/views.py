@@ -140,6 +140,8 @@ class ReportsQueryAPIView(APIView):
                 result_string = request.data["result_string"]
             if key == "vulnerability":
                 vulnerability = request.data["vulnerability"]
+            if key == "with_headers":
+                with_headers = request.data["with_headers"]
 
         jwt = JwtHelper()
 
@@ -165,13 +167,18 @@ class ReportsQueryAPIView(APIView):
             vulnerability__contains=vulnerability,
             result_string__contains=result_string,
         )
-
+        
+        report_serializers = ReportsSerializer(reports, many=True)
+        
+        if not with_headers:
+            return Response(data=report_serializers.data)
+        
         requests = RequestHeaders.objects.none()
         responses = ResponseHeaders.objects.none()
         for report in reports:
             requests |= RequestHeaders.objects.filter(id__exact=report.id)
             responses |= ResponseHeaders.objects.filter(id__exact=report.id)
-        report_serializers = ReportsSerializer(reports, many=True)
+    
         request_serializers = RequestHeadersSerializer(requests, many=True)
         response_serializers = ResponseHeadersSerializer(responses, many=True)
         
