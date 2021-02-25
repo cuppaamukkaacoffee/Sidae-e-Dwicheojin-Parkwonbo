@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useEffect } from 'react';
+import React, {useCallback, useState, useEffect } from 'react';
 import {useSelector, useDispatch, shallowEqual} from 'react-redux';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import {
@@ -17,14 +17,17 @@ import {
   CInput,
   CLabel,
   CSelect,
-  CListGroupItem,
-  CListGroup,
   CNav,
   CNavItem,
   CNavLink,
   CTabContent,
   CTabPane,
   CTabs,
+  CProgress,
+  CToaster,
+  CToast,
+  CToastHeader,
+  CToastBody
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as loadingActions from 'src/store/modules/loading/actions';
@@ -33,19 +36,36 @@ import * as userActions from 'src/store/modules/user/actions';
 const fields = ['vulnerability','result_string','url','sub_path', 'status']
 
 const Webscan = () => {
+  const [toast_Active,set_toast_Active] = useState(false)
   const dispatch = useDispatch();
   const {
     loading,
     url,
     url_list,
-    ws_results,
+    reports,
+    requests,
+    responses,
+    report,
+    request,
+    response,
+    headers_string,
     fuzz,
+    progress,
+    total,
     } = useSelector((state) => ({
       loading: state.loading.loading,
       url : state.user.url,
       url_list : state.user.url_list,
-      ws_results : state.user.ws_results,
-      fuzz : state.user.fuzz
+      reports : state.user.reports,
+      requests: state.user.requests,
+      responses: state.user.responses,
+      report: state.user.report,
+      request: state.user.request,
+      response: state.user.response,
+      headers_string: state.user.headers_string,
+      fuzz : state.user.fuzz,
+      progress: state.loading.progress,
+      total: state.loading.total,
     }), shallowEqual)
 
   const {
@@ -68,12 +88,22 @@ const Webscan = () => {
       const results = JSON.parse(lastMessage.data);
       if(results.urlList){
           dispatch(userActions.set_url_list(results.urlList))
+          dispatch(loadingActions.add_total())
       }
-      else if(results.result){
-        dispatch(userActions.set_ws_results(results.result))
+      else if(results.reports){
+        dispatch(userActions.set_results(results))
+        dispatch(loadingActions.add_progress())
       }
       else if(results.message == "all good"){
-        alert("스캔끝")
+        set_toast_Active(true);
+        if(reports.length > 0){
+          const req = requests.find((el) => el.id === reports[0].id);
+          const res = responses.find((el) => el.id === reports[0].id);
+          dispatch(userActions.set_request(req));
+          dispatch(userActions.set_response(res));
+          dispatch(userActions.set_report(reports[0]));
+      }
+
       }
     }
   }, [lastMessage]);
@@ -81,14 +111,23 @@ const Webscan = () => {
   useEffect(() => {
     if(connectionStatus == 'Closed'){
       dispatch(loadingActions.finishLoading());
-      alert("disconnect")
     }
   }, [connectionStatus]);
       
   useEffect(() => {
-    dispatch(loadingActions.finishLoading());
-    dispatch(userActions.reset_msg())
+    return () => {
+      dispatch(loadingActions.finishLoading());
+      dispatch(userActions.reset_msg())
+    };
   }, []);
+
+  useEffect(() => {
+    if(toast_Active == true){
+      setTimeout(() => {
+        set_toast_Active(false)
+      },5000)
+    }
+  },[toast_Active])
 
   const handleClickSendMessage = useCallback(() =>{
     if(url.length > 0){
@@ -111,8 +150,24 @@ const Webscan = () => {
   }
 
   const handleRowclick = (e) =>{
-    alert(e)
+    const req = requests.find((el) => el.id === e.id);
+    const res = responses.find((el) => el.id === e.id);
+    dispatch(userActions.set_request(req));
+    dispatch(userActions.set_response(res));
+    dispatch(userActions.set_report(e));
   }
+
+  let res = []
+  let req = []
+  for (let [key, val] of Object.entries(headers_string)){
+      res.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+    } 
+  for (let [key, val] of Object.entries(request)){
+      if (key !== "id"){
+          req.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+        }
+    } 
+
   return (
     <>
       <CRow>
@@ -156,41 +211,62 @@ const Webscan = () => {
                 <CCardHeader>
                   Url List
                 </CCardHeader>
-                <CCardBody style={{maxHeight:"200px",overflow: 'auto'}}>
-                  <CListGroup>
-                   {url_list.map((url,idx) => (<CListGroupItem href = {url} target="_blank" key={idx}>{url}</CListGroupItem>))}
-                  </CListGroup>
+                <CCardBody style={{maxHeight:"100px",overflow: 'auto'}}>
+                  <ul style={{listStyle : 'none'}}>
+                   {url_list.map((url,idx) => (<li key={idx}><a href = {url} target="_blank" >{url}</a></li>))}
+                  </ul>
                 </CCardBody>
               </CCard> 
             </CCol>
-            <CCol>
-              <CCard style={{height:"540px",overflow: 'auto'}}>
+            <CCol xs="10" md="7">
+              <CCard style={{height:"440px",overflow: 'auto'}}>
                 <CCardBody>
                   <CTabs>
                       <CNav variant="tabs">
                           <CNavItem>
                           <CNavLink>
-                              Request
+                              Response
                           </CNavLink>
                           </CNavItem>
                           <CNavItem>
                           <CNavLink>
-                              Response
+                              Request
                           </CNavLink>
                           </CNavItem>
                       </CNav>
                       <CTabContent>
                           <CTabPane>
-                            {loading ? <CSpinner
-                              color="primary"
-                              style={{width:'4rem', height:'4rem', marginTop:"25%",marginLeft: '45%'}}
-                            />  : null}
+                            {loading ? 
+                            <div>
+                              <CSpinner
+                                color="primary"
+                                style={{width:'4rem', height:'4rem', marginTop:"10%",marginLeft: '45%', marginBottom: '5%'}}/>  
+                              <CProgress animated value={progress} max={total} showPercentage className="mb-3" />
+                            </div> 
+                            : 
+                            <div>
+                              <br/>
+                              {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
+                              {res}
+                            </div>
+                            }
                           </CTabPane>
                           <CTabPane>
-                            {loading ? <CSpinner
-                              color="primary"
-                              style={{width:'4rem', height:'4rem', marginTop:"25%",marginLeft: '45%'}}
-                            />  : null}
+                            {
+                            loading ? 
+                            <div>
+                              <CSpinner
+                                color="primary"
+                                style={{width:'4rem', height:'4rem', marginTop:"10%",marginLeft: '45%', marginBottom: '5%'}}/>  
+                              <CProgress animated value={progress} max={total} showPercentage className="mb-3" />
+                            </div> 
+                            :
+                            <div>
+                              <br/>
+                              {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
+                              {req}
+                            </div>
+                            }
                           </CTabPane>
                       </CTabContent>
                   </CTabs>
@@ -203,13 +279,10 @@ const Webscan = () => {
       
       <CRow>
         <CCol xs="12" md="12">
-          <CCard>
-              <CCardHeader>
-                  Results
-              </CCardHeader>
+          <CCard style={{maxHeight:"300px",overflow: 'auto'}}>
                 <CCardBody>
                   <CDataTable
-                  items={ws_results}
+                  items={reports}
                   fields={fields}
                   hover
                   striped
@@ -222,6 +295,21 @@ const Webscan = () => {
           </CCard> 
         </CCol>
       </CRow>
+
+      <CToaster position="top-center" >
+              <CToast
+                show={toast_Active}
+                autohide={3000}
+                fade
+              >
+                <CToastHeader>
+                  Notification
+                </CToastHeader>
+                <CToastBody>
+                  Scanned Successfully!
+                </CToastBody>
+              </CToast>
+      </CToaster>
     </>
   );
 };

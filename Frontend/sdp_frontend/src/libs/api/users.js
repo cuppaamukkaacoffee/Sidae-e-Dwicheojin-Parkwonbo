@@ -28,23 +28,9 @@ export const results_api = async (info) => {
     target : info.url,
     sub_path : "",
     vulnerability : info.vul,
-    result_string : info.result_string
+    result_string : info.result_string,
+    with_headers : info.with_headers
   }
   const response = await axios.post('/scan/query/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
-  return response.data;
-};
-
-export const results_detail_api = async (id) => {
-  const token = window.sessionStorage.getItem('token');
-  console.log(token)
-  const response = await axios.get(`/api/url/${id}`,{headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
-  return response.data;
-};
-
-
-export const results_delete_api = async (id) => {
-  const token = window.sessionStorage.getItem('token');
-  console.log(token)
-  const response = await axios.delete(`/api/url/${id}`,{headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
   return response.data;
 };

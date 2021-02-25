@@ -1,5 +1,5 @@
 import {handleActions} from 'redux-actions';
-import produce, {createDraft, finishDraft} from 'immer';
+import produce from 'immer';
 import * as USER from './actions';
 
 
@@ -8,12 +8,17 @@ const initialState = {
   pw: '',
   url: '',
   url_list:[],
+  db_data:[],
   vul: '',
   result_string:'',
   fuzz: true,
-  content:'',
-  results:[],
-  ws_results:[],
+  report:{},
+  request:{},
+  response:{},
+  headers_string:{},
+  reports:[],
+  requests:[],
+  responses:[],
   sidebarShow : 'responsive',
   errorMsg : '',
   errorCode : '',
@@ -28,15 +33,31 @@ const user = handleActions(
         draft.pw = '';
         draft.url = '';
         draft.url_list = [];
+        draft.db_data = [];
         draft.vul = '';
         draft.result_string = '';
         draft.fuzz = true;
-        draft.content = '';
-        draft.results = [];
-        draft.ws_results = [];
+        draft.report = {};
+        draft.request = {};
+        draft.response = {};
+        draft.headers_string = {};
+        draft.reports = [];
+        draft.requests = [];
+        draft.responses = [];
         draft.errorCode = '';
         draft.errorMsg = '';
         draft.sidebarShow = 'responsive';
+      })
+    },
+    [USER.RESET_R]: (state, action) => {
+      console.log('Reset r');
+      return produce(state, (draft) => {
+        draft.report = {};
+        draft.request = {};
+        draft.response = {};
+        draft.headers_string = {};
+        draft.errorCode = '';
+        draft.errorMsg = '';
       })
     },
     [USER.LOGIN_SUCCESS]: (state, action) => {
@@ -95,14 +116,35 @@ const user = handleActions(
     },
     [USER.SET_RESULT_STRING]: (state, action) => {
       return produce(state, (draft) => {
-        console.log('url in result_string => ', action.payload)
+        console.log('result_string in reducer => ', action.payload)
         draft.result_string = action.payload;
       })
     },
-    [USER.SET_WS_RESULTS]: (state, action) => {
+    [USER.SET_RESULTS]: (state, action) => {
       return produce(state, (draft) => {
-        console.log('ws_results in reducer => ', action.payload)
-        draft.ws_results.unshift(...action.payload);
+        console.log('results in reducer => ', action.payload)
+        draft.reports.unshift(...action.payload.reports);
+        draft.requests.unshift(...action.payload.requests);
+        draft.responses.unshift(...action.payload.responses);
+      })
+    },
+    [USER.SET_REQUEST]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('request in reducer => ', action.payload)
+        draft.request = action.payload;
+      })
+    },
+    [USER.SET_RESPONSE]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('response in reducer => ', action.payload)
+        draft.response = action.payload;
+        draft.headers_string = JSON.parse(action.payload.headers_string)
+      })
+    },
+    [USER.SET_REPORT]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('report in reducer => ', action.payload)
+        draft.report = action.payload;
       })
     },
     [USER.SET_FUZZ]: (state, action) => {
@@ -120,7 +162,9 @@ const user = handleActions(
     [USER.RESULTS_CHECK_SUCCESS]: (state, action) => {
       console.log('RESULTS_CHECK_SUCCESS => ', action.payload);
       return produce(state, (draft) => {
-        draft.results = action.payload
+        draft.reports = action.payload.reports;
+        draft.requests = action.payload.requests;
+        draft.responses = action.payload.responses;
       });
     },
     [USER.RESULTS_CHECK_FAILED]: (state, action) => {
@@ -130,27 +174,15 @@ const user = handleActions(
         draft.errorCode = '404';
       });
     },
-    [USER.RESULTS_DETAIL_CHECK_SUCCESS]: (state, action) => {
-      console.log('RESULTS_DETAIL_CHECK_SUCCESS => ', action.payload);
+
+    [USER.DASHBOARD_DATA_CHECK_SUCCESS]: (state, action) => {
+      console.log('DASHBOARD_DATA_CHECK_SUCCESS => ', action.payload);
       return produce(state, (draft) => {
-        draft.content = action.payload.content
+        draft.db_data = action.payload.reports;
       });
     },
-    [USER.RESULTS_DETAIL_CHECK_FAILED]: (state, action) => {
-      console.log('RESULTS_DETAIL_CHECK_Failed => ', action.payload);
-      return produce(state, (draft) => {
-        draft.errorMsg = '오류';
-        draft.errorCode = '404';
-      });
-    },
-    [USER.RESULTS_DETAIL_DELETE_SUCCESS]: (state, action) => {
-      console.log('RESULTS_DETAIL_DELETE_SUCCESS => ', action.payload);
-      return produce(state, (draft) => {
-        draft.content = action.payload
-      });
-    },
-    [USER.RESULTS_DETAIL_DELETE_FAILED]: (state, action) => {
-      console.log('RESULTS_DETAIL_DELETE_Failed => ', action.payload);
+    [USER.DASHBOARD_DATA_CHECK_FAILED]: (state, action) => {
+      console.log('DASHBOARD_DATA_CHECK_FAILED => ', action.payload);
       return produce(state, (draft) => {
         draft.errorMsg = '오류';
         draft.errorCode = '404';

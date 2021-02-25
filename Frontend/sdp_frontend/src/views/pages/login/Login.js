@@ -26,7 +26,9 @@ const Login = () => {
   const {id,pw,error} = useSelector(state => ({id: state.user.id, pw: state.user.pw, error: state.user.errorMsg}))
   
   useEffect(() => {
-    dispatch(userActions.reset_msg());
+    return () => {
+      dispatch(userActions.reset_msg());
+    };
   }, []);
 
   const handleInputId = (e) => {

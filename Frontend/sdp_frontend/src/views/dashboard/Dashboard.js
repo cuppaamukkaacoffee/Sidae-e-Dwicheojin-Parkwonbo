@@ -29,30 +29,34 @@ const Dashboards = () => {
   const dispatch = useDispatch();
 
   const {
-    results,
+    db_data,
     } = useSelector((state) => ({
-    results: state.user.results,
+    db_data: state.user.db_data,
     }), shallowEqual)
  
   useEffect(() => {
-    dispatch(userActions.results_check({id:sessionStorage.getItem('id')}))
+    dispatch(userActions.dashboard_data_check({id:sessionStorage.getItem('id'), with_headers: false}))
+
+    return () => {
+      dispatch(userActions.reset_msg());
+    };
     },[])
   
   
   const filterItems_all = (query) => {
-    return results.filter((el) =>
+    return db_data.filter((el) =>
       el.timestamp.includes(query) 
     );
   }
   
   const filterItems_vul = (query) => {
-    return results.filter((el) =>
+    return db_data.filter((el) =>
     el.result_string.includes("vulnerable") && el.timestamp.includes(query) 
     );
   }
 
   const filterItems_vulnerability = (query) => {
-    return results.filter((el) =>
+    return db_data.filter((el) =>
       el.result_string.includes("vulnerable") && el.vulnerability.includes(query)
     );
   }
@@ -64,7 +68,7 @@ const Dashboards = () => {
 
   const datasets_scanned = (()=>{
     let data = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    if(results.length > 0){
+    if(db_data.length > 0){
       for(let i = 0 ; i < 30 ; i++){
         if(i < 10){
           let num = numberPad(i+1,2)
@@ -87,7 +91,7 @@ const Dashboards = () => {
 
   const datasets_vul = (()=>{
     let data = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    if(results.length > 0){
+    if(db_data.length > 0){
       for(let i = 0 ; i < 30 ; i++){
         if(i < 10){
           let num = numberPad(i+1,2)
@@ -110,7 +114,7 @@ const Dashboards = () => {
 
   const datasets_doughnut = (()=>{
     let data = [0,0,0,0,0,0,0,0,0]
-    if(results.length > 0){
+    if(db_data.length > 0){
         for(let i = 0 ; i < 9 ; i++){
           data[i] = filterItems_vulnerability(labels[i]).length
         }

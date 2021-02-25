@@ -4,6 +4,9 @@ import {createRequestActionTypes} from '../../../libs/createRequestSaga';
 export const RESET_MSG = 'user/RESET_MSG';
 export const reset_msg = createAction(RESET_MSG);
 
+export const RESET_R = 'user/RESET_R';
+export const reset_r = createAction(RESET_R);
+
 // Redux 값을 저장할 때
 
 
@@ -25,8 +28,17 @@ export const set_vul = createAction(SET_VUL);
 export const SET_RESULT_STRING = 'user/SET_RESULT_STRING';
 export const set_result_string = createAction(SET_RESULT_STRING);
 
-export const SET_WS_RESULTS = 'user/SET_WS_RESULTS';
-export const set_ws_results = createAction(SET_WS_RESULTS);
+export const SET_RESULTS = 'user/SET_RESULTS';
+export const set_results = createAction(SET_RESULTS);
+
+export const SET_REQUEST = 'user/SET_REQUEST';
+export const set_request = createAction(SET_REQUEST);
+
+export const SET_RESPONSE = 'user/SET_RESPONSE';
+export const set_response = createAction(SET_RESPONSE);
+
+export const SET_REPORT = 'user/SET_REPORT';
+export const set_report = createAction(SET_REPORT);
 
 export const SET_SIDEBAR = 'user/SET_SIDEBAR';
 export const set_sidebar = createAction(SET_SIDEBAR);
@@ -51,24 +63,19 @@ export const register = createAction(REGISTER);
 
 
 export const [
+  DASHBOARD_DATA_CHECK,
+  DASHBOARD_DATA_CHECK_SUCCESS,
+  DASHBOARD_DATA_CHECK_FAILED,
+] = createRequestActionTypes('user/DASHBOARD_DATA_CHECK');
+export const dashboard_data_check = createAction(DASHBOARD_DATA_CHECK);
+
+export const [
   RESULTS_CHECK,
   RESULTS_CHECK_SUCCESS,
   RESULTS_CHECK_FAILED,
 ] = createRequestActionTypes('user/RESULTS_CHECK');
 export const results_check = createAction(RESULTS_CHECK);
 
-export const [
-  RESULTS_DETAIL_CHECK,
-  RESULTS_DETAIL_CHECK_SUCCESS,
-  RESULTS_DETAIL_CHECK_FAILED,
-] = createRequestActionTypes('user/RESULTS_DETAIL_CHECK');
-export const results_detail_check = createAction(RESULTS_DETAIL_CHECK);
 
-export const [
-  RESULTS_DETAIL_DELETE,
-  RESULTS_DETAIL_DELETE_SUCCESS,
-  RESULTS_DETAIL_DELETE_FAILED,
-] = createRequestActionTypes('user/RESULTS_DETAIL_DELETE');
-export const results_detail_delete = createAction(RESULTS_DETAIL_DELETE);
 
 
