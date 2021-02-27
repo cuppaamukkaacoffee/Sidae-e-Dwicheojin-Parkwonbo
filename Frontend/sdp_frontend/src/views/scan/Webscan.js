@@ -37,6 +37,8 @@ const fields = ['vulnerability','result_string','url','sub_path', 'status']
 
 const Webscan = () => {
   const [toast_Active,set_toast_Active] = useState(false)
+  const [first_rendering,set_first_rendering] = useState(true)
+
   const dispatch = useDispatch();
   const {
     loading,
@@ -96,18 +98,22 @@ const Webscan = () => {
       }
       else if(results.message == "all good"){
         set_toast_Active(true);
-        if(reports.length > 0){
-          const req = requests.find((el) => el.id === reports[0].id);
-          const res = responses.find((el) => el.id === reports[0].id);
-          dispatch(userActions.set_request(req));
-          dispatch(userActions.set_response(res));
-          dispatch(userActions.set_report(reports[0]));
-      }
-
       }
     }
   }, [lastMessage]);
   
+  useEffect(() => {
+    if(reports.length > 0 && first_rendering){
+      const req = requests.find((el) => el.id === reports[0].id);
+      const res = responses.find((el) => el.id === reports[0].id);
+      dispatch(userActions.set_request(req));
+      dispatch(userActions.set_response(res));
+      dispatch(userActions.set_report(reports[0]));
+
+      set_first_rendering(false)
+    }
+  }, [reports]);
+
   useEffect(() => {
     if(connectionStatus == 'Closed'){
       dispatch(loadingActions.finishLoading());
@@ -205,6 +211,7 @@ const Webscan = () => {
                   <CButton type="button" size="sm" color="primary" onClick={handleClickSendMessage} 
                     disabled={readyState !== ReadyState.OPEN || loading}><CIcon name="cil-scrubber" /> Scan
                   </CButton>
+                  {loading && <CSpinner color="primary" style={{width:'1.5rem', height:'1.5rem'}}/>}
                   </CCardFooter>
               </CCard>
               <CCard>
@@ -235,38 +242,15 @@ const Webscan = () => {
                           </CNavItem>
                       </CNav>
                       <CTabContent>
-                          <CTabPane>
-                            {loading ? 
-                            <div>
-                              <CSpinner
-                                color="primary"
-                                style={{width:'4rem', height:'4rem', marginTop:"10%",marginLeft: '45%', marginBottom: '5%'}}/>  
-                              <CProgress animated value={progress} max={total} showPercentage className="mb-3" />
-                            </div> 
-                            : 
-                            <div>
-                              <br/>
-                              {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
-                              {res}
-                            </div>
-                            }
+                          <CTabPane>                           
+                            <br/>
+                            {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
+                            {res}                                                   
                           </CTabPane>
-                          <CTabPane>
-                            {
-                            loading ? 
-                            <div>
-                              <CSpinner
-                                color="primary"
-                                style={{width:'4rem', height:'4rem', marginTop:"10%",marginLeft: '45%', marginBottom: '5%'}}/>  
-                              <CProgress animated value={progress} max={total} showPercentage className="mb-3" />
-                            </div> 
-                            :
-                            <div>
-                              <br/>
-                              {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
-                              {req}
-                            </div>
-                            }
+                          <CTabPane>  
+                            <br/>
+                            {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
+                            {req}
                           </CTabPane>
                       </CTabContent>
                   </CTabs>
@@ -279,19 +263,20 @@ const Webscan = () => {
       
       <CRow>
         <CCol xs="12" md="12">
+          {loading && <CProgress animated value={progress} max={total} showPercentage className="mb-3" />}
           <CCard style={{maxHeight:"300px",overflow: 'auto'}}>
-                <CCardBody>
-                  <CDataTable
-                  items={reports}
-                  fields={fields}
-                  hover
-                  striped
-                  bordered
-                  pagination
-                  size="sm"
-                  onRowClick ={handleRowclick}
-                  />
-                </CCardBody>
+            <CCardBody>
+              <CDataTable
+              items={reports}
+              fields={fields}
+              hover
+              striped
+              bordered
+              pagination
+              size="sm"
+              onRowClick ={handleRowclick}
+              />
+            </CCardBody>
           </CCard> 
         </CCol>
       </CRow>

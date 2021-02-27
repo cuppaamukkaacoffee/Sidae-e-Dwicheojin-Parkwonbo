@@ -123,9 +123,9 @@ const user = handleActions(
     [USER.SET_RESULTS]: (state, action) => {
       return produce(state, (draft) => {
         console.log('results in reducer => ', action.payload)
-        draft.reports.unshift(...action.payload.reports);
-        draft.requests.unshift(...action.payload.requests);
-        draft.responses.unshift(...action.payload.responses);
+        draft.reports.push(...action.payload.reports);
+        draft.requests.push(...action.payload.requests);
+        draft.responses.push(...action.payload.responses);
       })
     },
     [USER.SET_REQUEST]: (state, action) => {
