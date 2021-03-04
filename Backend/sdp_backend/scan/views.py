@@ -175,7 +175,7 @@ class ReportsQueryAPIView(APIView):
 
         if urls_only:
             urls = CrawledUrls.objects.filter(
-                target__contains=target,
+                target__contains = target,
                 username__contains=username
             )
             urls_serializer = CrawledUrlsSerializer(urls, many=True)

@@ -6,7 +6,7 @@ from rest_framework import status
 import channels.exceptions
 from .vuln import shmlackShmidow
 from .spider import asyncCrawl
-from .models import Reports
+from .models import Reports, Targets
 import asyncio
 from aiohttp import ClientSession
 from asgiref.sync import sync_to_async
@@ -68,7 +68,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 tasks.append(task)
 
             for coro in asyncio.as_completed(tasks):
-                reports, requests, responses = await asyncio.shield(coro)
+                reports, requests, responses, vulncount = await asyncio.shield(coro)
                 
                 reports_serializers = ReportsSerializer(data=reports, many=True)
                 requests_serializers = RequestHeadersSerializer(data=requests, many=True)
@@ -94,11 +94,34 @@ class ReportsConsumer(AsyncWebsocketConsumer):
 
                 await self.send(text_data=JSON.dumps(result))
         
-        targets_serializer = TargetsSerializer(data={"target": target, "username": verification.username})
+        target_data = {
+                "target": target,
+                "username": verification.username,
+                'sqli': vulncount['SQL Injection'],
+                'xss': vulncount['XSS'],
+                'open_redirect': vulncount['Open Redirect'],
+                'windows_directory_traversal': vulncount['Windows Directory Traversal'],
+                'linux_directory_traversal': vulncount['Linux Directory Traversal'],
+                'lfi': vulncount['LFI Check'],
+                'rfi': vulncount['RFI Check'],
+                'rce_linux': vulncount['RCE Linux Check'],
+                'rce_php': vulncount['RCE PHP Check'],
+                'ssti': vulncount['SSTI Check'],
+            }
+
+        targets_serializer = TargetsSerializer(data=target_data)
+
         try:
             if await sync_to_async(targets_serializer.is_valid)(raise_exception=True):
                 await database_sync_to_async(targets_serializer.save)()
-        except:
+        except Exception as e:
+            print(e)
+            target_tuple = await database_sync_to_async(Targets.objects.get)(target=target)
+            targets_serializer = TargetsSerializer(target_tuple, data=target_data)
+            if await sync_to_async(targets_serializer.is_valid)(raise_exception=True):
+                await database_sync_to_async(targets_serializer.save)()
+
+            #{'target': [ErrorDetail(string='targets with this target already exists.', code='unique')]}
             pass
 
         urls_serializer = CrawledUrlsSerializer(data=urlList, many=True)

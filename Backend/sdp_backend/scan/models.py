@@ -36,6 +36,18 @@ class ResponseHeaders(models.Model):
 class Targets(models.Model):
     target = models.TextField(primary_key=True)
     username = models.TextField(default="")
+    #'SQL Injection', 'XSS', 'Open Redirect', 'Windows Directory Traversal', 'Linux Directory Traversal', LFI Check', 'RFI Check', 'RCE Linux Check', 'RCE PHP Check', 'SSTI Check'
+    sqli = models.IntegerField(default=0)
+    xss = models.IntegerField(default=0)
+    open_redirect = models.IntegerField(default=0)
+    windows_directory_traversal = models.IntegerField(default=0)
+    linux_directory_traversal = models.IntegerField(default=0)
+    lfi = models.IntegerField(default=0)
+    rfi = models.IntegerField(default=0)
+    rce_linux = models.IntegerField(default=0)
+    rce_php = models.IntegerField(default=0)
+    ssti = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 class CrawledUrls(models.Model):
     id = models.TextField(primary_key=True)

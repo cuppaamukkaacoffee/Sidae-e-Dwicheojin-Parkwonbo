@@ -29,6 +29,7 @@ async def active_scan(
     payload,
     username=None,
     result_list=None,
+    vulncount=None
 ):
     verbose = "y"
     new_url = base_url
@@ -54,6 +55,8 @@ async def active_scan(
 
         if "<title>Google</title>" in http_response:
             result_string = "vulnerable"
+            vulncount['Open Redirect'] += 1
+
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -98,6 +101,7 @@ async def active_scan(
 
         if "<title>Google</title>" in http_response:
             result_string = "vulnerable"
+            vulncount['Open Redirect'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -142,6 +146,7 @@ async def active_scan(
 
         if "<title>Google</title>" in http_response:
             result_string = "vulnerable"
+            vulncount['Open Redirect'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -208,6 +213,7 @@ async def active_scan(
                 payload_exploit2 = urllib.parse.quote('"><iframe/onload=alert(1)>')
                 xss_url2 = new_url.replace("INJECTX", payload_exploit2)
                 result_string = "vulnerable"
+                vulncount['XSS'] += 1
 
                 now = datetime.now()
                 current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -250,6 +256,7 @@ async def active_scan(
                     http_status = res_reflect.status
 
                     result_string = "vulnerable"
+                    vulncount['XSS'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -336,6 +343,7 @@ async def active_scan(
 
         if "SQL" in http_response or http_status == 500 or http_status == 503:
             result_string = "vulnerable"
+            vulncount['SQL Injection'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -384,6 +392,7 @@ async def active_scan(
 
         if "SQL" in http_response or http_status == 500 or http_status == 503:
             result_string = "vulnerable"
+            vulncount['SQL Injection'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -433,6 +442,7 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
+            vulncount['Windows Directory Traversal'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -486,6 +496,7 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
+            vulncount['Windows Directory Traversal'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -541,6 +552,7 @@ async def active_scan(
             or "16-bit" in http_response
         ):
             result_string = "vulnerable"
+            vulncount['Windows Directory Traversal'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -592,6 +604,7 @@ async def active_scan(
 
         if "<web-app" in http_response:
             result_string = "vulnerable"
+            vulncount['Windows Directory Traversal'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -643,6 +656,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['Linux Directory Traversal'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -693,6 +707,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['Linux Directory Traversal'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -743,6 +758,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['LFI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -792,6 +808,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['LFI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -840,6 +857,7 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
+            vulncount['LFI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -888,6 +906,7 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
+            vulncount['LFI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -936,6 +955,7 @@ async def active_scan(
 
         if "705cd559b16e6946826207c2199bd890" in http_response:
             result_string = "vulnerable"
+            vulncount['RFI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -984,6 +1004,7 @@ async def active_scan(
 
         if "705cd559b16e6946826207c2199bd890" in http_response:
             result_string = "vulnerable"
+            vulncount['RFI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1075,6 +1096,7 @@ async def active_scan(
 
         if "1337" in http_response:
             result_string = "vulnerable"
+            vulncount['SSTI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1123,6 +1145,7 @@ async def active_scan(
 
         if "1337" in http_response:
             result_string = "vulnerable"
+            vulncount['SSTI Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1171,6 +1194,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['RCE Linux Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1219,6 +1243,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['RCE Linux Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1267,6 +1292,7 @@ async def active_scan(
 
         if "<title>phpinfo()</title>" in http_response:
             result_string = "vulnerable"
+            vulncount['RCE PHP Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1317,6 +1343,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['RCE PHP Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1366,6 +1393,7 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
+            vulncount['RCE PHP Check'] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1411,6 +1439,18 @@ async def main(url, cookies="", session=None, username=None):
     result_list = []
     request_list = []
     response_list = []
+    vulncount = {
+        'SQL Injection': 0,
+        'XSS': 0,
+        'Open Redirect': 0,
+        'Windows Directory Traversal': 0,
+        'Linux Directory Traversal': 0,
+        'LFI Check': 0,
+        'RFI Check': 0,
+        'RCE Linux Check': 0,
+        'RCE PHP Check': 0,
+        'SSTI Check': 0
+    }
     random.seed(datetime.now())
 
     async with session.get(full_url) as res:
@@ -1470,6 +1510,7 @@ async def main(url, cookies="", session=None, username=None):
                             http_length_base,
                             payload,
                             username,
+                            vulncount=vulncount
                         )
                         result_list += results
                         request_list += requests
@@ -1487,6 +1528,7 @@ async def main(url, cookies="", session=None, username=None):
                             http_length_base,
                             payload,
                             username,
+                            vulncount=vulncount
                         )
                         result_list += results
                         request_list += requests
@@ -1504,6 +1546,7 @@ async def main(url, cookies="", session=None, username=None):
                             http_length_base,
                             payload,
                             username,
+                            vulncount=vulncount
                         )
                         result_list += results
                         request_list += requests
@@ -1584,6 +1627,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Open Redirect'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1637,6 +1681,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Open Redirect'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1690,6 +1735,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Open Redirect'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1743,6 +1789,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Open Redirect'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1799,6 +1846,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "boot loader" in http_response or "16-bit" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Windows Directory Traversal'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1856,6 +1904,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "boot loader" in http_response or "16-bit" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Windows Directory Traversal'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1913,6 +1962,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "boot loader" in http_response or "16-bit" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Windows Directory Traversal'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -1968,6 +2018,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Linux Directory Traversal'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -2025,6 +2076,7 @@ async def main(url, cookies="", session=None, username=None):
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
+                        vulncount['Linux Directory Traversal'] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -2063,7 +2115,7 @@ async def main(url, cookies="", session=None, username=None):
                     pass
 
     await session.close()
-    return result_list, request_list, response_list
+    return result_list, request_list, response_list, vulncount
 
 
 # async def wrapperMain(urlList, cookies="", session=None, username=None):
