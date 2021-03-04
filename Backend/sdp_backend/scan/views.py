@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from .vuln import shmlackShmidow
 from .spider import asyncCrawl
-from .models import Reports, RequestHeaders, ResponseHeaders
+from .models import Reports, RequestHeaders, ResponseHeaders, Targets, CrawledUrls
 import asyncio
-from .serializers import ReportsSerializer, RequestHeadersSerializer, ResponseHeadersSerializer
+from .serializers import ReportsSerializer, RequestHeadersSerializer, ResponseHeadersSerializer, TargetsSerializer, CrawledUrlsSerializer
 from login.jwt import JwtHelper
 
 
@@ -124,6 +124,8 @@ class ReportsQueryAPIView(APIView):
         result_string = ""
         vulnerability = ""
         with_headers = True
+        targets_only = False
+        urls_only = False
 
         try:
             token = request.META["HTTP_AUTHORIZATION"]
@@ -143,6 +145,10 @@ class ReportsQueryAPIView(APIView):
                 vulnerability = request.data["vulnerability"]
             if key == "with_headers":
                 with_headers = request.data["with_headers"]
+            if key == "targets_only":
+                targets_only = request.data["targets_only"]
+            if key == "urls_only":
+                urls_only = request.data["urls_only"]    
 
         jwt = JwtHelper()
 
@@ -160,6 +166,22 @@ class ReportsQueryAPIView(APIView):
                 data="token user and query user does not match",
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        if targets_only:
+            targets = Targets.objects.filter(username__contains=username)
+            targets_serializer = TargetsSerializer(targets, many=True)
+            
+            return Response(data={"targets": targets_serializer.data})
+
+        if urls_only:
+            urls = CrawledUrls.objects.filter(
+                target__contains=target,
+                username__contains=username
+            )
+            urls_serializer = CrawledUrlsSerializer(urls, many=True)
+            
+            return Response(data={"urls": urls_serializer.data})
+
 
         reports = Reports.objects.filter(
             username__contains=username,

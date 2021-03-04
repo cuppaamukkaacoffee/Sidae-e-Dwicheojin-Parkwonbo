@@ -19,7 +19,7 @@ class Reports(models.Model):
 
 class RequestHeaders(models.Model):
     id = models.TextField(primary_key=True)
-    "('Host': 'www.daum.net', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'User-Agent': 'Python/3.9 aiohttp/3.7.3')"
+    #"('Host': 'www.daum.net', 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate', 'User-Agent': 'Python/3.9 aiohttp/3.7.3')"
     timestamp = models.DateTimeField(auto_now_add=True)
     host = models.TextField(default="")
     accept = models.TextField(default="*/*")
@@ -32,3 +32,13 @@ class ResponseHeaders(models.Model):
     id = models.TextField(primary_key=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     headers_string = models.TextField(default="")
+
+class Targets(models.Model):
+    target = models.TextField(primary_key=True)
+    username = models.TextField(default="")
+
+class CrawledUrls(models.Model):
+    id = models.TextField(primary_key=True)
+    url = models.TextField(default="")
+    target = models.TextField(default="")
+    username = models.TextField(default="")

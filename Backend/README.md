@@ -35,6 +35,12 @@ POST:
 
   - 'result_string': 스캔 결과 'vulnerable/benign'
 
+  - 'with_headers': 참일 시 헤더까지 포함한 결과 응답
+
+  - 'targets_only': 유저가 스캔한 타겟들 일람(username 필수)
+
+  - 'urls_only': 타겟 하위 url들 일람(username, target 필수)
+
 -> 결과 JSON 목록
 
   # ws://\<주소>:8000/ws/scan/

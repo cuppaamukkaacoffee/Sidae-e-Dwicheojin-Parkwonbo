@@ -11,7 +11,8 @@ import asyncio
 from aiohttp import ClientSession
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
-from .serializers import ReportsSerializer, RequestHeadersSerializer, ResponseHeadersSerializer
+from .serializers import ReportsSerializer, RequestHeadersSerializer, ResponseHeadersSerializer, TargetsSerializer, CrawledUrlsSerializer
+import hashlib
 
 
 class ReportsConsumer(AsyncWebsocketConsumer):
@@ -50,7 +51,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             urlList = []
             session = ClientSession()
             async for url in asyncCrawl.crawl(target, session):
-                urlList.append(url)
+                urlList.append({"id": hashlib.md5((url + verification.username).encode("utf-8")).hexdigest(), "target": target, "url": url, "username": verification.username})
                 await self.send(text_data=JSON.dumps({"status": "200", "urlList": url}))
             print("doing scan...")
             await session.close()
@@ -61,7 +62,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 session = ClientSession()
                 task = asyncio.create_task(
                     shmlackShmidow.main(
-                        url, session=session, username=verification.username
+                        url['url'], session=session, username=verification.username
                     )
                 )
                 tasks.append(task)
@@ -92,6 +93,21 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 result['responses'] = responses
 
                 await self.send(text_data=JSON.dumps(result))
+        
+        targets_serializer = TargetsSerializer(data={"target": target, "username": verification.username})
+        try:
+            if await sync_to_async(targets_serializer.is_valid)(raise_exception=True):
+                await database_sync_to_async(targets_serializer.save)()
+        except:
+            pass
+
+        urls_serializer = CrawledUrlsSerializer(data=urlList, many=True)
+        try:
+            if await sync_to_async(urls_serializer.is_valid)(raise_exception=True):
+                await database_sync_to_async(urls_serializer.save)()
+        except Exception as e:
+            # print(e)s
+            pass
 
         await self.send(text_data=JSON.dumps({"status": "200"}))
         await self.disconnect(message="all good")

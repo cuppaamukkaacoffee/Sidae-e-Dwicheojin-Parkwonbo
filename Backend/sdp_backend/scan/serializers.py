@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Reports, RequestHeaders, ResponseHeaders
+from .models import Reports, RequestHeaders, ResponseHeaders, Targets, CrawledUrls
 
 
 class ReportsSerializer(serializers.ModelSerializer):
@@ -16,6 +16,16 @@ class RequestHeadersSerializer(serializers.ModelSerializer):
 class ResponseHeadersSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResponseHeaders
+        fields = "__all__"
+
+class TargetsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Targets
+        fields = "__all__"
+
+class CrawledUrlsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CrawledUrls
         fields = "__all__"
 
     # def create(self, validated_data):
