@@ -16,7 +16,7 @@ const _nav =  [
     _tag: 'CSidebarNavDropdown',
     name: 'Scanner',
     route: '/scans',
-    icon: 'cil-puzzle',
+    icon: 'cil-speedometer',
     _children: [
       {
         _tag: 'CSidebarNavItem',
@@ -32,9 +32,33 @@ const _nav =  [
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Result',
+    name: 'Target',
     icon: 'cil-puzzle',
+    to: '/target',
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Vulnerabilities',
+    icon: 'cil-bell',
+    to: '/vulnerabilities',
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Result',
+    icon: 'cil-laptop',
     to: '/result',
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Report',
+    icon: 'cil-moon',
+    to: '/report',
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'User',
+    icon: 'cil-user',
+    to: '/user',
   },
 
 ]

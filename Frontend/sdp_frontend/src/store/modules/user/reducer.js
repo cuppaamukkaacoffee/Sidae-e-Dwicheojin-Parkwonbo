@@ -16,9 +16,11 @@ const initialState = {
   request:{},
   response:{},
   headers_string:{},
+  vul_reports:[],
   reports:[],
   requests:[],
   responses:[],
+  targets:[],
   sidebarShow : 'responsive',
   errorMsg : '',
   errorCode : '',
@@ -41,9 +43,11 @@ const user = handleActions(
         draft.request = {};
         draft.response = {};
         draft.headers_string = {};
+        draft.vul_reports = [];
         draft.reports = [];
         draft.requests = [];
         draft.responses = [];
+        draft.targets = [];
         draft.errorCode = '';
         draft.errorMsg = '';
         draft.sidebarShow = 'responsive';
@@ -174,6 +178,21 @@ const user = handleActions(
         draft.errorCode = '404';
       });
     },
+    [USER.VUL_RESULTS_CHECK_SUCCESS]: (state, action) => {
+      console.log('VUL_RESULTS_CHECK_SUCCESS => ', action.payload);
+      return produce(state, (draft) => {
+        draft.vul_reports = action.payload.reports;
+        draft.requests = action.payload.requests;
+        draft.responses = action.payload.responses;
+      });
+    },
+    [USER.VUL_RESULTS_CHECK_FAILED]: (state, action) => {
+      console.log('VUL_RESULTS_CHECK_Failed => ', action.payload);
+      return produce(state, (draft) => {
+        draft.errorMsg = '오류';
+        draft.errorCode = '404';
+      });
+    },
 
     [USER.DASHBOARD_DATA_CHECK_SUCCESS]: (state, action) => {
       console.log('DASHBOARD_DATA_CHECK_SUCCESS => ', action.payload);
@@ -183,6 +202,19 @@ const user = handleActions(
     },
     [USER.DASHBOARD_DATA_CHECK_FAILED]: (state, action) => {
       console.log('DASHBOARD_DATA_CHECK_FAILED => ', action.payload);
+      return produce(state, (draft) => {
+        draft.errorMsg = '오류';
+        draft.errorCode = '404';
+      });
+    },
+    [USER.TARGETS_CHECK_SUCCESS]: (state, action) => {
+      console.log('TARGETS_CHECK_SUCCESS => ', action.payload);
+      return produce(state, (draft) => {
+        draft.targets = action.payload.targets;
+      });
+    },
+    [USER.TARGETS_CHECK_FAILED]: (state, action) => {
+      console.log('TARGETS_CHECK_FAILED => ', action.payload);
       return produce(state, (draft) => {
         draft.errorMsg = '오류';
         draft.errorCode = '404';

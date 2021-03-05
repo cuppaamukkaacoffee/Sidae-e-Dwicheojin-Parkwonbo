@@ -29,7 +29,19 @@ export const results_api = async (info) => {
     sub_path : "",
     vulnerability : info.vul,
     result_string : info.result_string,
-    with_headers : info.with_headers
+    with_headers : info.with_headers,
+    scan_session_id : info.scan_session_id
+  }
+  const response = await axios.post('/scan/query/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
+  return response.data;
+};
+
+export const targets_api = async () => {
+  const token = window.sessionStorage.getItem('token');
+  const id = window.sessionStorage.getItem('id');
+  const data = {
+    username : id,
+    targets_only : true
   }
   const response = await axios.post('/scan/query/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
   return response.data;

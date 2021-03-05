@@ -9,9 +9,13 @@ const login = createRequestSaga(USER.LOGIN, usersAPI.login_api,);
 
 const register = createRequestSaga(USER.REGISTER, usersAPI.register_api,);
 
+const vul_results_check = createRequestSaga(USER.VUL_RESULTS_CHECK, usersAPI.results_api,);
+
 const results_check = createRequestSaga(USER.RESULTS_CHECK, usersAPI.results_api,);
 
 const dashboard_data_check = createRequestSaga(USER.DASHBOARD_DATA_CHECK, usersAPI.results_api,);
+
+const targets_check = createRequestSaga(USER.TARGETS_CHECK, usersAPI.targets_api,);
 
 function* goToHomeSaga() {
   history.push('/dashboard');
@@ -30,6 +34,8 @@ export default function* rootSaga() {
     yield takeLatest(USER.REGISTER, register),
     yield takeLatest(USER.REGISTER_SUCCESS, goToLoginSaga),
     yield takeLatest(USER.RESULTS_CHECK, results_check),
+    yield takeLatest(USER.VUL_RESULTS_CHECK, vul_results_check),
     yield takeLatest(USER.DASHBOARD_DATA_CHECK, dashboard_data_check),
+    yield takeLatest(USER.TARGETS_CHECK, targets_check),
   ];
 }

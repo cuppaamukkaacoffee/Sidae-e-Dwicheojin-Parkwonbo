@@ -6,14 +6,10 @@ import {
   CCardBody,
   CCardHeader,
   CWidgetDropdown,
-  CDropdown,
-  CDropdownMenu,
-  CDropdownItem,
-  CDropdownToggle,
   CRow,
   CCol,
-  CWidgetProgressIcon,
-  CProgress
+  CDataTable,
+  CLink
 } from '@coreui/react'
 import {
   CChartBar,
@@ -22,6 +18,7 @@ import {
 import CIcon from '@coreui/icons-react'
 
 const labels = ['SQL Injection', 'XSS', 'Open Redirect', 'Windows Directory Traversal', 'Linux Directory Traversal', 'LFI Check', 'RFI Check', 'RCE Linux Check', 'SSTI Check']
+const fields = ['target','timestamp']
 const days = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
 
 
@@ -30,13 +27,15 @@ const Dashboards = () => {
 
   const {
     db_data,
+    targets,
     } = useSelector((state) => ({
     db_data: state.user.db_data,
+    targets: state.user.targets,
     }), shallowEqual)
  
   useEffect(() => {
     dispatch(userActions.dashboard_data_check({id:sessionStorage.getItem('id'), with_headers: false}))
-
+    dispatch(userActions.targets_check())
     return () => {
       dispatch(userActions.reset_msg());
     };
@@ -61,6 +60,12 @@ const Dashboards = () => {
     );
   }
 
+  const filterItems_all_vul = () => {
+    return db_data.filter((el) =>
+      el.result_string.includes("vulnerable")
+    );
+  }
+
   const numberPad = (n, width) => {
     n = n + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
@@ -72,9 +77,9 @@ const Dashboards = () => {
       for(let i = 0 ; i < 30 ; i++){
         if(i < 10){
           let num = numberPad(i+1,2)
-          data[i] = filterItems_all(`2021-02-${num}`).length
+          data[i] = filterItems_all(`2021-03-${num}`).length
         }else{
-          data[i] = filterItems_all(`2021-02-${i+1}`).length
+          data[i] = filterItems_all(`2021-03-${i+1}`).length
         }
       }
 
@@ -95,9 +100,9 @@ const Dashboards = () => {
       for(let i = 0 ; i < 30 ; i++){
         if(i < 10){
           let num = numberPad(i+1,2)
-          data[i] = filterItems_vul(`2021-02-${num}`).length
+          data[i] = filterItems_vul(`2021-03-${num}`).length
         }else{
-          data[i] = filterItems_vul(`2021-02-${i+1}`).length
+          data[i] = filterItems_vul(`2021-03-${i+1}`).length
         }
       }
 
@@ -138,57 +143,47 @@ const Dashboards = () => {
     ]
   })()
 
+  const vul_length = (()=>{
+    let num = 0
+    if(db_data.length > 0){
+      num = filterItems_all_vul().length
+    }
+    return String(num)
+  })()
+
+
   return (
     <>
     <CRow>
-      <CCol md="2">
-        <CWidgetDropdown
-          color="gradient-primary"
-          header="9.823"
-          text="Members online"
-        >
-          <CDropdown>
-            <CDropdownToggle color="transparent">
-              <CIcon name="cil-settings"/>
-            </CDropdownToggle>
-            <CDropdownMenu className="pt-0" placement="bottom-end">
-              <CDropdownItem>Action</CDropdownItem>
-              <CDropdownItem>Another action</CDropdownItem>
-              <CDropdownItem>Something else here...</CDropdownItem>
-              <CDropdownItem disabled>Disabled action</CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
-        </CWidgetDropdown>
-
-        <div className="text-uppercase mb-1">
-          <small><b>CPU Usage</b></small>
-        </div>
-        <CProgress size="xs" color="info" value={25} />
-        <small className="text-muted">348 Processes. 1/4 Cores.</small>
-
-        <div className="text-uppercase mb-1">
-          <small><b>Memory Usage</b></small>
-        </div>
-        <CProgress size="xs" color="warning" value={70} />
-        <small className="text-muted">11444GB/16384MB</small>
-
-        <div className="text-uppercase mb-1">
-          <small><b>SSD 1 Usage</b></small>
-        </div>
-        <CProgress size="xs" color="danger" value={90} />
-        <small className="text-muted">243GB/256GB</small>
-
-      </CCol>
-      <CCol md = "4">
-        <CWidgetProgressIcon
-          header="385"
-          text="New Clients"
-          color="gradient-success"
-        >
-          <CIcon name="cil-userFollow" height="36"/>
-        </CWidgetProgressIcon>
-      </CCol>
-      <CCol>
+      <CCol sm="12" md="6">
+        <CRow>
+          <CCol sm="12" md="6">
+            <CWidgetDropdown
+              color="danger"
+              header={vul_length}
+              text="Vulnerabilities"
+              footerSlot={
+                <CIcon name="cilBellExclamation" height="50"/>
+              }
+            >
+              
+           </CWidgetDropdown>
+          </CCol>
+          <CCol sm="12" md="6">
+            <CWidgetDropdown
+              color="warning"
+              header={String(targets.length)}
+              text="Total Scans Conducted"
+              footerSlot={
+                <CIcon name="cil-speedometer" height="50"/>
+              }
+            >
+              
+           </CWidgetDropdown>
+          </CCol>
+        </CRow>
+        
+      
         <CCard>
           <CCardHeader>
             Scanned Vulnerability
@@ -206,10 +201,42 @@ const Dashboards = () => {
           </CCardBody>
         </CCard>
       </CCol>
-      </CRow>
+      <CCol sm="12" md="6">
+        <CCard style={{height:"500px",overflow: 'auto'}}>
+          <CCardHeader>
+            Recently Scanned Target
+          </CCardHeader>
+          <CCardBody>
+            <CDataTable
+            items={targets}
+            fields={fields}
+
+            size="sm"
+            scopedSlots = {{
+              'target':
+                (item)=>(
+                  <td>
+                    <CLink 
+                      style={{color: 'red'}} 
+                      to={{
+                        pathname: "/vulnerabilities",
+                        state: {id:item.id}
+                      }}
+                    >
+                      {item.target}
+                    </CLink>
+                  </td>
+                ),
+                    }}/>
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
+
+    
       
       <CRow>
-        <CCol>
+        <CCol sm="12" md="6">
           <CCard>
             <CCardBody>
               <CChartBar
@@ -224,7 +251,7 @@ const Dashboards = () => {
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol>
+        <CCol sm="12" md="6">
           <CCard>
             <CCardBody>
               <CChartBar

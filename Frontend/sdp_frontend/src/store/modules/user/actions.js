@@ -76,6 +76,20 @@ export const [
 ] = createRequestActionTypes('user/RESULTS_CHECK');
 export const results_check = createAction(RESULTS_CHECK);
 
+export const [
+  VUL_RESULTS_CHECK,
+  VUL_RESULTS_CHECK_SUCCESS,
+  VUL_RESULTS_CHECK_FAILED,
+] = createRequestActionTypes('user/VUL_RESULTS_CHECK');
+export const vul_results_check = createAction(VUL_RESULTS_CHECK);
+
+export const [
+  TARGETS_CHECK,
+  TARGETS_CHECK_SUCCESS,
+  TARGETS_CHECK_FAILED,
+] = createRequestActionTypes('user/TARGETS_CHECK');
+export const targets_check = createAction(TARGETS_CHECK);
+
 
 
 
