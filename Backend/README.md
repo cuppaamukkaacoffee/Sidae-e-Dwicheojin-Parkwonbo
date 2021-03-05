@@ -27,6 +27,8 @@ POST:
 
   - 'target': 타켓 서비스 주소,
 
+  - 'scan_session_id': 개별 스캔 세션 id,
+
   - 'sub_path': 세부 도메인,
 
   - 'vulnerability': 취약점'
@@ -34,6 +36,12 @@ POST:
     > 'SQL Injection', 'XSS', 'Open Redirect', 'Windows Directory Traversal', 'Linux Directory Traversal', 'LFI Check', 'RFI Check', 'RCE Linux Check', 'RCE PHP Check', 'SSTI Check'
 
   - 'result_string': 스캔 결과 'vulnerable/benign'
+  - 
+  - 'with_headers': 참일시 스캔 HTTP 요청/응답 헤더까지 응답에 담아줌
+  - 
+  - 'targets_only': 참일시 스캔 세션들만 응답
+  - 
+  - 'urls_only': 특정 타겟 하위 url들만 응답
 
 -> 결과 JSON 목록
 
