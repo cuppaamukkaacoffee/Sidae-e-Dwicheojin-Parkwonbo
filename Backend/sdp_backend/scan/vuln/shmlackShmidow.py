@@ -29,7 +29,9 @@ async def active_scan(
     payload,
     username=None,
     result_list=None,
-    vulncount=None
+    vulncount=None,
+    scan_session_id=None,
+    sub_path_wo_payload=None,
 ):
     verbose = "y"
     new_url = base_url
@@ -63,10 +65,11 @@ async def active_scan(
         id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Open Redirect",
             "status": redirect_res.status,
             "url": redirect_url,
@@ -108,10 +111,11 @@ async def active_scan(
         id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Open Redirect",
             "status": redirect_res.status,
             "url": redirect_url,
@@ -153,10 +157,11 @@ async def active_scan(
         id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Open Redirect",
             "status": redirect_res.status,
             "url": redirect_url,
@@ -220,10 +225,11 @@ async def active_scan(
                 id = hashlib.md5((xss_url2 + current_time + str(random.random())).encode("utf-8")).hexdigest()
                 result = {
                     "id": id,
+                    "scan_session_id": scan_session_id,
                     "timestamp": current_time,
                     "username": username,
                     "target": target,
-                    "sub_path": sub_path,
+                    "sub_path": sub_path_wo_payload,
                     "vulnerability": "XSS",
                     "status": res_xss.status,
                     "url": xss_url,
@@ -265,10 +271,11 @@ async def active_scan(
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "XSS",
                         "status": res_xss.status,
                         "url": xss_url2,
@@ -300,10 +307,11 @@ async def active_scan(
             id = hashlib.md5((new_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
             result = {
                 "id": id,
+                "scan_session_id": scan_session_id,
                 "timestamp": current_time,
                 "username": username,
                 "target": target,
-                "sub_path": sub_path,
+                "sub_path": sub_path_wo_payload,
                 "vulnerability": "XSS",
                 "status": res_xss.status,
                 "url": new_url,
@@ -350,10 +358,11 @@ async def active_scan(
         id = hashlib.md5((sqli_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "SQL Injection",
             "status": res_sql.status,
             "url": sqli_url,
@@ -399,10 +408,11 @@ async def active_scan(
         id = hashlib.md5((sqli_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "SQL Injection",
             "status": res_sql.status,
             "url": sqli_url,
@@ -449,10 +459,11 @@ async def active_scan(
         id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Windows Directory Traversal",
             "status": res_direc_traversal.status,
             "url": traversal_url,
@@ -503,10 +514,11 @@ async def active_scan(
         id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Windows Directory Traversal",
             "status": res_direc_traversal.status,
             "url": traversal_url,
@@ -559,10 +571,11 @@ async def active_scan(
         id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Windows Directory Traversal",
             "status": res_direc_traversal.status,
             "url": traversal_url,
@@ -611,10 +624,11 @@ async def active_scan(
         id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Windows Directory Traversal",
             "status": res_direc_traversal.status,
             "url": traversal_url,
@@ -663,10 +677,11 @@ async def active_scan(
         id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Linux Directory Traversal",
             "status": http_status,
             "url": traversal_url,
@@ -714,10 +729,11 @@ async def active_scan(
         id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "Linux Directory Traversal",
             "status": http_status,
             "url": traversal_url,
@@ -765,10 +781,11 @@ async def active_scan(
         id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "LFI Check",
             "status": http_status,
             "url": lfi_url,
@@ -815,10 +832,11 @@ async def active_scan(
         id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "LFI Check",
             "status": http_status,
             "url": lfi_url,
@@ -864,10 +882,11 @@ async def active_scan(
         id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "LFI Check",
             "status": http_status,
             "url": lfi_url,
@@ -913,10 +932,11 @@ async def active_scan(
         id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "LFI Check",
             "status": http_status,
             "url": lfi_url,
@@ -962,10 +982,11 @@ async def active_scan(
         id = hashlib.md5((rfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "RFI Check",
             "status": http_status,
             "url": rfi_url,
@@ -1011,10 +1032,11 @@ async def active_scan(
         id = hashlib.md5((rfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "RFI Check",
             "status": http_status,
             "url": rfi_url,
@@ -1103,10 +1125,11 @@ async def active_scan(
         id = hashlib.md5((ssti_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "SSTI Check",
             "status": http_status,
             "url": ssti_url,
@@ -1152,10 +1175,11 @@ async def active_scan(
         id = hashlib.md5((ssti_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "SSTI Check",
             "status": http_status,
             "url": ssti_url,
@@ -1201,10 +1225,11 @@ async def active_scan(
         id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "RCE Linux Check",
             "status": http_status,
             "url": rce_url,
@@ -1250,10 +1275,11 @@ async def active_scan(
         id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "RCE Linux Check",
             "status": http_status,
             "url": rce_url,
@@ -1299,10 +1325,11 @@ async def active_scan(
         id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "RCE PHP Check",
             "status": http_status,
             "url": rce_url,
@@ -1350,10 +1377,11 @@ async def active_scan(
         id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "RCE PHP Check",
             "status": http_status,
             "url": rce_url,
@@ -1400,10 +1428,11 @@ async def active_scan(
         id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
         result = {
             "id": id,
+            "scan_session_id": scan_session_id,
             "timestamp": current_time,
             "username": username,
             "target": target,
-            "sub_path": sub_path,
+            "sub_path": sub_path_wo_payload,
             "vulnerability": "RCE PHP Check",
             "status": http_status,
             "url": rce_url,
@@ -1428,7 +1457,7 @@ async def active_scan(
     return result_list, request_list, response_list
 
 
-async def main(url, cookies="", session=None, username=None):
+async def main(url, cookies="", session=None, username=None, scan_session_id=None):
     # print("scanning {} ...".format(url))
     full_url = str(url)
     payload = "INJECTX"
@@ -1436,6 +1465,7 @@ async def main(url, cookies="", session=None, username=None):
     http_length_base = "0"
     parsed = urlparse(url)
     target = "{uri.scheme}://{uri.netloc}".format(uri=parsed)
+    sub_path_wo_payload = url.split(target)[1]
     result_list = []
     request_list = []
     response_list = []
@@ -1510,7 +1540,9 @@ async def main(url, cookies="", session=None, username=None):
                             http_length_base,
                             payload,
                             username,
-                            vulncount=vulncount
+                            vulncount=vulncount,
+                            scan_session_id=scan_session_id,
+                            sub_path_wo_payload=sub_path_wo_payload
                         )
                         result_list += results
                         request_list += requests
@@ -1528,7 +1560,9 @@ async def main(url, cookies="", session=None, username=None):
                             http_length_base,
                             payload,
                             username,
-                            vulncount=vulncount
+                            vulncount=vulncount,
+                            scan_session_id=scan_session_id,
+                            sub_path_wo_payload=sub_path_wo_payload
                         )
                         result_list += results
                         request_list += requests
@@ -1546,7 +1580,9 @@ async def main(url, cookies="", session=None, username=None):
                             http_length_base,
                             payload,
                             username,
-                            vulncount=vulncount
+                            vulncount=vulncount,
+                            scan_session_id=scan_session_id,
+                            sub_path_wo_payload=sub_path_wo_payload
                         )
                         result_list += results
                         request_list += requests
@@ -1582,10 +1618,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Open Redirect",
                         "status": red_res.status,
                         "url": redirect_url,
@@ -1636,10 +1673,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Open Redirect",
                         "status": red_res.status,
                         "url": redirect_url,
@@ -1690,10 +1728,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Open Redirect",
                         "status": red_res.status,
                         "url": redirect_url,
@@ -1744,10 +1783,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Open Redirect",
                         "status": red_res.status,
                         "url": redirect_url,
@@ -1798,10 +1838,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Open Redirect",
                         "status": red_res.status,
                         "url": redirect_url,
@@ -1855,10 +1896,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Windows Directory Traversal",
                         "status": trav_res.status,
                         "url": traversal_url,
@@ -1913,10 +1955,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Windows Directory Traversal",
                         "status": trav_res.status,
                         "url": traversal_url,
@@ -1971,10 +2014,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Windows Directory Traversal",
                         "status": trav_res.status,
                         "url": traversal_url,
@@ -2027,10 +2071,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Linux Directory Traversal",
                         "status": http_status,
                         "url": traversal_url,
@@ -2085,10 +2130,11 @@ async def main(url, cookies="", session=None, username=None):
                     ).hexdigest()
                     result = {
                         "id": id,
+                        "scan_session_id": scan_session_id,
                         "timestamp": current_time,
                         "username": username,
                         "target": target,
-                        "sub_path": sub_path,
+                        "sub_path": sub_path_wo_payload,
                         "vulnerability": "Linux Directory Traversal",
                         "status": http_status,
                         "url": traversal_url,

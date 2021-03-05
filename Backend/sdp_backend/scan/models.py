@@ -5,10 +5,11 @@ from django.db import models
 
 class Reports(models.Model):
     id = models.TextField(primary_key=True)
+    scan_session_id = models.TextField(default="")
     timestamp = models.DateTimeField()
     username = models.TextField(max_length=15, default="")
     target = models.TextField(default="")
-    sub_path = models.TextField(default="")
+    sub_path = models.TextField(default="", blank=True)
     url = models.TextField(default="")
     status = models.IntegerField(default=0)
     result_string = models.TextField(default="")
@@ -34,7 +35,8 @@ class ResponseHeaders(models.Model):
     headers_string = models.TextField(default="")
 
 class Targets(models.Model):
-    target = models.TextField(primary_key=True)
+    id = models.TextField(primary_key=True)
+    target = models.TextField(default="")
     username = models.TextField(default="")
     #'SQL Injection', 'XSS', 'Open Redirect', 'Windows Directory Traversal', 'Linux Directory Traversal', LFI Check', 'RFI Check', 'RCE Linux Check', 'RCE PHP Check', 'SSTI Check'
     sqli = models.IntegerField(default=0)
@@ -51,6 +53,7 @@ class Targets(models.Model):
 
 class CrawledUrls(models.Model):
     id = models.TextField(primary_key=True)
+    scan_session_id = models.TextField(default="")
     url = models.TextField(default="")
     target = models.TextField(default="")
     username = models.TextField(default="")

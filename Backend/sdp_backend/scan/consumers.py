@@ -12,7 +12,7 @@ from aiohttp import ClientSession
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from .serializers import ReportsSerializer, RequestHeadersSerializer, ResponseHeadersSerializer, TargetsSerializer, CrawledUrlsSerializer
-import hashlib
+import hashlib, datetime, random
 
 
 class ReportsConsumer(AsyncWebsocketConsumer):
@@ -25,6 +25,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
         raise channels.exceptions.StopConsumer
 
     async def receive(self, text_data):
+        random.seed(datetime.datetime.now())
         print(type(text_data))
 
         data_json = JSON.loads(text_data)
@@ -47,11 +48,20 @@ class ReportsConsumer(AsyncWebsocketConsumer):
         elif type(verification) == str:
             await self.disconnect(message=verification)
 
+        scan_session_id = hashlib.md5((str(random.random())).encode("utf-8")).hexdigest()
+
         if target:
             urlList = []
             session = ClientSession()
             async for url in asyncCrawl.crawl(target, session):
-                urlList.append({"id": hashlib.md5((url + verification.username).encode("utf-8")).hexdigest(), "target": target, "url": url, "username": verification.username})
+                urlList.append(
+                    {
+                        "id": hashlib.md5((url + verification.username).encode("utf-8")).hexdigest(),
+                        "scan_session_id": scan_session_id,
+                        "target": target, "url": url,
+                        "username": verification.username
+                    }
+                )
                 await self.send(text_data=JSON.dumps({"status": "200", "urlList": url}))
             print("doing scan...")
             await session.close()
@@ -76,14 +86,14 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 session = ClientSession()
                 task = asyncio.create_task(
                     shmlackShmidow.main(
-                        url['url'], session=session, username=verification.username
+                        url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
                     )
                 )
                 tasks.append(task)
 
             for coro in asyncio.as_completed(tasks):
                 reports, requests, responses, vulncount = await asyncio.shield(coro)
-                
+
                 result_vulncount['SQL Injection'] += vulncount['SQL Injection']
                 result_vulncount['XSS'] += vulncount['XSS']
                 result_vulncount['Open Redirect'] += vulncount['Open Redirect']
@@ -120,6 +130,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=JSON.dumps(result))
         
         target_data = {
+                "id": scan_session_id,
                 "target": target,
                 "username": verification.username,
                 'sqli': result_vulncount['SQL Injection'],

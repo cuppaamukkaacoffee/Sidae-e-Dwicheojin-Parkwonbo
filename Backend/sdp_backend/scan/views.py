@@ -120,6 +120,7 @@ class ReportsQueryAPIView(APIView):
     def post(self, request):
         username = ""
         target = ""
+        scan_session_id = ""
         sub_path = ""
         result_string = ""
         vulnerability = ""
@@ -137,6 +138,8 @@ class ReportsQueryAPIView(APIView):
                 username = request.data["username"]
             if key == "target":
                 target = request.data["target"]
+            if key == "scan_session_id":
+               scan_session_id = request.data["scan_session_id"]
             if key == "subpath":
                 sub_path = request.data["sub_path"]
             if key == "result_string":
@@ -168,14 +171,19 @@ class ReportsQueryAPIView(APIView):
             )
 
         if targets_only:
-            targets = Targets.objects.filter(username__contains=username)
+            targets = Targets.objects.filter(
+                username__contains=username,
+                target__contains=target,
+                id__contains=scan_session_id
+            )
             targets_serializer = TargetsSerializer(targets, many=True)
             
             return Response(data={"targets": targets_serializer.data})
 
         if urls_only:
             urls = CrawledUrls.objects.filter(
-                target__contains = target,
+                target__contains=target,
+                scan_session_id__contains=scan_session_id,
                 username__contains=username
             )
             urls_serializer = CrawledUrlsSerializer(urls, many=True)
@@ -184,6 +192,7 @@ class ReportsQueryAPIView(APIView):
 
 
         reports = Reports.objects.filter(
+            scan_session_id__contains=scan_session_id,
             username__contains=username,
             target__contains=target,
             sub_path__contains=sub_path,
