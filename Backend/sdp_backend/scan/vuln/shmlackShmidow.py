@@ -226,7 +226,7 @@ async def active_scan(
                     "sub_path": sub_path,
                     "vulnerability": "XSS",
                     "status": res_xss.status,
-                    "url": new_url,
+                    "url": xss_url,
                     "result_string": result_string,
                 }
                 request = {
