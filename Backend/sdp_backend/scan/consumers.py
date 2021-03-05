@@ -57,6 +57,20 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             await session.close()
 
         if fuzz:
+
+            result_vulncount = {
+                'SQL Injection': 0,
+                'XSS': 0,
+                'Open Redirect': 0,
+                'Windows Directory Traversal': 0,
+                'Linux Directory Traversal': 0,
+                'LFI Check': 0,
+                'RFI Check': 0,
+                'RCE Linux Check': 0,
+                'RCE PHP Check': 0,
+                'SSTI Check': 0
+            }
+
             tasks = []
             for url in urlList:
                 session = ClientSession()
@@ -70,6 +84,17 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             for coro in asyncio.as_completed(tasks):
                 reports, requests, responses, vulncount = await asyncio.shield(coro)
                 
+                result_vulncount['SQL Injection'] += vulncount['SQL Injection']
+                result_vulncount['XSS'] += vulncount['XSS']
+                result_vulncount['Open Redirect'] += vulncount['Open Redirect']
+                result_vulncount['Windows Directory Traversal'] += vulncount['Windows Directory Traversal']
+                result_vulncount['Linux Directory Traversal'] += vulncount['Linux Directory Traversal']
+                result_vulncount['LFI Check'] += vulncount['LFI Check']
+                result_vulncount['RFI Check'] += vulncount['RFI Check']
+                result_vulncount['RCE Linux Check'] += vulncount['RCE Linux Check']
+                result_vulncount['RCE PHP Check'] += vulncount['RCE PHP Check']
+                result_vulncount['SSTI Check'] += vulncount['SSTI Check']
+
                 reports_serializers = ReportsSerializer(data=reports, many=True)
                 requests_serializers = RequestHeadersSerializer(data=requests, many=True)
                 responses_serializers = ResponseHeadersSerializer(data=responses, many=True)
@@ -97,16 +122,16 @@ class ReportsConsumer(AsyncWebsocketConsumer):
         target_data = {
                 "target": target,
                 "username": verification.username,
-                'sqli': vulncount['SQL Injection'],
-                'xss': vulncount['XSS'],
-                'open_redirect': vulncount['Open Redirect'],
-                'windows_directory_traversal': vulncount['Windows Directory Traversal'],
-                'linux_directory_traversal': vulncount['Linux Directory Traversal'],
-                'lfi': vulncount['LFI Check'],
-                'rfi': vulncount['RFI Check'],
-                'rce_linux': vulncount['RCE Linux Check'],
-                'rce_php': vulncount['RCE PHP Check'],
-                'ssti': vulncount['SSTI Check'],
+                'sqli': result_vulncount['SQL Injection'],
+                'xss': result_vulncount['XSS'],
+                'open_redirect': result_vulncount['Open Redirect'],
+                'windows_directory_traversal': result_vulncount['Windows Directory Traversal'],
+                'linux_directory_traversal': result_vulncount['Linux Directory Traversal'],
+                'lfi': result_vulncount['LFI Check'],
+                'rfi': result_vulncount['RFI Check'],
+                'rce_linux': result_vulncount['RCE Linux Check'],
+                'rce_php': result_vulncount['RCE PHP Check'],
+                'ssti': result_vulncount['SSTI Check'],
             }
 
         targets_serializer = TargetsSerializer(data=target_data)
