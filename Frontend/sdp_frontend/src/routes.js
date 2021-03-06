@@ -9,6 +9,7 @@ const Result = React.lazy(() => import('./views/results/Result'));
 const Target = React.lazy(() => import('./views/results/Target'));
 const Vulnerabilities = React.lazy(() => import('./views/results/Vulnerabilities'));
 const Report = React.lazy(() => import('./views/results/Report'));
+const Detail = React.lazy(() => import('./views/results/Detail'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -20,6 +21,7 @@ const routes = [
   { path: '/target', exact: true, name: 'Target', component: Target },
   { path: '/vulnerabilities', exact: true, name: 'Vulnerabilities', component: Vulnerabilities },
   { path: '/report', exact: true, name: 'Report', component: Report },
+  { path: '/detail', exact: true, name: 'Detailt', component: Detail },
 ];
 
 export default routes;

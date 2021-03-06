@@ -14,8 +14,12 @@ const Vulnerabilities = ({location}) => {
   const dispatch = useDispatch();
 
   const {
+    requests,
+    responses,
     vul_reports
     } = useSelector((state) => ({
+      requests: state.user.requests,
+      responses: state.user.responses,
       vul_reports: state.user.vul_reports,
     }), shallowEqual)
 
@@ -37,6 +41,16 @@ const Vulnerabilities = ({location}) => {
       dispatch(userActions.reset_msg());
     };
   }, []);
+
+
+  const handleRowclick = (e) => {
+    const req = requests.find((el) => el.id === e.id);
+    const res = responses.find((el) => el.id === e.id);
+    history.push({
+      pathname:"/detail",
+      state:{rep: e, req: req, res: JSON.parse(res.headers_string)}
+    })
+  }
   return (
     <>
       <CDataTable
@@ -60,6 +74,7 @@ const Vulnerabilities = ({location}) => {
                     </td>
                   ),
                 }}
+                onRowClick={handleRowclick}
       />
     </>
   )
