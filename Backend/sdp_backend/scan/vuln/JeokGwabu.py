@@ -54,7 +54,7 @@ def is_vulnerable(response):
         "unclosed quotation mark after the character string",
         "quoted string not properly terminated",
     }
-    
+
     for error in errors:
         if error in response:
             return True
@@ -62,7 +62,9 @@ def is_vulnerable(response):
     return False
 
 
-async def scan_sql_injection(session, url, target, sub_path, scan_session_id, username, vulncount):
+async def scan_sql_injection(
+    session, url, target, sub_path, scan_session_id, username, vulncount
+):
 
     reports = []
     requests = []
@@ -83,7 +85,7 @@ async def scan_sql_injection(session, url, target, sub_path, scan_session_id, us
     for form in forms:
         result_string = "benign"
         form_details = get_form_details(form)
-        for c in ["\"", "'"]:
+        for c in ['"', "'"]:
 
             data = {}
             for input_tag in form_details["inputs"]:
@@ -103,13 +105,13 @@ async def scan_sql_injection(session, url, target, sub_path, scan_session_id, us
             elif form_details["method"] == "get":
                 res = await session.get(url, params=data)
 
-            http_response = (await res.read()).decode('utf-8')
+            http_response = (await res.read()).decode("utf-8")
             http_length = len(http_response)
             http_status = res.status
 
             if is_vulnerable(http_response):
                 result_string = "vulnerable"
-                vulncount['SQL Injection'] += 1
+                vulncount["SQL Injection"] += 1
 
             now = datetime.now()
             current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -128,7 +130,7 @@ async def scan_sql_injection(session, url, target, sub_path, scan_session_id, us
                 "status": http_status,
                 "url": url,
                 "result_string": result_string,
-                "form": str(form)
+                "form": str(form),
             }
             request = {
                 "id": id,
@@ -142,21 +144,21 @@ async def scan_sql_injection(session, url, target, sub_path, scan_session_id, us
                 "id": id,
                 "headers_string": json.dumps(dict(res.headers)),
             }
-            
+
             reports.append(report)
             requests.append(request)
             responses.append(response)
 
-
     return reports, requests, responses
-                # print("[+] SQL Injection vulnerability detected, link:", url)
-                # print("[+] Form:")
-                # pprint(form_details)
-                # return True
-                # break
+    # print("[+] SQL Injection vulnerability detected, link:", url)
+    # print("[+] Form:")
+    # pprint(form_details)
+    # return True
+    # break
+
 
 async def submit_form(session, form_details, url, value):
-  
+
     target_url = urljoin(url, form_details["action"])
     inputs = form_details["inputs"]
     data = {}
@@ -176,8 +178,10 @@ async def submit_form(session, form_details, url, value):
         return await session.get(target_url, params=data)
 
 
-async def scan_xss(session, url, target, sub_path, scan_session_id, username, vulncount):
-    
+async def scan_xss(
+    session, url, target, sub_path, scan_session_id, username, vulncount
+):
+
     reports = []
     requests = []
     responses = []
@@ -193,13 +197,13 @@ async def scan_xss(session, url, target, sub_path, scan_session_id, username, vu
             result_string = "benign"
             form_details = get_form_details(form)
             res = await submit_form(session, form_details, url, payload)
-            http_response = (await res.read()).decode('utf-8')
+            http_response = (await res.read()).decode("utf-8")
             http_length = len(http_response)
             http_status = res.status
 
             if js_script in http_response:
                 result_string = "vulnerable"
-                vulncount['XSS'] += 1
+                vulncount["XSS"] += 1
 
             now = datetime.now()
             current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -218,7 +222,7 @@ async def scan_xss(session, url, target, sub_path, scan_session_id, username, vu
                 "status": http_status,
                 "url": url,
                 "result_string": result_string,
-                "form": str(form)
+                "form": str(form),
             }
             request = {
                 "id": id,
@@ -245,7 +249,6 @@ async def scan_xss(session, url, target, sub_path, scan_session_id, username, vu
     return reports, requests, responses
 
 
-
 async def main(session, username, url, scan_session_id):
     reports_list = []
     requests_list = []
@@ -256,15 +259,19 @@ async def main(session, username, url, scan_session_id):
     random.seed(int(datetime.now().timestamp()))
     target = "{uri.scheme}://{uri.netloc}".format(uri=parsed)
     sub_path = url.split(target)[1]
-    
-    reports, requests, responses = await scan_sql_injection(session, url, target, sub_path, scan_session_id, username, vulncount)
-    
+
+    reports, requests, responses = await scan_sql_injection(
+        session, url, target, sub_path, scan_session_id, username, vulncount
+    )
+
     reports_list += reports
     requests_list += requests
     responses_list += responses
 
-    reports, requests, responses = await scan_xss(session, url, target, sub_path, scan_session_id, username, vulncount)
-    
+    reports, requests, responses = await scan_xss(
+        session, url, target, sub_path, scan_session_id, username, vulncount
+    )
+
     reports_list += reports
     requests_list += requests
     responses_list += responses
@@ -275,6 +282,7 @@ async def main(session, username, url, scan_session_id):
     await session.close()
     return reports_list, requests_list, responses_list, vulncount
 
+
 async def testMain():
 
     session = ClientSession()
@@ -282,5 +290,6 @@ async def testMain():
     url2 = "http://testphp.vulnweb.com/userinfo.php"
 
     await main(session, "aaa", url2, "test")
+
 
 # asyncio.run(testMain())

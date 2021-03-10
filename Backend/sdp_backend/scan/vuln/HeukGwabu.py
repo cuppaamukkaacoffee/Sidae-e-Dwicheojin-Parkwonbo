@@ -1,11 +1,13 @@
 # from __future__ import print_function
 from urllib.parse import urlparse
 import urllib.request, sys, os, optparse
+
 # from socket import timeout
 import asyncio
 import json
 from datetime import datetime
 import hashlib, random
+
 
 async def fire_payload(
     session,
@@ -15,9 +17,9 @@ async def fire_payload(
     bullseyes,
     username,
     target,
-    vulncount, 
+    vulncount,
     scan_session_id,
-    sub_path
+    sub_path,
 ):
 
     result_string = "benign"
@@ -25,7 +27,7 @@ async def fire_payload(
 
     try:
         http_request = await session.get(url)
-        http_response = (await http_request.read()).decode('utf-8')
+        http_response = (await http_request.read()).decode("utf-8")
         http_length = len(http_response)
         http_status = http_request.status
 
@@ -74,7 +76,9 @@ async def fire_payload(
         return report, request, response
 
 
-async def url_query_scan(session, username, full_url, vulncount, scan_session_id, sub_path):
+async def url_query_scan(
+    session, username, full_url, vulncount, scan_session_id, sub_path
+):
     reports_list = []
     requests_list = []
     responses_list = []
@@ -151,9 +155,13 @@ async def url_query_scan(session, username, full_url, vulncount, scan_session_id
         #     "bullseyes": ["</SIDWIPARK>(1)"],
         # },
         "XSS": {
-          "payloads": ["SIDWIPARK", "%22%3E%3C%2FSIDWIPARK%3E%281%29", urllib.parse.quote('"><iframe/onload=alert(1)>')],
-          "bullseyes": ["SIDWIPARK", "<iframe/onload=alert(1)>"]
-        }
+            "payloads": [
+                "SIDWIPARK",
+                "%22%3E%3C%2FSIDWIPARK%3E%281%29",
+                urllib.parse.quote('"><iframe/onload=alert(1)>'),
+            ],
+            "bullseyes": ["SIDWIPARK", "<iframe/onload=alert(1)>"],
+        },
     }
 
     target = full_url.split("?")[0]
@@ -173,7 +181,7 @@ async def url_query_scan(session, username, full_url, vulncount, scan_session_id
                     target=target,
                     vulncount=vulncount,
                     scan_session_id=scan_session_id,
-                    sub_path=sub_path
+                    sub_path=sub_path,
                 )
             )
             tasks.append(task)
@@ -187,7 +195,9 @@ async def url_query_scan(session, username, full_url, vulncount, scan_session_id
     return reports_list, requests_list, responses_list
 
 
-async def url_scan(session, username, full_url, vulncount=None, scan_session_id=None, sub_path=None):
+async def url_scan(
+    session, username, full_url, vulncount=None, scan_session_id=None, sub_path=None
+):
     reports_list = []
     requests_list = []
     responses_list = []
@@ -237,7 +247,7 @@ async def url_scan(session, username, full_url, vulncount=None, scan_session_id=
                     target=target,
                     vulncount=vulncount,
                     scan_session_id=scan_session_id,
-                    sub_path=sub_path
+                    sub_path=sub_path,
                 )
             )
             tasks.append(task)
@@ -262,16 +272,16 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
     target = "{uri.scheme}://{uri.netloc}".format(uri=parsed)
     sub_path = full_url.split(target)[1]
     vulncount = {
-        'SQL Injection': 0,
-        'XSS': 0,
-        'Open Redirect': 0,
-        'Windows Directory Traversal': 0,
-        'Linux Directory Traversal': 0,
-        'LFI Check': 0,
-        'RFI Check': 0,
-        'RCE Linux Check': 0,
-        'RCE PHP Check': 0,
-        'SSTI Check': 0
+        "SQL Injection": 0,
+        "XSS": 0,
+        "Open Redirect": 0,
+        "Windows Directory Traversal": 0,
+        "Linux Directory Traversal": 0,
+        "LFI Check": 0,
+        "RFI Check": 0,
+        "RCE Linux Check": 0,
+        "RCE PHP Check": 0,
+        "SSTI Check": 0,
     }
 
     response = await session.get(full_url)
@@ -319,7 +329,7 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
                     full_url=base_url,
                     vulncount=vulncount,
                     scan_session_id=scan_session_id,
-                    sub_path=sub_path
+                    sub_path=sub_path,
                 )
                 reports_list += reports
                 requests_list += requests
@@ -335,7 +345,7 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
             full_url=full_url,
             vulncount=vulncount,
             scan_session_id=scan_session_id,
-            sub_path=sub_path
+            sub_path=sub_path,
         )
         reports_list += reports
         requests_list += requests

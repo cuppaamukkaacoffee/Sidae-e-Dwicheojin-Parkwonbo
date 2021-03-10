@@ -8,20 +8,24 @@ class ReportsSerializer(serializers.ModelSerializer):
         # fields = ['id', 'title', 'author', 'email']
         fields = "__all__"
 
+
 class RequestHeadersSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestHeaders
         fields = "__all__"
+
 
 class ResponseHeadersSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResponseHeaders
         fields = "__all__"
 
+
 class TargetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Targets
         fields = "__all__"
+
 
 class CrawledUrlsSerializer(serializers.ModelSerializer):
     class Meta:

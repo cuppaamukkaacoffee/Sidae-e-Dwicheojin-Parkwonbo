@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('scan', '0001_initial'),
+        ("scan", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reports',
-            name='scan_type',
-            field=models.TextField(default=''),
+            model_name="reports",
+            name="scan_type",
+            field=models.TextField(default=""),
         ),
         migrations.AlterField(
-            model_name='reports',
-            name='scan_session_id',
-            field=models.TextField(default=''),
+            model_name="reports",
+            name="scan_session_id",
+            field=models.TextField(default=""),
         ),
         migrations.AlterField(
-            model_name='reports',
-            name='sub_path',
-            field=models.TextField(blank=True, default=''),
+            model_name="reports",
+            name="sub_path",
+            field=models.TextField(blank=True, default=""),
         ),
     ]

@@ -20,7 +20,6 @@ RESET = "\x1b[0m"
 VERBOSE = "1"
 
 
-
 async def active_scan(
     session,
     full_url,
@@ -57,12 +56,13 @@ async def active_scan(
 
         if "<title>Google</title>" in http_response:
             result_string = "vulnerable"
-            vulncount['Open Redirect'] += 1
-
+            vulncount["Open Redirect"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (redirect_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -104,11 +104,13 @@ async def active_scan(
 
         if "<title>Google</title>" in http_response:
             result_string = "vulnerable"
-            vulncount['Open Redirect'] += 1
+            vulncount["Open Redirect"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (redirect_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -127,7 +129,8 @@ async def active_scan(
             "accept": "*/*",
             "Accept-Encoding": "gzip, deflate",
             "User-Agent": "Python/3.9 aiohttp/3.7.3",
-            "body": "","host": target,
+            "body": "",
+            "host": target,
         }
         response = {"id": id, "headers_string": json.dumps(dict(redirect_res.headers))}
         result_list.append(result)
@@ -150,11 +153,13 @@ async def active_scan(
 
         if "<title>Google</title>" in http_response:
             result_string = "vulnerable"
-            vulncount['Open Redirect'] += 1
+            vulncount["Open Redirect"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((redirect_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (redirect_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -218,11 +223,13 @@ async def active_scan(
                 payload_exploit2 = urllib.parse.quote('"><iframe/onload=alert(1)>')
                 xss_url2 = new_url.replace("INJECTX", payload_exploit2)
                 result_string = "vulnerable"
-                vulncount['XSS'] += 1
+                vulncount["XSS"] += 1
 
                 now = datetime.now()
                 current_time = now.strftime("%Y-%m-%dT%H:%M")
-                id = hashlib.md5((xss_url2 + current_time + str(random.random())).encode("utf-8")).hexdigest()
+                id = hashlib.md5(
+                    (xss_url2 + current_time + str(random.random())).encode("utf-8")
+                ).hexdigest()
                 result = {
                     "id": id,
                     "scan_session_id": scan_session_id,
@@ -262,7 +269,7 @@ async def active_scan(
                     http_status = res_reflect.status
 
                     result_string = "vulnerable"
-                    vulncount['XSS'] += 1
+                    vulncount["XSS"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -304,7 +311,9 @@ async def active_scan(
 
             now = datetime.now()
             current_time = now.strftime("%Y-%m-%dT%H:%M")
-            id = hashlib.md5((new_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+            id = hashlib.md5(
+                (new_url + current_time + str(random.random())).encode("utf-8")
+            ).hexdigest()
             result = {
                 "id": id,
                 "scan_session_id": scan_session_id,
@@ -351,11 +360,13 @@ async def active_scan(
 
         if "SQL" in http_response or http_status == 500 or http_status == 503:
             result_string = "vulnerable"
-            vulncount['SQL Injection'] += 1
+            vulncount["SQL Injection"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((sqli_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (sqli_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -401,11 +412,13 @@ async def active_scan(
 
         if "SQL" in http_response or http_status == 500 or http_status == 503:
             result_string = "vulnerable"
-            vulncount['SQL Injection'] += 1
+            vulncount["SQL Injection"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((sqli_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (sqli_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -452,11 +465,13 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
-            vulncount['Windows Directory Traversal'] += 1
+            vulncount["Windows Directory Traversal"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (traversal_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -507,11 +522,13 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
-            vulncount['Windows Directory Traversal'] += 1
+            vulncount["Windows Directory Traversal"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (traversal_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -564,11 +581,13 @@ async def active_scan(
             or "16-bit" in http_response
         ):
             result_string = "vulnerable"
-            vulncount['Windows Directory Traversal'] += 1
+            vulncount["Windows Directory Traversal"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (traversal_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -617,11 +636,13 @@ async def active_scan(
 
         if "<web-app" in http_response:
             result_string = "vulnerable"
-            vulncount['Windows Directory Traversal'] += 1
+            vulncount["Windows Directory Traversal"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (traversal_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -670,11 +691,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['Linux Directory Traversal'] += 1
+            vulncount["Linux Directory Traversal"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (traversal_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -722,11 +745,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['Linux Directory Traversal'] += 1
+            vulncount["Linux Directory Traversal"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((traversal_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (traversal_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -774,11 +799,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['LFI Check'] += 1
+            vulncount["LFI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (lfi_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -825,11 +852,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['LFI Check'] += 1
+            vulncount["LFI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (lfi_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -875,11 +904,13 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
-            vulncount['LFI Check'] += 1
+            vulncount["LFI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (lfi_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -925,11 +956,13 @@ async def active_scan(
 
         if "boot loader" in http_response or "16-bit" in http_response:
             result_string = "vulnerable"
-            vulncount['LFI Check'] += 1
+            vulncount["LFI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((lfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (lfi_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -975,11 +1008,13 @@ async def active_scan(
 
         if "705cd559b16e6946826207c2199bd890" in http_response:
             result_string = "vulnerable"
-            vulncount['RFI Check'] += 1
+            vulncount["RFI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((rfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (rfi_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1025,11 +1060,13 @@ async def active_scan(
 
         if "705cd559b16e6946826207c2199bd890" in http_response:
             result_string = "vulnerable"
-            vulncount['RFI Check'] += 1
+            vulncount["RFI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((rfi_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (rfi_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1118,11 +1155,13 @@ async def active_scan(
 
         if "1337" in http_response:
             result_string = "vulnerable"
-            vulncount['SSTI Check'] += 1
+            vulncount["SSTI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((ssti_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (ssti_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1168,11 +1207,13 @@ async def active_scan(
 
         if "1337" in http_response:
             result_string = "vulnerable"
-            vulncount['SSTI Check'] += 1
+            vulncount["SSTI Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((ssti_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (ssti_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1218,11 +1259,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['RCE Linux Check'] += 1
+            vulncount["RCE Linux Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (rce_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1268,11 +1311,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['RCE Linux Check'] += 1
+            vulncount["RCE Linux Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (rce_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1318,11 +1363,13 @@ async def active_scan(
 
         if "<title>phpinfo()</title>" in http_response:
             result_string = "vulnerable"
-            vulncount['RCE PHP Check'] += 1
+            vulncount["RCE PHP Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (rce_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1370,11 +1417,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['RCE PHP Check'] += 1
+            vulncount["RCE PHP Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (rce_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1421,11 +1470,13 @@ async def active_scan(
 
         if "root:" in http_response:
             result_string = "vulnerable"
-            vulncount['RCE PHP Check'] += 1
+            vulncount["RCE PHP Check"] += 1
 
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%dT%H:%M")
-        id = hashlib.md5((rce_url + current_time + str(random.random())).encode("utf-8")).hexdigest()
+        id = hashlib.md5(
+            (rce_url + current_time + str(random.random())).encode("utf-8")
+        ).hexdigest()
         result = {
             "id": id,
             "scan_session_id": scan_session_id,
@@ -1470,16 +1521,16 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
     request_list = []
     response_list = []
     vulncount = {
-        'SQL Injection': 0,
-        'XSS': 0,
-        'Open Redirect': 0,
-        'Windows Directory Traversal': 0,
-        'Linux Directory Traversal': 0,
-        'LFI Check': 0,
-        'RFI Check': 0,
-        'RCE Linux Check': 0,
-        'RCE PHP Check': 0,
-        'SSTI Check': 0
+        "SQL Injection": 0,
+        "XSS": 0,
+        "Open Redirect": 0,
+        "Windows Directory Traversal": 0,
+        "Linux Directory Traversal": 0,
+        "LFI Check": 0,
+        "RFI Check": 0,
+        "RCE Linux Check": 0,
+        "RCE PHP Check": 0,
+        "SSTI Check": 0,
     }
     random.seed(datetime.now())
 
@@ -1542,7 +1593,7 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
                             username,
                             vulncount=vulncount,
                             scan_session_id=scan_session_id,
-                            sub_path_wo_payload=sub_path_wo_payload
+                            sub_path_wo_payload=sub_path_wo_payload,
                         )
                         result_list += results
                         request_list += requests
@@ -1562,7 +1613,7 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
                             username,
                             vulncount=vulncount,
                             scan_session_id=scan_session_id,
-                            sub_path_wo_payload=sub_path_wo_payload
+                            sub_path_wo_payload=sub_path_wo_payload,
                         )
                         result_list += results
                         request_list += requests
@@ -1582,7 +1633,7 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
                             username,
                             vulncount=vulncount,
                             scan_session_id=scan_session_id,
-                            sub_path_wo_payload=sub_path_wo_payload
+                            sub_path_wo_payload=sub_path_wo_payload,
                         )
                         result_list += results
                         request_list += requests
@@ -1614,7 +1665,9 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                        (redirect_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -1664,12 +1717,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Open Redirect'] += 1
+                        vulncount["Open Redirect"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                        (redirect_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -1719,12 +1774,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Open Redirect'] += 1
+                        vulncount["Open Redirect"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                        (redirect_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -1774,12 +1831,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Open Redirect'] += 1
+                        vulncount["Open Redirect"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                        (redirect_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -1829,12 +1888,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "<title>Google</title>" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Open Redirect'] += 1
+                        vulncount["Open Redirect"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (redirect_url + current_time + str(random.random())).encode("utf-8")
+                        (redirect_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -1887,12 +1948,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "boot loader" in http_response or "16-bit" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Windows Directory Traversal'] += 1
+                        vulncount["Windows Directory Traversal"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                        (traversal_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -1946,12 +2009,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "boot loader" in http_response or "16-bit" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Windows Directory Traversal'] += 1
+                        vulncount["Windows Directory Traversal"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                        (traversal_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -2005,12 +2070,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "boot loader" in http_response or "16-bit" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Windows Directory Traversal'] += 1
+                        vulncount["Windows Directory Traversal"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                        (traversal_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -2062,12 +2129,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Linux Directory Traversal'] += 1
+                        vulncount["Linux Directory Traversal"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                        (traversal_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,
@@ -2121,12 +2190,14 @@ async def main(url, cookies="", session=None, username=None, scan_session_id=Non
 
                     if "root:" in http_response:
                         result_string = "vulnerable"
-                        vulncount['Linux Directory Traversal'] += 1
+                        vulncount["Linux Directory Traversal"] += 1
 
                     now = datetime.now()
                     current_time = now.strftime("%Y-%m-%dT%H:%M")
                     id = hashlib.md5(
-                        (traversal_url + current_time + str(random.random())).encode("utf-8")
+                        (traversal_url + current_time + str(random.random())).encode(
+                            "utf-8"
+                        )
                     ).hexdigest()
                     result = {
                         "id": id,

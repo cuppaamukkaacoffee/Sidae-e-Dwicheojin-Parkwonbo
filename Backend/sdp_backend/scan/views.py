@@ -6,7 +6,13 @@ from .vuln import shmlackShmidow
 from .spider import asyncCrawl
 from .models import Reports, RequestHeaders, ResponseHeaders, Targets, CrawledUrls
 import asyncio
-from .serializers import ReportsSerializer, RequestHeadersSerializer, ResponseHeadersSerializer, TargetsSerializer, CrawledUrlsSerializer
+from .serializers import (
+    ReportsSerializer,
+    RequestHeadersSerializer,
+    ResponseHeadersSerializer,
+    TargetsSerializer,
+    CrawledUrlsSerializer,
+)
 from login.jwt import JwtHelper
 
 
@@ -70,11 +76,11 @@ class ReportsAPIView(APIView):
         report_serializers = ReportsSerializer(reports, many=True)
         request_serializers = RequestHeadersSerializer(requests, many=True)
         response_serializers = ResponseHeadersSerializer(responses, many=True)
-        
+
         result = {}
-        result['reports'] = report_serializers.data
-        result['requests'] = request_serializers.data
-        result['responses'] = response_serializers.data
+        result["reports"] = report_serializers.data
+        result["requests"] = request_serializers.data
+        result["responses"] = response_serializers.data
         return Response(data=result)
 
     def post(self, request):
@@ -139,7 +145,7 @@ class ReportsQueryAPIView(APIView):
             if key == "target":
                 target = request.data["target"]
             if key == "scan_session_id":
-               scan_session_id = request.data["scan_session_id"]
+                scan_session_id = request.data["scan_session_id"]
             if key == "subpath":
                 sub_path = request.data["sub_path"]
             if key == "result_string":
@@ -151,7 +157,7 @@ class ReportsQueryAPIView(APIView):
             if key == "targets_only":
                 targets_only = request.data["targets_only"]
             if key == "urls_only":
-                urls_only = request.data["urls_only"]    
+                urls_only = request.data["urls_only"]
 
         jwt = JwtHelper()
 
@@ -174,22 +180,21 @@ class ReportsQueryAPIView(APIView):
             targets = Targets.objects.filter(
                 username__contains=username,
                 target__contains=target,
-                id__contains=scan_session_id
+                id__contains=scan_session_id,
             )
             targets_serializer = TargetsSerializer(targets, many=True)
-            
+
             return Response(data={"targets": targets_serializer.data})
 
         if urls_only:
             urls = CrawledUrls.objects.filter(
                 target__contains=target,
                 scan_session_id__contains=scan_session_id,
-                username__contains=username
+                username__contains=username,
             )
             urls_serializer = CrawledUrlsSerializer(urls, many=True)
-            
-            return Response(data={"urls": urls_serializer.data})
 
+            return Response(data={"urls": urls_serializer.data})
 
         reports = Reports.objects.filter(
             scan_session_id__contains=scan_session_id,
@@ -199,23 +204,23 @@ class ReportsQueryAPIView(APIView):
             vulnerability__contains=vulnerability,
             result_string__contains=result_string,
         )
-        
+
         report_serializers = ReportsSerializer(reports, many=True)
-        
+
         if not with_headers:
             return Response(data={"reports": report_serializers.data})
-        
+
         requests = RequestHeaders.objects.none()
         responses = ResponseHeaders.objects.none()
         for report in reports:
             requests |= RequestHeaders.objects.filter(id__exact=report.id)
             responses |= ResponseHeaders.objects.filter(id__exact=report.id)
-    
+
         request_serializers = RequestHeadersSerializer(requests, many=True)
         response_serializers = ResponseHeadersSerializer(responses, many=True)
-        
+
         result = {}
-        result['reports'] = report_serializers.data
-        result['requests'] = request_serializers.data
-        result['responses'] = response_serializers.data
+        result["reports"] = report_serializers.data
+        result["requests"] = request_serializers.data
+        result["responses"] = response_serializers.data
         return Response(data=result)
