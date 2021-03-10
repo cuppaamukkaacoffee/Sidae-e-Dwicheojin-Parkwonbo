@@ -137,7 +137,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=JSON.dumps(result))
 
         if form_fuzz:
-
+            print("doing form fuzz")
             tasks = []
             for url in urlList:
                 session = ClientSession()
@@ -187,32 +187,37 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             reports, requests, responses, count = await asyncio.shield(BaekGwabu.main(target=target, session=session, username=verification.username, scan_session_id=scan_session_id))
 
             print("trav scan done")
-            result_vulncount['Linux Directory Traversal'] += count
 
-            reports_serializers = ReportsSerializer(data=reports, many=True)
-            requests_serializers = RequestHeadersSerializer(data=requests, many=True)
-            responses_serializers = ResponseHeadersSerializer(data=responses, many=True)
-            
-            if await sync_to_async(reports_serializers.is_valid)(raise_exception=True) and \
-                await sync_to_async(requests_serializers.is_valid)(raise_exception=True) and \
-                await sync_to_async(responses_serializers.is_valid)(raise_exception=True):
-                await database_sync_to_async(reports_serializers.save)()
-                await database_sync_to_async(requests_serializers.save)()
-                await database_sync_to_async(responses_serializers.save)()
-            
-            # if requests_serializers.is_valid(raise_exception=True):
-            #     await database_sync_to_async(requests_serializers.save)()
-            
-            # if responses_serializers.is_valid(raise_exception=True):
-            #     await database_sync_to_async(responses_serializers.save)()
+            if count != 0:
+                result_vulncount['Linux Directory Traversal'] += count
 
-            result = {}
-            result['reports'] = reports
-            result['requests'] = requests
-            result['responses'] = responses
+                reports_serializers = ReportsSerializer(data=reports, many=True)
+                requests_serializers = RequestHeadersSerializer(data=requests, many=True)
+                responses_serializers = ResponseHeadersSerializer(data=responses, many=True)
+                
+                if await sync_to_async(reports_serializers.is_valid)(raise_exception=True) and \
+                    await sync_to_async(requests_serializers.is_valid)(raise_exception=True) and \
+                    await sync_to_async(responses_serializers.is_valid)(raise_exception=True):
+                    await database_sync_to_async(reports_serializers.save)()
+                    await database_sync_to_async(requests_serializers.save)()
+                    await database_sync_to_async(responses_serializers.save)()
+                
+                # if requests_serializers.is_valid(raise_exception=True):
+                #     await database_sync_to_async(requests_serializers.save)()
+                
+                # if responses_serializers.is_valid(raise_exception=True):
+                #     await database_sync_to_async(responses_serializers.save)()
 
-            await self.send(text_data=JSON.dumps(result))
-        
+                result = {}
+                result['reports'] = reports
+                result['requests'] = requests
+                result['responses'] = responses
+
+                await self.send(text_data=JSON.dumps(result))
+            
+            else:
+                await self.send(text_data=JSON.dumps({"traversal_result": "no traversal vulnerbility detected"}))
+
         target_data = {
                 "id": scan_session_id,
                 "target": target,

@@ -269,6 +269,9 @@ async def main(session, username, url, scan_session_id):
     requests_list += requests
     responses_list += responses
 
+    if reports_list == [] or requests_list == [] or responses_list == []:
+        print(f"empty string at {url} due to zero forms")
+
     await session.close()
     return reports_list, requests_list, responses_list, vulncount
 

@@ -47,6 +47,10 @@ slashes = ["/", "\\",
 
 async def fire_payload(session, username, target, path, scan_session_id, count):
   
+  report = {}
+  request = {}
+  response = {}
+
   result_string = "benign"
   now = datetime.now()
   current_time = now.strftime("%Y-%m-%dT%H:%M")
@@ -63,31 +67,31 @@ async def fire_payload(session, username, target, path, scan_session_id, count):
         result_string = "vulnerable"
         count += 1
 
-      report = {
-          "id": id,
-          "scan_session_id": scan_session_id,
-          "scan_type": "traversal_check",
-          "timestamp": current_time,
-          "username": username,
-          "target": target,
-          "sub_path": path,
-          "vulnerability": "Linux Directory Travevrsal",
-          "status": http_status,
-          "url": target + path,
-          "result_string": result_string,
-      }
-      request = {
-          "id": id,
-          "host": target,
-          "Accept": "*/*",
-          "Accept-Encoding": "gzip, deflate",
-          "User-Agent": "Python/3.9 aiohttp/3.7.3",
-          "body": "",
-      }
-      response = {
-          "id": id,
-          "headers_string": json.dumps(dict(http_request.headers)),
-      }
+        report = {
+            "id": id,
+            "scan_session_id": scan_session_id,
+            "scan_type": "traversal_check",
+            "timestamp": current_time,
+            "username": username,
+            "target": target,
+            "sub_path": path,
+            "vulnerability": "Linux Directory Travevrsal",
+            "status": http_status,
+            "url": target + path,
+            "result_string": result_string,
+        }
+        request = {
+            "id": id,
+            "host": target,
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate",
+            "User-Agent": "Python/3.9 aiohttp/3.7.3",
+            "body": "",
+        }
+        response = {
+            "id": id,
+            "headers_string": json.dumps(dict(http_request.headers)),
+        }
 
   except Exception as exception:
       print(exception)
