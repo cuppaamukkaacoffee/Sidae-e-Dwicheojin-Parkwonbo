@@ -51,6 +51,19 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             await self.disconnect(message=verification)
 
         scan_session_id = hashlib.md5((str(random.random())).encode("utf-8")).hexdigest()
+        
+        result_vulncount = {
+            'SQL Injection': 0,
+            'XSS': 0,
+            'Open Redirect': 0,
+            'Windows Directory Traversal': 0,
+            'Linux Directory Traversal': 0,
+            'LFI Check': 0,
+            'RFI Check': 0,
+            'RCE Linux Check': 0,
+            'RCE PHP Check': 0,
+            'SSTI Check': 0
+        }
 
         if target:
             if target[-1] != "/":
@@ -71,19 +84,6 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             await session.close()
 
         if url_fuzz:
-
-            result_vulncount = {
-                'SQL Injection': 0,
-                'XSS': 0,
-                'Open Redirect': 0,
-                'Windows Directory Traversal': 0,
-                'Linux Directory Traversal': 0,
-                'LFI Check': 0,
-                'RFI Check': 0,
-                'RCE Linux Check': 0,
-                'RCE PHP Check': 0,
-                'SSTI Check': 0
-            }
 
             tasks = []
             for url in urlList:
