@@ -6,6 +6,7 @@ from django.db import models
 class Reports(models.Model):
     id = models.TextField(primary_key=True)
     scan_session_id = models.TextField(default="")
+    scan_type = models.TextField(default="")
     timestamp = models.DateTimeField()
     username = models.TextField(max_length=15, default="")
     target = models.TextField(default="")
@@ -14,6 +15,7 @@ class Reports(models.Model):
     status = models.IntegerField(default=0)
     result_string = models.TextField(default="")
     vulnerability = models.TextField(default="")
+    form = models.TextField(default="", blank=True)
 
     # def get_filtered(self, **kwargs):
 

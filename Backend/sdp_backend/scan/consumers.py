@@ -4,7 +4,7 @@ from login.jwt import JwtHelper, AsyncJwtHelper
 from rest_framework.response import Response
 from rest_framework import status
 import channels.exceptions
-from .vuln import shmlackShmidow
+from .vuln import shmlackShmidow, HeukGwabu, BaekGwabu, JeokGwabu
 from .spider import asyncCrawl
 from .models import Reports, Targets
 import asyncio
@@ -35,7 +35,9 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             token = data_json["token"]
             target = data_json["target"]
 
-            fuzz = data_json["fuzz"]
+            url_fuzz = data_json["url_fuzz"]
+            form_fuzz = data_json["form_fuzz"]
+            traversal_check = data_json["traversal_check"]
 
         except:
             print("nothing")
@@ -51,6 +53,8 @@ class ReportsConsumer(AsyncWebsocketConsumer):
         scan_session_id = hashlib.md5((str(random.random())).encode("utf-8")).hexdigest()
 
         if target:
+            if target[-1] != "/":
+                target += "/"
             urlList = []
             session = ClientSession()
             async for url in asyncCrawl.crawl(target, session):
@@ -66,7 +70,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             print("doing scan...")
             await session.close()
 
-        if fuzz:
+        if url_fuzz:
 
             result_vulncount = {
                 'SQL Injection': 0,
@@ -85,7 +89,10 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             for url in urlList:
                 session = ClientSession()
                 task = asyncio.create_task(
-                    shmlackShmidow.main(
+                    # shmlackShmidow.main(
+                    #     url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
+                    # )
+                    HeukGwabu.main(
                         url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
                     )
                 )
@@ -128,6 +135,83 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 result['responses'] = responses
 
                 await self.send(text_data=JSON.dumps(result))
+
+        if form_fuzz:
+
+            tasks = []
+            for url in urlList:
+                session = ClientSession()
+                task = asyncio.create_task(
+                    # shmlackShmidow.main(
+                    #     url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
+                    # )
+                    JeokGwabu.main(
+                        url=url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
+                    )
+                )
+                tasks.append(task)
+
+            for coro in asyncio.as_completed(tasks):
+                reports, requests, responses, vulncount = await asyncio.shield(coro)
+
+                result_vulncount['SQL Injection'] += vulncount['SQL Injection']
+                result_vulncount['XSS'] += vulncount['XSS']
+
+                reports_serializers = ReportsSerializer(data=reports, many=True)
+                requests_serializers = RequestHeadersSerializer(data=requests, many=True)
+                responses_serializers = ResponseHeadersSerializer(data=responses, many=True)
+                
+                if await sync_to_async(reports_serializers.is_valid)(raise_exception=True) and \
+                    await sync_to_async(requests_serializers.is_valid)(raise_exception=True) and \
+                    await sync_to_async(responses_serializers.is_valid)(raise_exception=True):
+                    await database_sync_to_async(reports_serializers.save)()
+                    await database_sync_to_async(requests_serializers.save)()
+                    await database_sync_to_async(responses_serializers.save)()
+                
+                # if requests_serializers.is_valid(raise_exception=True):
+                #     await database_sync_to_async(requests_serializers.save)()
+                
+                # if responses_serializers.is_valid(raise_exception=True):
+                #     await database_sync_to_async(responses_serializers.save)()
+
+                result = {}
+                result['reports'] = reports
+                result['requests'] = requests
+                result['responses'] = responses
+
+                await self.send(text_data=JSON.dumps(result))
+            
+        if traversal_check:
+            print("at traversal")
+            session = ClientSession()
+            reports, requests, responses, count = await asyncio.shield(BaekGwabu.main(target=target, session=session, username=verification.username, scan_session_id=scan_session_id))
+
+            print("trav scan done")
+            result_vulncount['Linux Directory Traversal'] += count
+
+            reports_serializers = ReportsSerializer(data=reports, many=True)
+            requests_serializers = RequestHeadersSerializer(data=requests, many=True)
+            responses_serializers = ResponseHeadersSerializer(data=responses, many=True)
+            
+            if await sync_to_async(reports_serializers.is_valid)(raise_exception=True) and \
+                await sync_to_async(requests_serializers.is_valid)(raise_exception=True) and \
+                await sync_to_async(responses_serializers.is_valid)(raise_exception=True):
+                await database_sync_to_async(reports_serializers.save)()
+                await database_sync_to_async(requests_serializers.save)()
+                await database_sync_to_async(responses_serializers.save)()
+            
+            # if requests_serializers.is_valid(raise_exception=True):
+            #     await database_sync_to_async(requests_serializers.save)()
+            
+            # if responses_serializers.is_valid(raise_exception=True):
+            #     await database_sync_to_async(responses_serializers.save)()
+
+            result = {}
+            result['reports'] = reports
+            result['requests'] = requests
+            result['responses'] = responses
+
+            await self.send(text_data=JSON.dumps(result))
         
         target_data = {
                 "id": scan_session_id,
@@ -167,6 +251,8 @@ class ReportsConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             # print(e)s
             pass
+
+        
 
         await self.send(text_data=JSON.dumps({"status": "200"}))
         await self.disconnect(message="all good")

@@ -55,7 +55,11 @@ POST:
 
   - 'target': 타겟 서비스 주소,
 
-  - 'fuzz': 취약점 스캔 여부 'True/False'
+  - 'url_fuzz': url 상 취약점 스캔 여부 'True/False'
+
+  - 'traversal_check': 'path traversal' 취약점 스캔 여부 'True/False'
+
+  - 'form_fuzz': 페이지 form 취약점 스캔 여부 'True/False'
 
 -> 서브 도메인 목록, 전체 결과 JSON 목록
   
