@@ -95,7 +95,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             await session.close()
 
         if url_fuzz:
-
+            await self.send(text_data=JSON.dumps({"message": "doing url fuzz..."}))
             tasks = []
             for url in urlList:
                 session = ClientSession()
@@ -168,6 +168,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
 
         if form_fuzz:
             print("doing form fuzz")
+            await self.send(text_data=JSON.dumps({"message": "doing form fuzz..."}))
             tasks = []
             for url in urlList:
                 session = ClientSession()
@@ -187,6 +188,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
             for coro in asyncio.as_completed(tasks):
                 reports, requests, responses, vulncount = await asyncio.shield(coro)
                 if reports == [] and requests == [] and responses == []:
+                    print("empty received")
                     continue
                 result_vulncount["SQL Injection"] += vulncount["SQL Injection"]
                 result_vulncount["XSS"] += vulncount["XSS"]
@@ -228,6 +230,7 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=JSON.dumps(result))
 
         if traversal_check:
+            await self.send(text_data=JSON.dumps({"message": "doing traversal check..."}))
             print("at traversal")
             session = ClientSession()
             reports, requests, responses, count = await asyncio.shield(

@@ -133,6 +133,7 @@ class ReportsQueryAPIView(APIView):
         with_headers = True
         targets_only = False
         urls_only = False
+        scan_type = ""
 
         try:
             token = request.META["HTTP_AUTHORIZATION"]
@@ -158,6 +159,8 @@ class ReportsQueryAPIView(APIView):
                 targets_only = request.data["targets_only"]
             if key == "urls_only":
                 urls_only = request.data["urls_only"]
+            if key == "scan_type":
+                scan_type = request.data["scan_type"]
 
         jwt = JwtHelper()
 
@@ -203,6 +206,7 @@ class ReportsQueryAPIView(APIView):
             sub_path__contains=sub_path,
             vulnerability__contains=vulnerability,
             result_string__contains=result_string,
+            scan_type__contains=scan_type
         )
 
         report_serializers = ReportsSerializer(reports, many=True)

@@ -138,7 +138,7 @@ async def scan_sql_injection(
                 "Accept": "*/*",
                 "Accept-Encoding": "gzip, deflate",
                 "User-Agent": "Python/3.9 aiohttp/3.7.3",
-                "body": c,
+                "body": json.dumps(dict(data)),
             }
             response = {
                 "id": id,
@@ -173,9 +173,9 @@ async def submit_form(session, form_details, url, value):
             data[input_name] = input_value
     # print(data)
     if form_details["method"] == "post":
-        return await session.post(target_url, data=data)
+        return await session.post(target_url, data=data), data
     else:
-        return await session.get(target_url, params=data)
+        return await session.get(target_url, params=data), data
 
 
 async def scan_xss(
@@ -191,12 +191,16 @@ async def scan_xss(
     payload = quote_plus("<Script>alert('hi')</scripT>")
     payloads = [js_script, payload]
 
+    if forms == []:
+        print(f"form: {forms}")
+        return reports, requests, responses
+
     for form in forms:
         # print(str(form))
         for payload in payloads:
             result_string = "benign"
             form_details = get_form_details(form)
-            res = await submit_form(session, form_details, url, payload)
+            res, body = await submit_form(session, form_details, url, payload)
             http_response = (await res.read()).decode("utf-8")
             http_length = len(http_response)
             http_status = res.status
@@ -230,7 +234,7 @@ async def scan_xss(
                 "Accept": "*/*",
                 "Accept-Encoding": "gzip, deflate",
                 "User-Agent": "Python/3.9 aiohttp/3.7.3",
-                "body": js_script,
+                "body": json.dumps(body),
             }
             response = {
                 "id": id,
