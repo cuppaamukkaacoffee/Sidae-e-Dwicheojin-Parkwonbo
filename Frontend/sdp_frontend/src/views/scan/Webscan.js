@@ -16,7 +16,7 @@ import {
   CFormText,
   CInput,
   CLabel,
-  CSelect,
+  CPagination,
   CNav,
   CNavItem,
   CNavLink,
@@ -27,20 +27,24 @@ import {
   CToaster,
   CToast,
   CToastHeader,
-  CToastBody
+  CToastBody,
+  CSwitch,
+  CBadge
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as loadingActions from 'src/store/modules/loading/actions';
 import * as userActions from 'src/store/modules/user/actions';
 
-const fields = ['vulnerability','result_string','url','sub_path', 'status']
+const fields = ['vulnerability','result_string','url','sub_path', 'scan_type','status']
 
 const Webscan = () => {
   const [toast_Active,set_toast_Active] = useState(false)
   const [first_rendering,set_first_rendering] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1);
 
   const dispatch = useDispatch();
   const {
+    console,
     loading,
     url,
     url_list,
@@ -50,11 +54,13 @@ const Webscan = () => {
     report,
     request,
     response,
-    headers_string,
-    fuzz,
+    url_fuzz,
+    traversal_check,
+    form_fuzz,
     progress,
     total,
     } = useSelector((state) => ({
+      console: state.loading.console,
       loading: state.loading.loading,
       url : state.user.url,
       url_list : state.user.url_list,
@@ -64,8 +70,9 @@ const Webscan = () => {
       report: state.user.report,
       request: state.user.request,
       response: state.user.response,
-      headers_string: state.user.headers_string,
-      fuzz : state.user.fuzz,
+      url_fuzz : state.user.url_fuzz,
+      traversal_check : state.user.traversal_check,
+      form_fuzz : state.user.form_fuzz,
       progress: state.loading.progress,
       total: state.loading.total,
     }), shallowEqual)
@@ -90,14 +97,22 @@ const Webscan = () => {
       const results = JSON.parse(lastMessage.data);
       if(results.urlList){
           dispatch(userActions.set_url_list(results.urlList))
-          dispatch(loadingActions.add_total())
+          if(url_fuzz && form_fuzz){
+            dispatch(loadingActions.add_total2())
+          }
+          else{
+            dispatch(loadingActions.add_total())
+          }
       }
       else if(results.reports){
         dispatch(userActions.set_results(results))
         dispatch(loadingActions.add_progress())
       }
-      else if(results.message == "all good"){
-        set_toast_Active(true);
+      else if(results.message){
+        dispatch(loadingActions.set_loading_console(results.message))
+        if(results.message == "all good"){
+          set_toast_Active(true);
+        }
       }
     }
   }, [lastMessage]);
@@ -135,25 +150,44 @@ const Webscan = () => {
     }
   },[toast_Active])
 
+  const getBadge = (status) => {
+    switch (status) {
+      case '200': return 'success'
+      case '404': return 'danger'
+      default: return 'primary'
+    }
+  }
+
   const handleClickSendMessage = useCallback(() =>{
     if(url.length > 0){
       const token = sessionStorage.getItem('token');
       dispatch(loadingActions.startLoading());
+      dispatch(loadingActions.set_loading_console("sub domain scanning..."))
       sendMessage(JSON.stringify({"token": `Token ${token}`,
                                   "target": url,
-                                  "fuzz": fuzz}))
+                                  "url_fuzz": url_fuzz,
+                                  "traversal_check": traversal_check,
+                                  "form_fuzz": form_fuzz 
+                                }))
     }else{
       alert("url제대로")
     }
-   }, [url, fuzz]);
+   }, [url, url_fuzz, traversal_check, form_fuzz]);
   
   const handleInputurl = (e) => {
     dispatch(userActions.set_url(e.target.value))
   }
   
-  const handleInputfuzz = (e) => {
-    dispatch(userActions.set_fuzz(e.target.value))
+  const handleUrl_fuzz = (e) => {
+    dispatch(userActions.set_url_fuzz(e.target.checked))
   }
+  const handleTraversal_check = (e) => {
+    dispatch(userActions.set_traversal_check(e.target.checked))
+  }
+  const handleForm_fuzz = (e) => {
+    dispatch(userActions.set_form_fuzz(e.target.checked))
+  }
+  
 
   const handleRowclick = (e) =>{
     const req = requests.find((el) => el.id === e.id);
@@ -163,17 +197,42 @@ const Webscan = () => {
     dispatch(userActions.set_report(e));
   }
 
-  let res = []
-  let req = []
-  for (let [key, val] of Object.entries(headers_string)){
-      res.push(<p key={key}><strong>{key}</strong> : {val}</p>);
-    } 
-  for (let [key, val] of Object.entries(request)){
+  const req = (()=>{
+    let req = []
+    for (let [key, val] of Object.entries(request)){
       if (key !== "id"){
-          req.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+        if(key === "body"){
+            if(val){
+                req.push(<p key={key} style={{color: 'red'}}><strong>Payload</strong></p>);
+                for (let [key1, val1] of Object.entries(JSON.parse(val))){
+                    req.push(<p key={key1}><strong>{key1}</strong> : {val1}</p>);
+                }
+            }
         }
-    } 
+        else{
+            req.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+        }
+      }
+    }
+  return req 
+  })()
 
+  const res = (()=>{
+    let res = []
+    if(response.headers_string){
+        for (let [key, val] of Object.entries(JSON.parse(response.headers_string))){
+            res.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+        } 
+    } 
+    return res
+  })()
+
+  const scan_pages = (()=>{
+    if (reports.length > 0){
+      return Math.ceil(reports.length/10)
+    }
+  })()
+  
   return (
     <>
       <CRow>
@@ -196,13 +255,28 @@ const Webscan = () => {
                       
                       <CFormGroup row>
                       <CCol md="3">
-                          <CLabel htmlFor="select">Fuzz</CLabel>
+                        <CLabel htmlFor="select">Url Fuzz</CLabel>
                       </CCol>
                       <CCol xs="12" md="9">
-                          <CSelect custom name="select" id="select" onChange = {handleInputfuzz}>
-                          <option value="true">True</option>
-                          <option value="false">False</option>
-                          </CSelect>
+                        <CSwitch className={'mx-1'} variant={'3d'} color={'primary'} defaultChecked onChange={handleUrl_fuzz}/>
+                      </CCol>
+                      </CFormGroup>
+
+                      <CFormGroup row>
+                      <CCol md="3">
+                          <CLabel htmlFor="select">Form Fuzz</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <CSwitch className={'mx-1'} variant={'3d'} color={'primary'} defaultChecked onChange={handleForm_fuzz}/>  
+                      </CCol>
+                      </CFormGroup>
+
+                      <CFormGroup row>
+                      <CCol md="3">
+                          <CLabel htmlFor="select">Traversal Check</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <CSwitch className={'mx-1'} variant={'3d'} color={'primary'} defaultChecked onChange={handleTraversal_check}/>    
                       </CCol>
                       </CFormGroup>
                   </CForm>
@@ -211,7 +285,11 @@ const Webscan = () => {
                   <CButton type="button" size="sm" color="primary" onClick={handleClickSendMessage} 
                     disabled={readyState !== ReadyState.OPEN || loading}><CIcon name="cil-scrubber" /> Scan
                   </CButton>
-                  {loading && <CSpinner color="primary" style={{width:'1.5rem', height:'1.5rem'}}/>}
+                  {loading && 
+                  <span>
+                    <CSpinner color="primary" style={{width:'1.5rem', height:'1.5rem',marginLeft:'10px',marginRight:'10px'}}/>
+                    <small style={{color:'red'}}>{console}</small>
+                  </span>}
                   </CCardFooter>
               </CCard>
               <CCard>
@@ -219,14 +297,14 @@ const Webscan = () => {
                   Url List
                 </CCardHeader>
                 <CCardBody style={{maxHeight:"100px",overflow: 'auto'}}>
-                  <ul style={{listStyle : 'none'}}>
+                  <ul>
                    {url_list.map((url,idx) => (<li key={idx}><a href = {url} target="_blank" >{url}</a></li>))}
                   </ul>
                 </CCardBody>
               </CCard> 
             </CCol>
             <CCol xs="10" md="7">
-              <CCard style={{height:"440px",overflow: 'auto'}}>
+              <CCard style={{height:"480px",overflow: 'auto'}}>
                 <CCardBody>
                   <CTabs>
                       <CNav variant="tabs">
@@ -264,19 +342,41 @@ const Webscan = () => {
       <CRow>
         <CCol xs="12" md="12">
           {loading && <CProgress animated value={progress} max={total} showPercentage className="mb-3" />}
-          <CCard style={{maxHeight:"300px",overflow: 'auto'}}>
-            <CCardBody>
+          <CCard>
+            <CCardBody style={{height:"280px",overflow: 'auto'}}>
               <CDataTable
               items={reports}
               fields={fields}
+              activePage={currentPage}
               hover
               striped
               bordered
-              pagination
               size="sm"
               onRowClick ={handleRowclick}
+              scopedSlots = {
+                {'status':
+                    (item)=>(
+                    <td>
+                        <CBadge color={getBadge(item.status)}>
+                        {item.status}
+                        </CBadge>
+                    </td>
+                )}
+                }
               />
             </CCardBody>
+            {scan_pages &&
+              <CCardFooter> 
+                <CPagination
+                    size="sm"
+                    activePage={currentPage}
+                    limit={10}
+                    pages={scan_pages}
+                    align="center"
+                    onActivePageChange={setCurrentPage}
+                  />
+              </CCardFooter>
+            } 
           </CCard> 
         </CCol>
       </CRow>

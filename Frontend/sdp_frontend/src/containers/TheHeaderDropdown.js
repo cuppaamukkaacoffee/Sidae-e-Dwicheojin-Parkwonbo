@@ -31,12 +31,12 @@ const TheHeaderDropdown = () => {
         >
           <strong>Settings</strong>
         </CDropdownItem>
-        <CDropdownItem>
+        <CDropdownItem to="/user">
           <CIcon name="cil-user" className="mfe-2" />Profile
         </CDropdownItem>
-        <CDropdownItem>
-          <CIcon name="cil-settings" className="mfe-2" />
-          Settings
+        <CDropdownItem to="/login">
+          <CIcon name="cilX" className="mfe-2" />
+          Logout
         </CDropdownItem>
   
       </CDropdownMenu>

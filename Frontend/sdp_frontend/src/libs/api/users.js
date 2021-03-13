@@ -27,6 +27,7 @@ export const results_api = async (info) => {
     username : info.id,
     target : info.url,
     sub_path : "",
+    scan_type :info.scan_type,
     vulnerability : info.vul,
     result_string : info.result_string,
     with_headers : info.with_headers,

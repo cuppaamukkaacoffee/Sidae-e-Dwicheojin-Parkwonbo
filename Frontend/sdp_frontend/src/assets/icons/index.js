@@ -130,7 +130,7 @@ import {
   cilWarning,
   cilBellExclamation,
   cilChevronDoubleDown,
-  cilChevronDoubleUp
+  cilChevronDoubleUp,
 } from '@coreui/icons'
 
 export const icons = Object.assign({}, {
@@ -231,7 +231,7 @@ export const icons = Object.assign({}, {
   cilWarning,
   cilBellExclamation,
   cilChevronDoubleDown,
-  cilChevronDoubleUp
+  cilChevronDoubleUp,
 }, {
   cifUs,
   cifBr,

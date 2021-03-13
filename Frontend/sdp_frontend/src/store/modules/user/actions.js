@@ -22,6 +22,9 @@ export const set_url = createAction(SET_URL);
 export const SET_URL_LIST = 'user/SET_URL_LIST';
 export const set_url_list = createAction(SET_URL_LIST);
 
+export const SET_SCAN_TYPE = 'user/SET_SCAN_TYPE';
+export const set_scan_type = createAction(SET_SCAN_TYPE);
+
 export const SET_VUL = 'user/SET_VUL';
 export const set_vul = createAction(SET_VUL);
 
@@ -43,8 +46,14 @@ export const set_report = createAction(SET_REPORT);
 export const SET_SIDEBAR = 'user/SET_SIDEBAR';
 export const set_sidebar = createAction(SET_SIDEBAR);
 
-export const SET_FUZZ = 'user/SET_FUZZ';
-export const set_fuzz = createAction(SET_FUZZ);
+export const SET_URL_FUZZ = 'user/SET_URL_FUZZ';
+export const set_url_fuzz = createAction(SET_URL_FUZZ);
+
+export const SET_TRAVERSAL_CHECK = 'user/SET_TRAVERSAL_CHECK';
+export const set_traversal_check = createAction(SET_TRAVERSAL_CHECK);
+
+export const SET_FORM_FUZZ = 'user/SET_FORM_FUZZ';
+export const set_form_fuzz = createAction(SET_FORM_FUZZ);
 // API 호출 시
 
 export const [
@@ -82,6 +91,7 @@ export const [
   VUL_RESULTS_CHECK_FAILED,
 ] = createRequestActionTypes('user/VUL_RESULTS_CHECK');
 export const vul_results_check = createAction(VUL_RESULTS_CHECK);
+
 
 export const [
   TARGETS_CHECK,

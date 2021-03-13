@@ -23,8 +23,9 @@ const Detail = ({location}) => {
   const [Imp,setImp] = useState(true);
   const [Fix,setFix] = useState(true);
   const [Ref,setRef] = useState(true);
+  const [Form,setForm] = useState(true);
   const {rep,req,res} = location.state;
- 
+
   useEffect(() => {
       console.log(location.state)
       return () => {
@@ -77,21 +78,43 @@ const Detail = ({location}) => {
     }
   })()
 
-  let http_req = []
-  let http_res = []
-  for (let [key, val] of Object.entries(res)){
-      http_res.push(<p key={key}><strong>{key}</strong> : {val}</p>);
-    } 
-  for (let [key, val] of Object.entries(req)){
+  const http_req = (()=>{
+    let http_req = []
+    for (let [key, val] of Object.entries(req)){
       if (key !== "id"){
-          http_req.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+        if(key === "body"){
+            if(val){
+                http_req.push(<p key={key} style={{color: 'red'}}><strong>Payload</strong></p>);
+                for (let [key1, val1] of Object.entries(JSON.parse(val))){
+                    http_req.push(<p key={key1}><strong>{key1}</strong> : {val1}</p>);
+                }
+            }
         }
-    } 
+        else{
+            http_req.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+        }
+      }
+    }
+    return http_req 
+  })()
+
+  const http_res = (()=>{
+      let http_res = []
+      if(res.headers_string){
+          for (let [key, val] of Object.entries(JSON.parse(res.headers_string))){
+              http_res.push(<p key={key}><strong>{key}</strong> : {val}</p>);
+          } 
+      } 
+      return http_res
+  })()
 
   return (
     <CCard>
       <CCardHeader><h4>{vul}</h4></CCardHeader>
       <CCardBody>
+        <span style={{fontWeight:"bold",fontSize:"15px"}}>Scan type</span> : {rep.scan_type}
+        <hr style={{width:"100%"}}/>
+
         <CButton onClick={() => setDes(!Des)}>
           <span style={{fontWeight:"bold",fontSize:"15px"}}>{Des?<CIcon size="sm" name="cilChevronDoubleUp"/>:<CIcon size="sm" name="cilChevronDoubleDown"/>}Vulnerability description</span>
         </CButton>
@@ -100,8 +123,7 @@ const Detail = ({location}) => {
             {description}
             <hr style={{width:"100%"}}/>
         </CCollapse>
-        
-        
+
         <CButton onClick={() => setAttack(!Attack)}>
           <span style={{fontWeight:"bold",fontSize:"15px"}}>{Attack?<CIcon size="sm" name="cilChevronDoubleUp"/>:<CIcon size="sm" name="cilChevronDoubleDown"/>}Attack Payload</span>
         </CButton>
@@ -110,6 +132,17 @@ const Detail = ({location}) => {
             <a style={{color:"red"}} href = {rep.url} target="_blank">{rep.url}</a>
             <hr style={{width:"100%"}}/>
         </CCollapse>
+        
+        {rep.form && <>
+        <CButton onClick={() => setForm(!Form)}>
+          <span style={{fontWeight:"bold",fontSize:"15px"}}>{Form?<CIcon size="sm" name="cilChevronDoubleUp"/>:<CIcon size="sm" name="cilChevronDoubleDown"/>}Form data</span>
+        </CButton>
+        <hr style={{width:"100%"}}/>
+        <CCollapse show={Form} style={{whiteSpace:"pre-wrap"}}>
+            {rep.form}
+            <hr style={{width:"100%"}}/>
+        </CCollapse>
+        </>}
         
         <CButton onClick={() => setReq(!Req)}>
           <span style={{fontWeight:"bold",fontSize:"15px"}}>{Req?<CIcon size="sm" name="cilChevronDoubleUp"/>:<CIcon size="sm" name="cilChevronDoubleDown"/>}HTTP request</span>

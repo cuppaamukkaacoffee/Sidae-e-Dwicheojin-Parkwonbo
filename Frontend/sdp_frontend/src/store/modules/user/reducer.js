@@ -9,13 +9,16 @@ const initialState = {
   url: '',
   url_list:[],
   db_data:[],
+  scan_type: '',
   vul: '',
   result_string:'',
-  fuzz: true,
+  url_fuzz: true,
+  traversal_check: true,
+  form_fuzz: true,
   report:{},
   request:{},
   response:{},
-  headers_string:{},
+  total_reports:[],
   vul_reports:[],
   reports:[],
   requests:[],
@@ -36,13 +39,16 @@ const user = handleActions(
         draft.url = '';
         draft.url_list = [];
         draft.db_data = [];
+        draft.scan_type = '';
         draft.vul = '';
         draft.result_string = '';
-        draft.fuzz = true;
+        draft.url_fuzz = true;
+        draft.traversal_check = true;
+        draft.form_fuzz = true;
         draft.report = {};
         draft.request = {};
         draft.response = {};
-        draft.headers_string = {};
+        draft.total_reports = [];
         draft.vul_reports = [];
         draft.reports = [];
         draft.requests = [];
@@ -59,7 +65,6 @@ const user = handleActions(
         draft.report = {};
         draft.request = {};
         draft.response = {};
-        draft.headers_string = {};
         draft.errorCode = '';
         draft.errorMsg = '';
       })
@@ -112,6 +117,12 @@ const user = handleActions(
         draft.url_list.unshift(action.payload);
       })
     },
+    [USER.SET_SCAN_TYPE]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('scan_type in reducer => ', action.payload)
+        draft.scan_type = action.payload;
+      })
+    },
     [USER.SET_VUL]: (state, action) => {
       return produce(state, (draft) => {
         console.log('vul in reducer => ', action.payload)
@@ -142,7 +153,6 @@ const user = handleActions(
       return produce(state, (draft) => {
         console.log('response in reducer => ', action.payload)
         draft.response = action.payload;
-        draft.headers_string = JSON.parse(action.payload.headers_string)
       })
     },
     [USER.SET_REPORT]: (state, action) => {
@@ -151,22 +161,29 @@ const user = handleActions(
         draft.report = action.payload;
       })
     },
-    [USER.SET_FUZZ]: (state, action) => {
+    [USER.SET_URL_FUZZ]: (state, action) => {
       return produce(state, (draft) => {
-        console.log('fuzz in reducer => ', action.payload)
-        if (action.payload == "false"){
-          draft.fuzz = false
-        }
-        else{
-          draft.fuzz = true
-        }
+        console.log('url_fuzz in reducer => ', action.payload)
+        draft.url_fuzz= action.payload
+      })
+    },
+    [USER.SET_TRAVERSAL_CHECK]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('traversal_check in reducer => ', action.payload)
+        draft.traversal_check= action.payload
+      })
+    },
+    [USER.SET_FORM_FUZZ]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('form_fuzz in reducer => ', action.payload)
+        draft.form_fuzz= action.payload
       })
     },
     
     [USER.RESULTS_CHECK_SUCCESS]: (state, action) => {
       console.log('RESULTS_CHECK_SUCCESS => ', action.payload);
       return produce(state, (draft) => {
-        draft.reports = action.payload.reports;
+        draft.total_reports = action.payload.reports;
         draft.requests = action.payload.requests;
         draft.responses = action.payload.responses;
       });
