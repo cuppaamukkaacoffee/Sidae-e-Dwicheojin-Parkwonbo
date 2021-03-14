@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "scan",
     "login",
     "channels",
+    "netscan",
 ]
 
 MIDDLEWARE = [
