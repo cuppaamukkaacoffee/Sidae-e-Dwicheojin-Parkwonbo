@@ -63,6 +63,20 @@ POST:
 
 -> 서브 도메인 목록, 전체 결과 JSON 목록
   
+  # ws://\<주소>:8000/ws/netscan/
+
+- 웹소켓 전용
+
+- 연결후 data에 JSON
+ 
+  - 'token': 'Token \<JWT>'
+
+  - 'target': 타겟 서비스 주소,
+
+  - 'fast_scan': Nmap -F 스캔 여부 'True/False' (현재는 무조건 True로만)
+
+-> ip address 목록, port scan 목록
+
 
 # Todo
 
@@ -81,3 +95,16 @@ POST:
 - ClientSession 다수 사용 :white_check_mark:
 
 - 크롤링 읍답 속도 향상 :white_check_mark:
+
+# Network Scan Todo
+
+
+- 관리자 권한 여부 (runserver를 관리자 권한으로 실행 고려)
+
+- Nmap full Scan 시, Nmap 자체의 성능으로 인한 시간 지연 (masscan 도입 고려)
+
+- half mode scan, Xmas scan, Null scan 등 다양한 옵션 추가
+
+- whois를 이용한 정보 수집
+
+- robots.txt 정보 수집
