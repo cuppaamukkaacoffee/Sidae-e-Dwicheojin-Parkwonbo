@@ -20,4 +20,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("scan.urls")),
     path("", include("login.urls")),
+    path("", include("netscan.urls")),
 ]
