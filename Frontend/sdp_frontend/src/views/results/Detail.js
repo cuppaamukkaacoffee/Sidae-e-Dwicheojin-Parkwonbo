@@ -19,7 +19,7 @@ const Detail = ({location}) => {
   const [Des,setDes] = useState(true);
   const [Attack,setAttack] = useState(true);
   const [Req,setReq] = useState(false);
-  const [Res,setRes] = useState(false);
+  const [Res,setRes] = useState(true);
   const [Imp,setImp] = useState(true);
   const [Fix,setFix] = useState(true);
   const [Ref,setRef] = useState(true);
@@ -108,6 +108,26 @@ const Detail = ({location}) => {
       return http_res
   })()
 
+  const body = (()=>{
+    let body = res.body;
+    if(body){
+        const reactStringReplace = require('react-string-replace');
+
+        body = reactStringReplace(body, "SIDWIPARK", (match, i) => (
+        <span key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+        ));
+
+        body = reactStringReplace(body, "<iframe/onload=alert(1)>", (match, i) => (
+            <span id = "vul" key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+            ));
+
+        body = reactStringReplace(body, "<Script>alert('hi')</scripT>", (match, i) => (
+            <span id = "vul" key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+            ));
+    }
+    return body
+  })()
+
   return (
     <CCard>
       <CCardHeader><h4>{vul}</h4></CCardHeader>
@@ -159,6 +179,14 @@ const Detail = ({location}) => {
         <hr style={{width:"100%"}}/>
         <CCollapse show={Res}>
             {http_res}
+            <CCard accentColor="primary">
+              <CCardHeader >
+                  <strong>Body</strong>
+              </CCardHeader>
+              <CCardBody style={{height:"350px", overflow:"auto", whiteSpace:"pre-wrap"}}>
+                  {body}
+              </CCardBody>
+            </CCard>
             <hr style={{width:"100%"}}/>
         </CCollapse>
 

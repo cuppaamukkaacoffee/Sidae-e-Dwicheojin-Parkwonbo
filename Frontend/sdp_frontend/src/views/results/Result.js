@@ -1,4 +1,4 @@
-import {useState, useCallback, useEffect} from 'react';
+import {useRef, useState, useCallback, useEffect} from 'react';
 import {useSelector, useDispatch, shallowEqual} from 'react-redux';
 import React from 'react'
 import {
@@ -34,7 +34,7 @@ const fields = ['target','sub_path', 'url', 'result_string','vulnerability','sca
 const Result = () => {
     const dispatch = useDispatch();
     const [currentPage, setCurrentPage] = useState(1);
-
+    const ref = useRef();
     const {
     id,
     url,
@@ -151,7 +151,8 @@ const Result = () => {
             for (let [key, val] of Object.entries(JSON.parse(response.headers_string))){
                 res.push(<p key={key}><strong>{key}</strong> : {val}</p>);
             } 
-        } 
+        }
+
         return res
     })()
 
@@ -160,6 +161,30 @@ const Result = () => {
           return Math.ceil(total_reports.length/10)
         }
       })()
+
+    
+    const body = (()=>{
+        let body = response.body;
+        if(body){
+            const reactStringReplace = require('react-string-replace');
+    
+            body = reactStringReplace(body, "SIDWIPARK", (match, i) => (
+            <span key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+            ));
+
+            body = reactStringReplace(body, "<iframe/onload=alert(1)>", (match, i) => (
+                <span id = "vul" key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+                ));
+
+            body = reactStringReplace(body, "<Script>alert('hi')</scripT>", (match, i) => (
+                <span id = "vul" key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+                ));
+        }
+        return body
+    })()
+
+    
+    
 
     return (
     <>
@@ -262,12 +287,23 @@ const Result = () => {
                 <CTabContent>
                     <CTabPane>
                         <br/>
-                        {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
+                        {report.url && <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p>}
                         {res}
+                        {response.body &&
+                            <CCard accentColor="primary">
+                                <CCardHeader >
+                                    <strong>Body</strong>
+                                </CCardHeader>
+                                <CCardBody style={{height:"350px", overflow:"auto", whiteSpace:"pre-wrap"}}>
+                                    {body}
+                                </CCardBody>
+                            </CCard>
+                        }   
+                    
                     </CTabPane>
                     <CTabPane>
                         <br/>
-                        {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
+                        {report.url && <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p>}
                         {req}
                     </CTabPane>
                 </CTabContent>

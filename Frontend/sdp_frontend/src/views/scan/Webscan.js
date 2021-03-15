@@ -232,6 +232,26 @@ const Webscan = () => {
       return Math.ceil(reports.length/10)
     }
   })()
+
+  const body = (()=>{
+    let body = response.body;
+    if(body){
+        const reactStringReplace = require('react-string-replace');
+
+        body = reactStringReplace(body, "SIDWIPARK", (match, i) => (
+        <span key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+        ));
+
+        body = reactStringReplace(body, "<iframe/onload=alert(1)>", (match, i) => (
+            <span id = "vul" key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+            ));
+
+        body = reactStringReplace(body, "<Script>alert('hi')</scripT>", (match, i) => (
+            <span id = "vul" key = {i} style={{color: 'red'}}><strong>{match}</strong></span>
+            ));
+    }
+    return body
+  })()  
   
   return (
     <>
@@ -323,7 +343,17 @@ const Webscan = () => {
                           <CTabPane>                           
                             <br/>
                             {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
-                            {res}                                                   
+                            {res}     
+                            {response.body &&
+                              <CCard accentColor="primary">
+                                  <CCardHeader >
+                                      <strong>Body</strong>
+                                  </CCardHeader>
+                                  <CCardBody style={{height:"350px", overflow:"auto", whiteSpace:"pre-wrap"}}>
+                                      {body}
+                                  </CCardBody>
+                              </CCard>
+                            }                                              
                           </CTabPane>
                           <CTabPane>  
                             <br/>

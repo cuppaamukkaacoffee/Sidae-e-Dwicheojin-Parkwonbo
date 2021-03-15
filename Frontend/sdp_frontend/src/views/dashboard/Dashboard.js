@@ -9,7 +9,17 @@ import {
   CRow,
   CCol,
   CDataTable,
-  CLink
+  CLink,
+  CCarousel,
+  CCarouselItem,
+  CCarouselInner,
+  CCarouselControl,
+  CTabContent,
+  CTabPane,
+  CTabs,
+  CNav,
+  CNavItem,
+  CNavLink,
 } from '@coreui/react'
 import {
   CChartBar,
@@ -185,9 +195,6 @@ const Dashboards = () => {
         
       
         <CCard>
-          <CCardHeader>
-            Scanned Vulnerability
-          </CCardHeader>
           <CCardBody>
             <CChartDoughnut
                   datasets={datasets_doughnut}
@@ -200,34 +207,95 @@ const Dashboards = () => {
                 />
           </CCardBody>
         </CCard>
+
+        <CCard>
+            <CCardBody>
+              <CCarousel animate autoSlide={3000}>
+                <CCarouselInner>
+                  <CCarouselItem>
+                    <CChartBar
+                    datasets={datasets_scanned}
+                    labels={days}
+                    options={{
+                      tooltips: {
+                        enabled: true
+                      }
+                    }}
+                    />
+                  </CCarouselItem>
+                  <CCarouselItem>
+                    <CChartBar
+                      datasets={datasets_vul}
+                      labels={days}
+                      options={{
+                        tooltips: {
+                          enabled: true
+                        }
+                      }}
+                    />
+                  </CCarouselItem>
+                </CCarouselInner>
+                <CCarouselControl direction="prev"/>
+                <CCarouselControl direction="next"/>
+              </CCarousel>
+            </CCardBody>
+          </CCard>
       </CCol>
       <CCol sm="12" md="6">
-        <CCard style={{height:"500px",overflow: 'auto'}}>
-          <CCardHeader>
-            Recently Scanned Target
+        <CCard style={{height:"400px",overflow: 'auto'}}>
+          <CTabs> 
+            <CNav variant="tabs">
+                <CNavItem>
+                  <CNavLink style = {{color: 'black'}}>
+                    Recently Web Scanned Target
+                  </CNavLink>
+                </CNavItem>
+                <CNavItem>
+                  <CNavLink style = {{color: 'black'}}>
+                    Recently Network Scanned Target
+                  </CNavLink>
+                </CNavItem>
+            </CNav>
+            <CCardBody>
+              <CTabContent>
+                  <CTabPane>
+                    <CDataTable
+                    items={targets}
+                    fields={fields}
+                    size="sm"
+                    scopedSlots = {{
+                      'target':
+                        (item)=>(
+                          <td>
+                            <CLink 
+                              style={{color: 'red'}} 
+                              to={{
+                                pathname: "/vulnerabilities",
+                                state: {id:item.id}
+                              }}
+                            >
+                              {item.target}
+                            </CLink>
+                          </td>
+                        ),
+                            }}/>
+                  </CTabPane>
+                  <CTabPane>
+                  </CTabPane>
+              </CTabContent>
+            </CCardBody>
+          </CTabs>
+        </CCard>
+        
+        
+        <CCard style={{height:"400px",overflow: 'auto'}} accentColor="danger">
+          <CCardHeader style = {{color: 'black'}}>
+            Top Vulnerabilities
           </CCardHeader>
           <CCardBody>
             <CDataTable
-            items={targets}
-            fields={fields}
-
-            size="sm"
-            scopedSlots = {{
-              'target':
-                (item)=>(
-                  <td>
-                    <CLink 
-                      style={{color: 'red'}} 
-                      to={{
-                        pathname: "/vulnerabilities",
-                        state: {id:item.id}
-                      }}
-                    >
-                      {item.target}
-                    </CLink>
-                  </td>
-                ),
-                    }}/>
+              size="sm"
+            />
           </CCardBody>
         </CCard>
       </CCol>
@@ -235,38 +303,7 @@ const Dashboards = () => {
 
     
       
-      <CRow>
-        <CCol sm="12" md="6">
-          <CCard>
-            <CCardBody>
-              <CChartBar
-                  datasets={datasets_scanned}
-                  labels={days}
-                  options={{
-                    tooltips: {
-                      enabled: true
-                    }
-                  }}
-                />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol sm="12" md="6">
-          <CCard>
-            <CCardBody>
-              <CChartBar
-                datasets={datasets_vul}
-                labels={days}
-                options={{
-                  tooltips: {
-                    enabled: true
-                  }
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+      
       </>
   )
 }
