@@ -91,143 +91,159 @@ class ReportsConsumer(AsyncWebsocketConsumer):
                     }
                 )
                 await self.send(text_data=JSON.dumps({"status": "200", "urlList": url}))
+            _urlLists = [urlList]
+            if len(urlList) > 30:
+                print(f"length of urslList: {len(urlList)}")
+                _urlLists = []
+                for i in range(int(len(urlList) / 30) + 1):
+                    front = i * 30
+                    back = (i + 1) * 30
+                    if back > len(urlList):
+                        back = len(urlList)
+                    _urlLists.append(urlList[front:back])
             print("doing scan...")
             await session.close()
 
         if url_fuzz:
             await self.send(text_data=JSON.dumps({"message": "doing url fuzz..."}))
-            tasks = []
-            for url in urlList:
-                session = ClientSession()
-                task = asyncio.create_task(
-                    # shmlackShmidow.main(
-                    #     url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
-                    # )
-                    HeukGwabu.main(
-                        url["url"],
-                        session=session,
-                        username=verification.username,
-                        scan_session_id=scan_session_id,
+            for _urlList in _urlLists:
+                tasks = []
+                for url in _urlList:
+                    session = ClientSession()
+                    task = asyncio.create_task(
+                        # shmlackShmidow.main(
+                        #     url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
+                        # )
+                        HeukGwabu.main(
+                            url["url"],
+                            session=session,
+                            username=verification.username,
+                            scan_session_id=scan_session_id,
+                        )
                     )
-                )
-                tasks.append(task)
+                    tasks.append(task)
 
-            for coro in asyncio.as_completed(tasks):
-                reports, requests, responses, vulncount = await asyncio.shield(coro)
+                for coro in asyncio.as_completed(tasks):
+                    reports, requests, responses, vulncount = await asyncio.shield(coro)
 
-                result_vulncount["SQL Injection"] += vulncount["SQL Injection"]
-                result_vulncount["XSS"] += vulncount["XSS"]
-                result_vulncount["Open Redirect"] += vulncount["Open Redirect"]
-                result_vulncount["Windows Directory Traversal"] += vulncount[
-                    "Windows Directory Traversal"
-                ]
-                result_vulncount["Linux Directory Traversal"] += vulncount[
-                    "Linux Directory Traversal"
-                ]
-                result_vulncount["LFI Check"] += vulncount["LFI Check"]
-                result_vulncount["RFI Check"] += vulncount["RFI Check"]
-                result_vulncount["RCE Linux Check"] += vulncount["RCE Linux Check"]
-                result_vulncount["RCE PHP Check"] += vulncount["RCE PHP Check"]
-                result_vulncount["SSTI Check"] += vulncount["SSTI Check"]
+                    result_vulncount["SQL Injection"] += vulncount["SQL Injection"]
+                    result_vulncount["XSS"] += vulncount["XSS"]
+                    result_vulncount["Open Redirect"] += vulncount["Open Redirect"]
+                    result_vulncount["Windows Directory Traversal"] += vulncount[
+                        "Windows Directory Traversal"
+                    ]
+                    result_vulncount["Linux Directory Traversal"] += vulncount[
+                        "Linux Directory Traversal"
+                    ]
+                    result_vulncount["LFI Check"] += vulncount["LFI Check"]
+                    result_vulncount["RFI Check"] += vulncount["RFI Check"]
+                    result_vulncount["RCE Linux Check"] += vulncount["RCE Linux Check"]
+                    result_vulncount["RCE PHP Check"] += vulncount["RCE PHP Check"]
+                    result_vulncount["SSTI Check"] += vulncount["SSTI Check"]
 
-                reports_serializers = ReportsSerializer(data=reports, many=True)
-                requests_serializers = RequestHeadersSerializer(
-                    data=requests, many=True
-                )
-                responses_serializers = ResponseHeadersSerializer(
-                    data=responses, many=True
-                )
-
-                if (
-                    await sync_to_async(reports_serializers.is_valid)(
-                        raise_exception=True
+                    reports_serializers = ReportsSerializer(data=reports, many=True)
+                    requests_serializers = RequestHeadersSerializer(
+                        data=requests, many=True
                     )
-                    and await sync_to_async(requests_serializers.is_valid)(
-                        raise_exception=True
+                    responses_serializers = ResponseHeadersSerializer(
+                        data=responses, many=True
                     )
-                    and await sync_to_async(responses_serializers.is_valid)(
-                        raise_exception=True
-                    )
-                ):
-                    await database_sync_to_async(reports_serializers.save)()
-                    await database_sync_to_async(requests_serializers.save)()
-                    await database_sync_to_async(responses_serializers.save)()
+                    try:
+                        if (
+                            await sync_to_async(reports_serializers.is_valid)(
+                                raise_exception=True
+                            )
+                            and await sync_to_async(requests_serializers.is_valid)(
+                                raise_exception=True
+                            )
+                            and await sync_to_async(responses_serializers.is_valid)(
+                                raise_exception=True
+                            )
+                        ):
+                            await database_sync_to_async(reports_serializers.save)()
+                            await database_sync_to_async(requests_serializers.save)()
+                            await database_sync_to_async(responses_serializers.save)()
+                    except Exception as e:
+                        print(e)
+                        for report in reports:
+                            print(f"id: {report['id']} url: {report['url']} vulon: {report['vulnerability']}")
 
-                # if requests_serializers.is_valid(raise_exception=True):
-                #     await database_sync_to_async(requests_serializers.save)()
+                    # if requests_serializers.is_valid(raise_exception=True):
+                    #     await database_sync_to_async(requests_serializers.save)()
 
-                # if responses_serializers.is_valid(raise_exception=True):
-                #     await database_sync_to_async(responses_serializers.save)()
+                    # if responses_serializers.is_valid(raise_exception=True):
+                    #     await database_sync_to_async(responses_serializers.save)()
 
-                result = {}
-                result["reports"] = reports
-                result["requests"] = requests
-                result["responses"] = responses
+                    result = {}
+                    result["reports"] = reports
+                    result["requests"] = requests
+                    result["responses"] = responses
 
-                await self.send(text_data=JSON.dumps(result))
+                    await self.send(text_data=JSON.dumps(result))
 
         if form_fuzz:
             print("doing form fuzz")
             await self.send(text_data=JSON.dumps({"message": "doing form fuzz..."}))
-            tasks = []
-            for url in urlList:
-                session = ClientSession()
-                task = asyncio.create_task(
-                    # shmlackShmidow.main(
-                    #     url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
-                    # )
-                    JeokGwabu.main(
-                        url=url["url"],
-                        session=session,
-                        username=verification.username,
-                        scan_session_id=scan_session_id,
+            for _urlList in _urlLists:
+                tasks = []
+                for url in _urlList:
+                    session = ClientSession()
+                    task = asyncio.create_task(
+                        # shmlackShmidow.main(
+                        #     url['url'], session=session, username=verification.username, scan_session_id=scan_session_id
+                        # )
+                        JeokGwabu.main(
+                            url=url["url"],
+                            session=session,
+                            username=verification.username,
+                            scan_session_id=scan_session_id,
+                        )
                     )
-                )
-                tasks.append(task)
+                    tasks.append(task)
 
-            for coro in asyncio.as_completed(tasks):
-                reports, requests, responses, vulncount = await asyncio.shield(coro)
-                if reports == [] and requests == [] and responses == []:
-                    print("empty received")
-                    continue
-                result_vulncount["SQL Injection"] += vulncount["SQL Injection"]
-                result_vulncount["XSS"] += vulncount["XSS"]
+                for coro in asyncio.as_completed(tasks):
+                    reports, requests, responses, vulncount = await asyncio.shield(coro)
+                    if reports == [] and requests == [] and responses == []:
+                        print("empty received")
+                        continue
+                    result_vulncount["SQL Injection"] += vulncount["SQL Injection"]
+                    result_vulncount["XSS"] += vulncount["XSS"]
 
-                reports_serializers = ReportsSerializer(data=reports, many=True)
-                requests_serializers = RequestHeadersSerializer(
-                    data=requests, many=True
-                )
-                responses_serializers = ResponseHeadersSerializer(
-                    data=responses, many=True
-                )
-
-                if (
-                    await sync_to_async(reports_serializers.is_valid)(
-                        raise_exception=True
+                    reports_serializers = ReportsSerializer(data=reports, many=True)
+                    requests_serializers = RequestHeadersSerializer(
+                        data=requests, many=True
                     )
-                    and await sync_to_async(requests_serializers.is_valid)(
-                        raise_exception=True
+                    responses_serializers = ResponseHeadersSerializer(
+                        data=responses, many=True
                     )
-                    and await sync_to_async(responses_serializers.is_valid)(
-                        raise_exception=True
-                    )
-                ):
-                    await database_sync_to_async(reports_serializers.save)()
-                    await database_sync_to_async(requests_serializers.save)()
-                    await database_sync_to_async(responses_serializers.save)()
 
-                # if requests_serializers.is_valid(raise_exception=True):
-                #     await database_sync_to_async(requests_serializers.save)()
+                    if (
+                        await sync_to_async(reports_serializers.is_valid)(
+                            raise_exception=True
+                        )
+                        and await sync_to_async(requests_serializers.is_valid)(
+                            raise_exception=True
+                        )
+                        and await sync_to_async(responses_serializers.is_valid)(
+                            raise_exception=True
+                        )
+                    ):
+                        await database_sync_to_async(reports_serializers.save)()
+                        await database_sync_to_async(requests_serializers.save)()
+                        await database_sync_to_async(responses_serializers.save)()
 
-                # if responses_serializers.is_valid(raise_exception=True):
-                #     await database_sync_to_async(responses_serializers.save)()
+                    # if requests_serializers.is_valid(raise_exception=True):
+                    #     await database_sync_to_async(requests_serializers.save)()
 
-                result = {}
-                result["reports"] = reports
-                result["requests"] = requests
-                result["responses"] = responses
+                    # if responses_serializers.is_valid(raise_exception=True):
+                    #     await database_sync_to_async(responses_serializers.save)()
 
-                await self.send(text_data=JSON.dumps(result))
+                    result = {}
+                    result["reports"] = reports
+                    result["requests"] = requests
+                    result["responses"] = responses
+
+                    await self.send(text_data=JSON.dumps(result))
 
         if traversal_check:
             await self.send(text_data=JSON.dumps({"message": "doing traversal check..."}))

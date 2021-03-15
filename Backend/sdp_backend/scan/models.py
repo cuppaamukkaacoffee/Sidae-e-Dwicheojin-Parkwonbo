@@ -35,6 +35,7 @@ class ResponseHeaders(models.Model):
     id = models.TextField(primary_key=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     headers_string = models.TextField(default="")
+    body = models.TextField(default="", blank=True)
 
 
 class Targets(models.Model):

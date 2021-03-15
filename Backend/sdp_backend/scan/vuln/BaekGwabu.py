@@ -91,7 +91,8 @@ async def fire_payload(session, username, target, path, scan_session_id, count):
 
     try:
         http_request = await session.get(target + path)
-        http_response = (await http_request.read()).decode("utf-8")
+        http_response_raw = await http_request.read()
+        http_response = http_response_raw.decode("utf-8")
         http_length = len(http_response)
         http_status = http_request.status
 
@@ -123,6 +124,7 @@ async def fire_payload(session, username, target, path, scan_session_id, count):
             response = {
                 "id": id,
                 "headers_string": json.dumps(dict(http_request.headers)),
+                "body": http_response
             }
 
     except Exception as exception:

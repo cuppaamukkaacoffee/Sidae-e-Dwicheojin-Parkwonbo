@@ -92,7 +92,10 @@ async def scan_sql_injection(
                 if input_tag["type"] == "hidden" or input_tag["value"]:
 
                     try:
-                        data[input_tag["name"]] = input_tag["value"] + c
+                        if input_tag["name"] != None:
+                            data[input_tag["name"]] = input_tag["value"] + c
+                        else:
+                            data['generic name'] = input_tag["value"] + c
                     except:
                         pass
                 elif input_tag["type"] != "submit":
@@ -100,12 +103,17 @@ async def scan_sql_injection(
                     data[input_tag["name"]] = f"test{c}"
 
             url = urljoin(url, form_details["action"])
-            if form_details["method"] == "post":
-                res = await session.post(url, data=data)
-            elif form_details["method"] == "get":
-                res = await session.get(url, params=data)
+            try:
+                if form_details["method"] == "post":
+                    res = await session.post(url, data=data)
+                elif form_details["method"] == "get":
+                    res = await session.get(url, params=data)
+                    
+            except Exception as e:
+                print(f"{e} at {url} and {data}")
 
-            http_response = (await res.read()).decode("utf-8")
+            http_response_raw = await res.read()
+            http_response = http_response_raw.decode("utf-8")
             http_length = len(http_response)
             http_status = res.status
 
@@ -143,6 +151,7 @@ async def scan_sql_injection(
             response = {
                 "id": id,
                 "headers_string": json.dumps(dict(res.headers)),
+                "body": http_response
             }
 
             reports.append(report)
@@ -201,7 +210,8 @@ async def scan_xss(
             result_string = "benign"
             form_details = get_form_details(form)
             res, body = await submit_form(session, form_details, url, payload)
-            http_response = (await res.read()).decode("utf-8")
+            http_response_raw = await res.read()
+            http_response = http_response_raw.decode("utf-8")
             http_length = len(http_response)
             http_status = res.status
 
@@ -239,6 +249,7 @@ async def scan_xss(
             response = {
                 "id": id,
                 "headers_string": json.dumps(dict(res.headers)),
+                "body": http_response
             }
 
             reports.append(report)
