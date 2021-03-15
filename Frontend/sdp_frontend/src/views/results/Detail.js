@@ -9,6 +9,8 @@ import {
     CCardHeader,
     CCardFooter,
     CButton,
+    CEmbed,
+    CEmbedItem
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as content from './Detail_content';
@@ -25,6 +27,7 @@ const Detail = ({location}) => {
   const [Ref,setRef] = useState(true);
   const [Form,setForm] = useState(true);
   const {rep,req,res} = location.state;
+  const [collapse, setCollapse] = useState(false);
 
   useEffect(() => {
       console.log(location.state)
@@ -182,9 +185,19 @@ const Detail = ({location}) => {
             <CCard accentColor="primary">
               <CCardHeader >
                   <strong>Body</strong>
+                  <CButton color="primary" onClick={()=>{setCollapse(!collapse)}} style={{float: 'right'}}>Render</CButton>
               </CCardHeader>
               <CCardBody style={{height:"350px", overflow:"auto", whiteSpace:"pre-wrap"}}>
-                  {body}
+                  <CCollapse show={collapse}>
+                      {collapse&&
+                          <CEmbed>
+                              <CEmbedItem src={rep.url}/>
+                          </CEmbed>
+                      }
+                  </CCollapse>
+                  <CCollapse show={!collapse}>
+                      {body}
+                  </CCollapse>
               </CCardBody>
             </CCard>
             <hr style={{width:"100%"}}/>

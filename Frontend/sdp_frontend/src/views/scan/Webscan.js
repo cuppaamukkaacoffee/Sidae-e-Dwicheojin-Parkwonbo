@@ -29,7 +29,10 @@ import {
   CToastHeader,
   CToastBody,
   CSwitch,
-  CBadge
+  CBadge,
+  CCollapse,
+  CEmbed,
+  CEmbedItem
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as loadingActions from 'src/store/modules/loading/actions';
@@ -41,6 +44,7 @@ const Webscan = () => {
   const [toast_Active,set_toast_Active] = useState(false)
   const [first_rendering,set_first_rendering] = useState(true)
   const [currentPage, setCurrentPage] = useState(1);
+  const [collapse, setCollapse] = useState(false);
 
   const dispatch = useDispatch();
   const {
@@ -190,6 +194,7 @@ const Webscan = () => {
   
 
   const handleRowclick = (e) =>{
+    setCollapse(false);
     const req = requests.find((el) => el.id === e.id);
     const res = responses.find((el) => el.id === e.id);
     dispatch(userActions.set_request(req));
@@ -345,14 +350,24 @@ const Webscan = () => {
                             {report.url? <p><strong>Url</strong> : <a href = {report.url} target="_blank">{report.url}</a></p> : null}
                             {res}     
                             {response.body &&
-                              <CCard accentColor="primary">
-                                  <CCardHeader >
-                                      <strong>Body</strong>
-                                  </CCardHeader>
-                                  <CCardBody style={{height:"350px", overflow:"auto", whiteSpace:"pre-wrap"}}>
-                                      {body}
-                                  </CCardBody>
-                              </CCard>
+                                <CCard accentColor="primary">
+                                    <CCardHeader >
+                                        <strong>Body</strong>
+                                        <CButton color="primary" onClick={()=>{setCollapse(!collapse)}} disabled={loading} style={{float: 'right'}}>Render</CButton>
+                                    </CCardHeader>
+                                    <CCardBody style={{height:"350px", overflow:"auto", whiteSpace:"pre-wrap"}}>
+                                        <CCollapse show={collapse}>
+                                            {collapse&&
+                                                <CEmbed>
+                                                    <CEmbedItem src={report.url}/>
+                                                </CEmbed>
+                                            }
+                                        </CCollapse>
+                                        <CCollapse show={!collapse}>
+                                            {body}
+                                        </CCollapse>
+                                    </CCardBody>
+                                </CCard>
                             }                                              
                           </CTabPane>
                           <CTabPane>  

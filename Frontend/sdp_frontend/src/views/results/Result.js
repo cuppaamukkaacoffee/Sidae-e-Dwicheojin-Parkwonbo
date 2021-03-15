@@ -24,7 +24,10 @@ import {
   CTabs,
   CSpinner,
   CPagination,
-  CBadge
+  CBadge,
+  CEmbed,
+  CEmbedItem,
+  CCollapse
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as userActions from 'src/store/modules/user/actions';
@@ -34,7 +37,8 @@ const fields = ['target','sub_path', 'url', 'result_string','vulnerability','sca
 const Result = () => {
     const dispatch = useDispatch();
     const [currentPage, setCurrentPage] = useState(1);
-    const ref = useRef();
+    const [collapse, setCollapse] = useState(false);
+
     const {
     id,
     url,
@@ -110,6 +114,7 @@ const Result = () => {
         }
 
     const handleRowclick = (e) =>{
+        setCollapse(false);
         const req = requests.find((el) => el.id === e.id);
         const res = responses.find((el) => el.id === e.id);
         dispatch(userActions.set_request(req));
@@ -119,6 +124,7 @@ const Result = () => {
     
     
     const handleSubmit_results = useCallback(() =>{
+        setCollapse(false);
         dispatch(userActions.reset_r())
         dispatch(userActions.results_check({id : id, url : url, scan_type: scan_type,vul : vul, result_string : result_string, with_headers : true}))
       }, [id ,url, vul, result_string, scan_type])
@@ -293,12 +299,23 @@ const Result = () => {
                             <CCard accentColor="primary">
                                 <CCardHeader >
                                     <strong>Body</strong>
+                                    <CButton color="primary" onClick={()=>{setCollapse(!collapse)}} style={{float: 'right'}}>Render</CButton>
                                 </CCardHeader>
                                 <CCardBody style={{height:"350px", overflow:"auto", whiteSpace:"pre-wrap"}}>
-                                    {body}
+                                    <CCollapse show={collapse}>
+                                        {collapse&&
+                                            <CEmbed>
+                                                <CEmbedItem src={report.url}/>
+                                            </CEmbed>
+                                        }
+                                    </CCollapse>
+                                    <CCollapse show={!collapse}>
+                                        {body}
+                                    </CCollapse>
                                 </CCardBody>
                             </CCard>
-                        }   
+                        }
+
                     
                     </CTabPane>
                     <CTabPane>
