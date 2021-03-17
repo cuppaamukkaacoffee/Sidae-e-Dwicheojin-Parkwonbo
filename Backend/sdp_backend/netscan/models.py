@@ -16,6 +16,14 @@ class Ports(models.Model):
     username = models.TextField(max_length=15, default="")
     target = models.TextField(default="")
     ip_address = models.TextField(default="")
-    port_number = models.TextField(default="")
+    port_number = models.IntegerField(default=0)
+    port_protocol = models.TextField(default="")
     port_status = models.TextField(default="")
-    port_service = models.TextField(default="")
+
+
+class Targets(models.Model):
+    id = models.TextField(primary_key=True)
+    target = models.TextField(default="")
+    username = models.TextField(default="")
+    open_ports = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now_add=True)

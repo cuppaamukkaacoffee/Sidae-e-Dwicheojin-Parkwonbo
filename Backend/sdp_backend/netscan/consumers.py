@@ -4,12 +4,14 @@ from channels.generic.websocket import WebsocketConsumer
 from .scanner.domain_name import get_domain_name
 from .scanner.ip_address import get_ip_address
 from .scanner.nmap import get_nmap
+from .scanner.masscan import get_masscan
 from login.jwt import JwtHelper, AsyncJwtHelper
 import channels.exceptions
 
 from .serializers import (
     PortsSerializer,
     CrawledIPsSerializer,
+    TargetsSerializer
 )
 import hashlib, datetime, random
 
@@ -21,6 +23,7 @@ class NetscanConsumer(WebsocketConsumer):
     def disconnect(self, message):
         self.send(text_data=JSON.dumps({"message": message}))
         self.close()
+        raise channels.exceptions.StopConsumer
 
     def receive(self, text_data):
         random.seed(datetime.datetime.now())
@@ -32,22 +35,19 @@ class NetscanConsumer(WebsocketConsumer):
         try:
             token = data_json["token"]
             target = data_json["target"]
-
-            fast_scan = data_json["fast_scan"]
+            port_range = data_json["port_range"]
+            rate = data_json["rate"]
 
         except:
             print("nothing")
             self.disconnect(message="missing body attribute")
-            raise channels.exceptions.StopConsumer
 
         verification = jwt.validate(token)
         print(verification)
         if not verification:
             self.disconnect(message="invalid token")
-            raise channels.exceptions.StopConsumer
         elif type(verification) == str:
             self.disconnect(message=verification)
-            raise channels.exceptions.StopConsumer
 
         scan_session_id = hashlib.md5(
             (str(random.random())).encode("utf-8")
@@ -60,12 +60,16 @@ class NetscanConsumer(WebsocketConsumer):
 
             domain_name = get_domain_name(target)
             print(domain_name)
-            ip_list = get_ip_address(domain_name)
+            ip_plus_dummy = get_ip_address(domain_name)
             crawledIPs = []
-            marker = ip_list.find('has address')
+            ip_list = []
+
+            marker = ip_plus_dummy.find('has address')
             while marker != -1:
-                ip_address = ip_list[marker + 12:].splitlines()[0]
+                ip_address = ip_plus_dummy[marker + 12:].splitlines()[0]
                 self.send(text_data=JSON.dumps({"ip_address": ip_address}))
+
+                ip_list.append(ip_address)
                 crawledIPs.append(
                     {
                         "id": hashlib.md5(
@@ -77,41 +81,65 @@ class NetscanConsumer(WebsocketConsumer):
                         "ip_address": ip_address,
                     }
                 )
-                marker = ip_list.find('has address', marker + 13)
+                marker = ip_plus_dummy.find('has address', marker + 13)
 
+        else:
+            self.disconnect(message="invalid target")
+            raise channels.exceptions.StopConsumer
+
+        open_ports = 0
         ports = []
-        if fast_scan:
-            self.send(text_data=JSON.dumps({"message": "doing fast scan..."}))
-            for ip_dict in crawledIPs:
-                ip = ip_dict["ip_address"]
-                print(ip)
-                lines = get_nmap("-F -Pn", ip)
-                for line in lines:
-                    line_split = line.split()
-                    port_number = line_split[0]
-                    port_status = line_split[1]
-                    port_service = line_split[2]
+        if not port_range:
+            port_range = "0-65535"
+        if not rate:
+            rate = "100"
+        p = get_masscan(port_range, ip_list, rate)
+        while p.poll() == None:
+            out = p.stdout.readline()
+            if out.startswith('Discovered open port'):
+                start = out.find('port ')
+                mid = out.find('/', start)
+                end = out.find(' ', mid)
+                port_number = out[start + 5:mid]
+                port_protocol = out[mid + 1:end]
 
-                    self.send(text_data=JSON.dumps({"ip_address": ip,
-                                                    "port_number": port_number,
-                                                    "port_status": port_status,
-                                                    "port_service": port_service}))
-                    ports.append(
-                        {
-                            "id": hashlib.md5(
-                                (port_number + ip + verification.username).encode("utf-8")
-                            ).hexdigest(),
-                            "scan_session_id": scan_session_id,
-                            "username": verification.username,
-                            "target": target,
-                            "ip_address": ip,
-                            "port_number": port_number,
-                            "port_status": port_status,
-                            "port_service": port_service,
-                        }
-                    )
+                start = out.find('on ')
+                end = out.find('\n', start)
+                ip_address = out[start + 3:end].rstrip(" ")
+
+                self.send(JSON.dumps({'status': 'open', 'port_number': port_number, 'port_protocol': port_protocol,
+                                      'ip_address': ip_address}))
+
+                open_ports = open_ports + 1
+                ports.append(
+                    {
+                        "id": hashlib.md5(
+                            (port_number + ip_address + verification.username).encode("utf-8")
+                        ).hexdigest(),
+                        "scan_session_id": scan_session_id,
+                        "username": verification.username,
+                        "target": target,
+                        "ip_address": ip_address,
+                        "port_number": port_number,
+                        "port_protocol": port_protocol,
+                        "port_status": "open"
+                    }
+                )
+            elif out.startswith('rate: '):
+                start = out.find('rate: ')
+                end = out.find(',', start)
+                rate = out[start + 6:end]
+
+                start = end + 1
+                end = out.find(' done', start)
+                process = out[start:end].lstrip(" ")
+
+                self.send(JSON.dumps({'rate': rate, 'process': process}))
+
         ip_serializer = CrawledIPsSerializer(data=crawledIPs, many=True)
         port_serializer = PortsSerializer(data=ports, many=True)
+        target_serializer = TargetsSerializer(data={"id": scan_session_id, "target": target,
+                                                   "username": verification.username, "open_ports": open_ports})
         try:
             if ip_serializer.is_valid():
                 ip_serializer.save()
@@ -122,54 +150,11 @@ class NetscanConsumer(WebsocketConsumer):
                 port_serializer.save()
         except Exception as e:
             print(e)
+        try:
+            if target_serializer.is_valid():
+                target_serializer.save()
+        except Exception as e:
+            print(e)
 
         self.send(text_data=JSON.dumps({"status": "200"}))
         self.disconnect(message="all good")
-
-        # else:
-        #     await self.send(text_data=JSON.dumps({"message": "doing full scan..."}))
-        #     for ip in ip_list:
-        #         lines = get_nmap("-p1-65535 --open -Pn", ip)
-        #         for line in lines:
-        #             line_split = line.split()
-        #             port_number = line_split[0]
-        #             port_status = line_split[1]
-        #             port_service = line_split[2]
-        #
-        #             ports.append(
-        #                 {
-        #                     "id": hashlib.md5(
-        #                         (port_number + verification.username).encode("utf-8")
-        #                     ).hexdigest(),
-        #                     "fast_scan": False,
-        #                     "scan_session_id": scan_session_id,
-        #                     "username": verification.username,
-        #                     "target": target,
-        #                     "ip_address": ip,
-        #                     "port_number": port_number,
-        #                     "port_status": port_status,
-        #                     "port_service": port_service,
-        #                 }
-        #             )
-        #         lines = get_nmap("-p1-65535 -sU --open -Pn", ip)
-        #         for line in lines:
-        #             line_split = line.split()
-        #             port_number = line_split[0]
-        #             port_status = line_split[1]
-        #             port_service = line_split[2]
-        #
-        #             ports.append(
-        #                 {
-        #                     "id": hashlib.md5(
-        #                         (port_number + verification.username).encode("utf-8")
-        #                     ).hexdigest(),
-        #                     "fast_scan": False,
-        #                     "scan_session_id": scan_session_id,
-        #                     "username": verification.username,
-        #                     "target": target,
-        #                     "ip_address": ip,
-        #                     "port_number": port_number,
-        #                     "port_status": port_status,
-        #                     "port_service": port_service,
-        #                 }
-        #             )

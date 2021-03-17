@@ -73,7 +73,9 @@ POST:
 
   - 'target': 타겟 서비스 주소,
 
-  - 'fast_scan': Nmap -F 스캔 여부 'True/False' (현재는 무조건 True로만)
+  - 'port_range': 스캔할 포트 넘버 (ex. '1-443,65535') 빈 문자열일 시, 0-65535
+  
+  - 'rate' 스캔 속도 pps (string으로 보낼 것) 빈 문자열일 시, 100
 
 -> ip address 목록, port scan 목록
 

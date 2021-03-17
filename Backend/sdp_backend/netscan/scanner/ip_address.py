@@ -7,5 +7,3 @@ def get_ip_address(url):
     results = str(process.read())
 
     return results
-
-# print(get_ip_address('naver.com'))
