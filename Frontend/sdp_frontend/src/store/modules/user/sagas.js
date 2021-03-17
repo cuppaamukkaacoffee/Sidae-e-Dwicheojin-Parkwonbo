@@ -26,6 +26,10 @@ function* goToLoginSaga() {
   history.push('/login');
 }
 
+function* tokenExpired(){
+  sessionStorage.clear();
+  history.push('/login');
+}
 
 export default function* rootSaga() {
   yield [
@@ -37,5 +41,9 @@ export default function* rootSaga() {
     yield takeLatest(USER.VUL_RESULTS_CHECK, vul_results_check),
     yield takeLatest(USER.DASHBOARD_DATA_CHECK, dashboard_data_check),
     yield takeLatest(USER.TARGETS_CHECK, targets_check),
+    yield takeLatest(USER.RESULTS_CHECK_FAILED, tokenExpired),
+    yield takeLatest(USER.VUL_RESULTS_CHECK_FAILED, tokenExpired),
+    yield takeLatest(USER.DASHBOARD_DATA_CHECK_FAILED, tokenExpired),
+    yield takeLatest(USER.TARGETS_CHECK_FAILED, tokenExpired),
   ];
 }

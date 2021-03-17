@@ -27,7 +27,7 @@ import {
   CBadge,
   CEmbed,
   CEmbedItem,
-  CCollapse
+  CCollapse,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import * as userActions from 'src/store/modules/user/actions';
@@ -115,6 +115,7 @@ const Result = () => {
 
     const handleRowclick = (e) =>{
         setCollapse(false);
+        dispatch(userActions.reset_r())
         const req = requests.find((el) => el.id === e.id);
         const res = responses.find((el) => el.id === e.id);
         dispatch(userActions.set_request(req));
@@ -315,8 +316,6 @@ const Result = () => {
                                 </CCardBody>
                             </CCard>
                         }
-
-                    
                     </CTabPane>
                     <CTabPane>
                         <br/>

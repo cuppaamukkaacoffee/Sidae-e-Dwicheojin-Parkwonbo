@@ -34,7 +34,7 @@ const TheHeaderDropdown = () => {
         <CDropdownItem to="/user">
           <CIcon name="cil-user" className="mfe-2" />Profile
         </CDropdownItem>
-        <CDropdownItem to="/login">
+        <CDropdownItem to="/login" onClick={()=>{sessionStorage.clear();}}>
           <CIcon name="cilX" className="mfe-2" />
           Logout
         </CDropdownItem>
