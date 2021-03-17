@@ -148,7 +148,7 @@ const Detail = ({location}) => {
         </CCollapse>
 
         <CButton onClick={() => setAttack(!Attack)}>
-          <span style={{fontWeight:"bold",fontSize:"15px"}}>{Attack?<CIcon size="sm" name="cilChevronDoubleUp"/>:<CIcon size="sm" name="cilChevronDoubleDown"/>}Attack Payload</span>
+          <span style={{fontWeight:"bold",fontSize:"15px"}}>{Attack?<CIcon size="sm" name="cilChevronDoubleUp"/>:<CIcon size="sm" name="cilChevronDoubleDown"/>}Target URL</span>
         </CButton>
         <hr style={{width:"100%"}}/>
         <CCollapse show={Attack}>
