@@ -63,21 +63,7 @@ POST:
 
 -> 서브 도메인 목록, 전체 결과 JSON 목록
   
-  # ws://\<주소>:8000/ws/netscan/
 
-- 웹소켓 전용
-
-- 연결후 data에 JSON
- 
-  - 'token': 'Token \<JWT>'
-
-  - 'target': 타겟 서비스 주소,
-
-  - 'port_range': 스캔할 포트 넘버 (ex. '1-443,65535') 빈 문자열일 시, 0-65535
-  
-  - 'rate' 스캔 속도 pps (string으로 보낼 것) 빈 문자열일 시, 100
-
--> ip address 목록, port scan 목록
 
 
 # Todo
@@ -98,12 +84,48 @@ POST:
 
 - 크롤링 읍답 속도 향상 :white_check_mark:
 
+---
+
+# /netscan/target/
+
+GET:
+
+- header Authorization 항목에 'Token \<JWT>'
+
+- body에
+
+  - 'username': Token 소유주와 일치해야함 (필수)
+
+  - 'target': 타켓 서비스 주소 (필수, 복수 가능)  
+  ex) 'http://testhtml5.vulnweb.com/, http://testphp.vulnweb.com/'  
+    'http://domain/' 형식 지켜야됨, ','으로 타겟 구분
+
+  - 'timestamp': 스캔한 날짜 (필수x)  
+  ex) 2021-03-19  
+-> 결과 JSON 목록
+
+ # ws://\<주소>:8000/ws/netscan/
+
+- 웹소켓 전용
+
+- 연결후 data에 JSON
+ 
+  - 'token': 'Token \<JWT>'
+
+  - 'target': 타겟 서비스 주소,
+
+  - 'port_range': 스캔할 포트 넘버 (ex. '1-443,65535') 빈 문자열일 시, 0-65535
+  
+  - 'rate' 스캔 속도 pps (string으로 보낼 것) 빈 문자열일 시, 100
+
+-> ip address 목록, port scan 목록
+
 # Network Scan Todo
 
 
-- 관리자 권한 여부 (runserver를 관리자 권한으로 실행 고려)
+- 관리자 권한 여부 (runserver를 관리자 권한으로 실행 고려) :white_check_mark:
 
-- Nmap full Scan 시, Nmap 자체의 성능으로 인한 시간 지연 (masscan 도입 고려)
+- Nmap full Scan 시, Nmap 자체의 성능으로 인한 시간 지연 (masscan 도입 고려) :white_check_mark:
 
 - half mode scan, Xmas scan, Null scan 등 다양한 옵션 추가
 

@@ -74,7 +74,7 @@ class NetscanConsumer(WebsocketConsumer):
                 crawledIPs.append(
                     {
                         "id": hashlib.md5(
-                            (ip_address + verification.username).encode("utf-8")
+                            (ip_address + scan_session_id + verification.username).encode("utf-8")
                         ).hexdigest(),
                         "scan_session_id": scan_session_id,
                         "username": verification.username,
@@ -147,7 +147,8 @@ class NetscanConsumer(WebsocketConsumer):
         ip_serializer = CrawledIPsSerializer(data=crawledIPs, many=True)
         port_serializer = PortsSerializer(data=ports, many=True)
         target_serializer = TargetsSerializer(data={"id": scan_session_id, "target": target,
-                                                   "username": verification.username, "open_ports": open_ports})
+                                                   "username": verification.username, "scan_session_id": scan_session_id,
+                                                    "open_ports": open_ports})
         try:
             if ip_serializer.is_valid():
                 ip_serializer.save()
