@@ -5,13 +5,15 @@ from .scanner.domain_name import get_domain_name
 from .scanner.ip_address import get_ip_address
 from .scanner.nmap import get_nmap
 from .scanner.masscan import get_masscan
+from .scanner.py_whois import get_whois
 from login.jwt import JwtHelper, AsyncJwtHelper
 import channels.exceptions
 
 from .serializers import (
     PortsSerializer,
     CrawledIPsSerializer,
-    TargetsSerializer
+    TargetsSerializer,
+    WhoissSerializer
 )
 import hashlib, datetime, random
 import asyncio
@@ -38,7 +40,7 @@ class NetscanConsumer(WebsocketConsumer):
             target = data_json["target"]
             port_range = data_json["port_range"]
             rate = data_json["rate"]
-
+            whois_flag = data_json["whois_flag"]
         except:
             print("nothing")
             self.disconnect(message="missing body attribute")
@@ -55,10 +57,37 @@ class NetscanConsumer(WebsocketConsumer):
         ).hexdigest()
 
         if target:
-            self.send(text_data=JSON.dumps({"message": "collecting ip addresses..."}))
             if target[-1] != "/":
                 target += "/"
+            if whois_flag:
+                self.send(text_data=JSON.dumps({"message": "collecting whois information..."}))
+                w = get_whois(target)
+                w = {key:value for key, value in w.items() if key in [
+                    'domain_name', 'registrar', 'whois_server', 'referral_url', 'updated_date',
+                    'creation_date', 'expiration_date', 'name_servers', 'status', 'emails', 'dnssec', 'name',
+                    'org', 'address', 'city', 'state', 'zipcode', 'country']}
+                w['id'] = hashlib.md5(
+                            (scan_session_id + verification.username).encode("utf-8")
+                        ).hexdigest()
+                w['scan_session_id'] = scan_session_id
+                w['username'] = verification.username
+                w['target'] = target
+                self.send(JSON.dumps(w))
 
+                for key in w:
+                    item = w[key]
+                    if type(item) == list:
+                        w[key] = ' && '.join(item)
+
+                whois_serializer = WhoissSerializer(data=w)
+                try:
+                    if whois_serializer.is_valid():
+                        whois_serializer.save()
+                    else:
+                        print(whois_serializer.errors)
+                except Exception as e:
+                    print(e)
+            self.send(text_data=JSON.dumps({"message": "collecting ip addresses..."}))
             domain_name = get_domain_name(target)
             print(domain_name)
             ip_plus_dummy = get_ip_address(domain_name)
@@ -90,7 +119,7 @@ class NetscanConsumer(WebsocketConsumer):
 
         self.send(text_data=JSON.dumps({"message": "scanning for open ports..."}))
         open_ports = 0
-        open_port = {}
+
         ports = []
         if not port_range:
             port_range = "0-65535"

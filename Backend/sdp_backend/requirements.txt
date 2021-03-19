@@ -75,3 +75,4 @@ urllib3==1.25.11
 webencodings==0.5.1
 yarl==1.6.3
 zope.interface==5.2.0
+python-whois==0.7.3

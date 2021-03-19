@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ports, CrawledIPs, Targets
+from .models import Ports, CrawledIPs, Targets, Whoiss
 
 
 class PortsSerializer(serializers.ModelSerializer):
@@ -17,4 +17,10 @@ class CrawledIPsSerializer(serializers.ModelSerializer):
 class TargetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Targets
+        fields = "__all__"
+
+
+class WhoissSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Whoiss
         fields = "__all__"
