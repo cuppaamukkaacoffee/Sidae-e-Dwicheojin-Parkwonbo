@@ -116,7 +116,9 @@ GET:
 
   - 'port_range': 스캔할 포트 넘버 (ex. '1-443,65535') 빈 문자열일 시, 0-65535
   
-  - 'rate' 스캔 속도 pps (string으로 보낼 것) 빈 문자열일 시, 100
+  - 'rate' : 스캔 속도 pps (string으로 보낼 것) 빈 문자열일 시, 100
+  
+  - 'whois_flag' : true, false
 
 -> ip address 목록, port scan 목록
 
