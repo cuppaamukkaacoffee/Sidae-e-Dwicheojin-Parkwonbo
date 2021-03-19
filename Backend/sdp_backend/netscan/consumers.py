@@ -1,5 +1,5 @@
 import json as JSON
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 
 from .scanner.domain_name import get_domain_name
 from .scanner.ip_address import get_ip_address
@@ -14,6 +14,7 @@ from .serializers import (
     TargetsSerializer
 )
 import hashlib, datetime, random
+import asyncio
 
 
 class NetscanConsumer(WebsocketConsumer):
@@ -87,13 +88,16 @@ class NetscanConsumer(WebsocketConsumer):
             self.disconnect(message="invalid target")
             raise channels.exceptions.StopConsumer
 
+        self.send(text_data=JSON.dumps({"message": "scanning for open ports..."}))
         open_ports = 0
+        open_port = {}
         ports = []
         if not port_range:
             port_range = "0-65535"
         if not rate:
-            rate = "100"
+            rate = "1000"
         p = get_masscan(port_range, ip_list, rate)
+        process_number = "0"
         while p.poll() == None:
             out = p.stdout.readline()
             if out.startswith('Discovered open port'):
@@ -107,12 +111,7 @@ class NetscanConsumer(WebsocketConsumer):
                 end = out.find('\n', start)
                 ip_address = out[start + 3:end].rstrip(" ")
 
-                self.send(JSON.dumps({'status': 'open', 'port_number': port_number, 'port_protocol': port_protocol,
-                                      'ip_address': ip_address}))
-
-                open_ports = open_ports + 1
-                ports.append(
-                    {
+                open_port = {
                         "id": hashlib.md5(
                             (port_number + ip_address + verification.username).encode("utf-8")
                         ).hexdigest(),
@@ -124,7 +123,11 @@ class NetscanConsumer(WebsocketConsumer):
                         "port_protocol": port_protocol,
                         "port_status": "open"
                     }
-                )
+
+                self.send(JSON.dumps(open_port))
+                ports.append(open_port)
+
+                open_ports = open_ports + 1
             elif out.startswith('rate: '):
                 start = out.find('rate: ')
                 end = out.find(',', start)
@@ -134,7 +137,12 @@ class NetscanConsumer(WebsocketConsumer):
                 end = out.find(' done', start)
                 process = out[start:end].lstrip(" ")
 
-                self.send(JSON.dumps({'rate': rate, 'process': process}))
+                if int(float(process[:-1])) % 10 != process_number and \
+                    float(process[:-1]) != 100.0:
+                    self.send(JSON.dumps({'rate': rate, 'process': process}))
+                    process_number = str((int(process_number) + 1) % 10)
+
+        # self.send(JSON.dumps({'port list': ports}))
 
         ip_serializer = CrawledIPsSerializer(data=crawledIPs, many=True)
         port_serializer = PortsSerializer(data=ports, many=True)
