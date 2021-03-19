@@ -95,7 +95,7 @@ class NetscanConsumer(WebsocketConsumer):
         if not port_range:
             port_range = "0-65535"
         if not rate:
-            rate = "1000"
+            rate = "5000"
         p = get_masscan(port_range, ip_list, rate)
         process_number = "0"
         while p.poll() == None:
