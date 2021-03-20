@@ -261,8 +261,8 @@ const Webscan = () => {
   return (
     <>
       <CRow>
-            <CCol xs="10" md="5">
-              <CCard>
+            <CCol xs="12" md="5">
+              <CCard accentColor="primary">
                   <CCardHeader>
                   Web Scan
                   </CCardHeader>
@@ -328,7 +328,7 @@ const Webscan = () => {
                 </CCardBody>
               </CCard> 
             </CCol>
-            <CCol xs="10" md="7">
+            <CCol xs="12" md="7">
               <CCard style={{height:"480px",overflow: 'auto'}}>
                 <CCardBody>
                   <CTabs>

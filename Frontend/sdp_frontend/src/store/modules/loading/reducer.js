@@ -6,7 +6,8 @@ const initialState = {
   loading: false,
   progress : 0,
   total : 1,
-  console : ""
+  console : "",
+  process : 0,
 };
 
 const loading = handleActions(
@@ -22,6 +23,7 @@ const loading = handleActions(
       progress : 0,
       total : 1,
       console : "",
+      process : 0,
       [action.payload]: false,
     }),
     [LOADING.ADD_PROGRESS]: (state, action) => {
@@ -37,6 +39,11 @@ const loading = handleActions(
     [LOADING.ADD_TOTAL2]: (state, action) => {
       return produce(state, (draft) => {
        draft.total += 2;
+      })
+    },
+    [LOADING.SET_PROCESS]: (state, action) => {
+      return produce(state, (draft) => {
+       draft.process = action.payload;
       })
     },
     [LOADING.SET_LOADING_CONSOLE]: (state, action) => {

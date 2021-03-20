@@ -54,7 +54,27 @@ export const set_traversal_check = createAction(SET_TRAVERSAL_CHECK);
 
 export const SET_FORM_FUZZ = 'user/SET_FORM_FUZZ';
 export const set_form_fuzz = createAction(SET_FORM_FUZZ);
-// API 호출 시
+
+export const SET_PORT_FROM = 'user/SET_PORT_FROM';
+export const set_port_from = createAction(SET_PORT_FROM);
+
+export const SET_PORT_TO = 'user/SET_PORT_TO';
+export const set_port_to = createAction(SET_PORT_TO);
+
+export const SET_SCAN_RATE= 'user/SET_SCAN_RATE';
+export const set_scan_rate = createAction(SET_SCAN_RATE);
+
+export const SET_WHOIS_RESULTS = 'user/SET_WHOIS_RESULTS';
+export const set_whois_results = createAction(SET_WHOIS_RESULTS);
+
+export const SET_WHOIS_FLAG = 'user/SET_WHOIS_FLAG';
+export const set_whois_flag = createAction(SET_WHOIS_FLAG);
+
+export const SET_PORT_RESULTS = 'user/SET_PORT_RESULTS';
+export const set_port_results = createAction(SET_PORT_RESULTS);
+
+export const SET_IP_ADDRESSES = 'user/SET_IP_ADDRESSES';
+export const set_ip_addresses = createAction(SET_IP_ADDRESSES);
 
 export const [
   LOGIN,

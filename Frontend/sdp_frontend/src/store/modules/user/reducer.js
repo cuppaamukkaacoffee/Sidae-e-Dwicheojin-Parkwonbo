@@ -24,6 +24,13 @@ const initialState = {
   requests:[],
   responses:[],
   targets:[],
+  port_from:"",
+  port_to:"",
+  scan_rate:"",
+  whois_flag:true,
+  port_results:[],
+  whois_results:{},
+  ip_addresses:[],
   sidebarShow : 'responsive',
   errorMsg : '',
   errorCode : '',
@@ -54,6 +61,13 @@ const user = handleActions(
         draft.requests = [];
         draft.responses = [];
         draft.targets = [];
+        draft.port_from = "";
+        draft.port_to = "";
+        draft.scan_rate = "";
+        draft.whois_flag = true;
+        draft.port_results = [];
+        draft.whois_results = {};
+        draft.ip_addresses = [];
         draft.errorCode = '';
         draft.errorMsg = '';
         draft.sidebarShow = 'responsive';
@@ -111,6 +125,24 @@ const user = handleActions(
         draft.url = action.payload;
       })
     },
+    [USER.SET_PORT_FROM]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('port_from in reducer => ', action.payload)
+        draft.port_from = action.payload;
+      })
+    },
+    [USER.SET_PORT_TO]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('port_to in reducer => ', action.payload)
+        draft.port_to = action.payload;
+      })
+    },
+    [USER.SET_SCAN_RATE]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('scan_rate in reducer => ', action.payload)
+        draft.scan_rate = action.payload;
+      })
+    },
     [USER.SET_URL_LIST]: (state, action) => {
       return produce(state, (draft) => {
         console.log('url_list in reducer => ', action.payload)
@@ -141,6 +173,24 @@ const user = handleActions(
         draft.reports.push(...action.payload.reports);
         draft.requests.push(...action.payload.requests);
         draft.responses.push(...action.payload.responses);
+      })
+    },
+    [USER.SET_PORT_RESULTS]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('port_results in reducer => ', action.payload)
+        draft.reports.push(action.payload);
+      })
+    },
+    [USER.SET_WHOIS_RESULTS]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('whois_results in reducer => ', action.payload)
+        draft.whois_results = action.payload;
+      })
+    },
+    [USER.SET_IP_ADDRESSES]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('ip_addresses in reducer => ', action.payload)
+        draft.ip_addresses.push(action.payload);
       })
     },
     [USER.SET_REQUEST]: (state, action) => {
@@ -177,6 +227,12 @@ const user = handleActions(
       return produce(state, (draft) => {
         console.log('form_fuzz in reducer => ', action.payload)
         draft.form_fuzz= action.payload
+      })
+    },
+    [USER.SET_WHOIS_FLAG]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('whois_flag in reducer => ', action.payload)
+        draft.whois_flag= action.payload
       })
     },
     
