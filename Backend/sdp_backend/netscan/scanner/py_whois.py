@@ -9,6 +9,14 @@ def timeobj_to_str(obj):
     else:
         return obj.strftime("%Y-%m-%d %H:%M:%S.%f")
 
+def to_list(w):
+    for key, value in w.items():
+        if type(value) == str:
+            w[key] = [value]
+        elif value is None:
+            w[key] = [""]
+    return w
+
 def get_whois(target):
     w = whois.whois(target)
 
@@ -16,4 +24,5 @@ def get_whois(target):
     w['creation_date'] = timeobj_to_str(w['creation_date'])
     w['expiration_date'] = timeobj_to_str(w['expiration_date'])
 
+    w = to_list(w)
     return w

@@ -72,12 +72,7 @@ class NetscanConsumer(WebsocketConsumer):
                 w['scan_session_id'] = scan_session_id
                 w['username'] = verification.username
                 w['target'] = target
-                self.send(JSON.dumps(w))
-
-                for key in w:
-                    item = w[key]
-                    if type(item) == list:
-                        w[key] = ' && '.join(item)
+                self.send(JSON.dumps({'whois': w}))
 
                 whois_serializer = WhoissSerializer(data=w)
                 try:

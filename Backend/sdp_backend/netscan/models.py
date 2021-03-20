@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
 class CrawledIPs(models.Model):
@@ -27,24 +28,24 @@ class Whoiss(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     username = models.TextField(max_length=15, default="")
     target = models.TextField(default="")
-    domain_name = models.TextField(default="", null=True)
-    registrar = models.TextField(default="", null=True)
-    whois_server = models.TextField(default="", null=True)
-    referral_url = models.TextField(default="", null=True)
-    updated_date = models.TextField(default="", null=True)
-    creation_date = models.TextField(default="", null=True)
-    expiration_date = models.TextField(default="", null=True)
-    name_servers = models.TextField(default="", null=True)
-    status = models.TextField(default="", null=True)
-    emails = models.TextField(default="", null=True)
-    dnssec = models.TextField(default="", null=True)
-    name = models.TextField(default="", null=True)
-    org = models.TextField(default="", null=True)
-    address = models.TextField(default="", null=True)
-    city = models.TextField(default="", null=True)
-    state = models.TextField(default="", null=True)
-    zipcode = models.TextField(default="", null=True)
-    country = models.TextField(default="", null=True)
+    domain_name = ArrayField(models.TextField(blank=True), default=list)
+    registrar = ArrayField(models.TextField(blank=True), default=list)
+    whois_server = ArrayField(models.TextField(blank=True), default=list)
+    referral_url = ArrayField(models.TextField(blank=True), default=list)
+    updated_date = ArrayField(models.TextField(blank=True), default=list)
+    creation_date = ArrayField(models.TextField(blank=True), default=list)
+    expiration_date = ArrayField(models.TextField(blank=True), default=list)
+    name_servers = ArrayField(models.TextField(blank=True), default=list)
+    status = ArrayField(models.TextField(blank=True), default=list)
+    emails = ArrayField(models.TextField(blank=True), default=list)
+    dnssec = ArrayField(models.TextField(blank=True), default=list)
+    name = ArrayField(models.TextField(blank=True), default=list)
+    org = ArrayField(models.TextField(blank=True), default=list)
+    address = ArrayField(models.TextField(blank=True), default=list)
+    city = ArrayField(models.TextField(blank=True), default=list)
+    state = ArrayField(models.TextField(blank=True), default=list)
+    zipcode = ArrayField(models.TextField(blank=True), default=list)
+    country = ArrayField(models.TextField(blank=True), default=list)
 
 
 class Targets(models.Model):
