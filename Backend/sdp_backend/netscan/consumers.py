@@ -62,13 +62,13 @@ class NetscanConsumer(WebsocketConsumer):
             if whois_flag:
                 self.send(text_data=JSON.dumps({"message": "collecting whois information..."}))
                 w = get_whois(target)
-                w = {key:value for key, value in w.items() if key in [
+                w = {key: value for key, value in w.items() if key in [
                     'domain_name', 'registrar', 'whois_server', 'referral_url', 'updated_date',
                     'creation_date', 'expiration_date', 'name_servers', 'status', 'emails', 'dnssec', 'name',
                     'org', 'address', 'city', 'state', 'zipcode', 'country']}
                 w['id'] = hashlib.md5(
-                            (scan_session_id + verification.username).encode("utf-8")
-                        ).hexdigest()
+                    (scan_session_id + verification.username).encode("utf-8")
+                ).hexdigest()
                 w['scan_session_id'] = scan_session_id
                 w['username'] = verification.username
                 w['target'] = target
@@ -97,7 +97,7 @@ class NetscanConsumer(WebsocketConsumer):
             marker = ip_plus_dummy.find('has address')
             while marker != -1:
                 ip_address = ip_plus_dummy[marker + 12:].splitlines()[0]
-                self.send(text_data=JSON.dumps({"ip_address": ip_address}))
+                self.send(text_data=JSON.dumps({"collected_ip": ip_address}))
 
                 ip_list.append(ip_address)
                 crawledIPs.append(
@@ -141,17 +141,17 @@ class NetscanConsumer(WebsocketConsumer):
                 ip_address = out[start + 3:end].rstrip(" ")
 
                 open_port = {
-                        "id": hashlib.md5(
-                            (port_number + ip_address + verification.username).encode("utf-8")
-                        ).hexdigest(),
-                        "scan_session_id": scan_session_id,
-                        "username": verification.username,
-                        "target": target,
-                        "ip_address": ip_address,
-                        "port_number": port_number,
-                        "port_protocol": port_protocol,
-                        "port_status": "open"
-                    }
+                    "id": hashlib.md5(
+                        (port_number + ip_address + verification.username).encode("utf-8")
+                    ).hexdigest(),
+                    "scan_session_id": scan_session_id,
+                    "username": verification.username,
+                    "target": target,
+                    "ip_address": ip_address,
+                    "port_number": port_number,
+                    "port_protocol": port_protocol,
+                    "port_status": "open"
+                }
 
                 self.send(JSON.dumps(open_port))
                 ports.append(open_port)
@@ -167,7 +167,7 @@ class NetscanConsumer(WebsocketConsumer):
                 process = out[start:end].lstrip(" ")
 
                 if int(float(process[:-1])) % 10 != process_number and \
-                    float(process[:-1]) != 100.0:
+                        float(process[:-1]) != 100.0:
                     self.send(JSON.dumps({'rate': rate, 'process': process}))
                     process_number = str((int(process_number) + 1) % 10)
 
@@ -176,7 +176,8 @@ class NetscanConsumer(WebsocketConsumer):
         ip_serializer = CrawledIPsSerializer(data=crawledIPs, many=True)
         port_serializer = PortsSerializer(data=ports, many=True)
         target_serializer = TargetsSerializer(data={"id": scan_session_id, "target": target,
-                                                   "username": verification.username, "scan_session_id": scan_session_id,
+                                                    "username": verification.username,
+                                                    "scan_session_id": scan_session_id,
                                                     "open_ports": open_ports})
         try:
             if ip_serializer.is_valid():
