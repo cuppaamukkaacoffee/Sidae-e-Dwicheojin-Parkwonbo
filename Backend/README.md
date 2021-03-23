@@ -104,6 +104,26 @@ GET:
   ex) 2021-03-19  
 -> 결과 JSON 목록
 
+# /netscan/result/
+
+GET:
+
+- header Authorization 항목에 'Token \<JWT>'
+
+- body에
+
+  - 'username': Token 소유주와 일치해야함 (필수)
+
+  - 'scan_session_id' (필수)
+  
+  -> {"ips": JSON 리스트, "ports": JSON 리스트, "whois": JSON, "robot": JSON}  
+  
+  netscan 시, whois_flag, robot_flag를 설정하지 않아,  
+  
+  scan_session_id에 해당하는 whois, robot이 없을 경우 빈 JSON 보내줌  
+
+# /netscan/target/
+
  # ws://\<주소>:8000/ws/netscan/
 
 - 웹소켓 전용
@@ -119,8 +139,10 @@ GET:
   - 'rate' : 스캔 속도 pps (string으로 보낼 것) 빈 문자열일 시, 100
   
   - 'whois_flag' : true, false
+  
+  - 'robot_flag' : true, false
 
--> ip address 목록, port scan 목록
+-> ip address 목록, port scan, whois, robot 목록
 
 # Network Scan Todo
 
@@ -131,6 +153,6 @@ GET:
 
 - half mode scan, Xmas scan, Null scan 등 다양한 옵션 추가
 
-- whois를 이용한 정보 수집
+- whois를 이용한 정보 수집 :white_check_mark
 
-- robots.txt 정보 수집
+- robots.txt 정보 수집 :white_check_mark

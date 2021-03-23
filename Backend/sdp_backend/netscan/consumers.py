@@ -1,11 +1,11 @@
 import json as JSON
-from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer
 
 from .scanner.domain_name import get_domain_name
 from .scanner.ip_address import get_ip_address
-from .scanner.nmap import get_nmap
 from .scanner.masscan import get_masscan
 from .scanner.py_whois import get_whois
+from .scanner.robots import get_robots_txt
 from login.jwt import JwtHelper, AsyncJwtHelper
 import channels.exceptions
 
@@ -13,10 +13,10 @@ from .serializers import (
     PortsSerializer,
     CrawledIPsSerializer,
     TargetsSerializer,
-    WhoissSerializer
+    WhoissSerializer,
+    RobotsSerializer
 )
 import hashlib, datetime, random
-import asyncio
 
 
 class NetscanConsumer(WebsocketConsumer):
@@ -41,6 +41,7 @@ class NetscanConsumer(WebsocketConsumer):
             port_range = data_json["port_range"]
             rate = data_json["rate"]
             whois_flag = data_json["whois_flag"]
+            robot_flag = data_json["robot_flag"]
         except:
             print("nothing")
             self.disconnect(message="missing body attribute")
@@ -82,6 +83,28 @@ class NetscanConsumer(WebsocketConsumer):
                         print(whois_serializer.errors)
                 except Exception as e:
                     print(e)
+            if robot_flag:
+                self.send(text_data=JSON.dumps({"message": "collecting robot.txt information..."}))
+                r = get_robots_txt(target)
+                robot_txt = {
+                    "id": hashlib.md5(
+                        (scan_session_id + verification.username).encode("utf-8")
+                    ).hexdigest(),
+                    "scan_session_id": scan_session_id,
+                    "username": verification.username,
+                    "target": target,
+                    "txt": r
+                }
+                self.send(JSON.dumps({'robot': robot_txt}))
+                robot_serializer = RobotsSerializer(data=robot_txt)
+                try:
+                    if robot_serializer.is_valid():
+                        robot_serializer.save()
+                    else:
+                        print(robot_serializer.errors)
+                except Exception as e:
+                    print(e)
+
             self.send(text_data=JSON.dumps({"message": "collecting ip addresses..."}))
             domain_name = get_domain_name(target)
             print(domain_name)

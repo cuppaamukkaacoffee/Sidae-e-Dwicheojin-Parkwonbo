@@ -48,6 +48,15 @@ class Whoiss(models.Model):
     country = ArrayField(models.TextField(blank=True), default=list)
 
 
+class Robots(models.Model):
+    id = models.TextField(primary_key=True)
+    scan_session_id = models.TextField(default="")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    username = models.TextField(max_length=15, default="")
+    target = models.TextField(default="")
+    txt = models.TextField(blank=True, default="")
+
+
 class Targets(models.Model):
     id = models.TextField(primary_key=True)
     target = models.TextField(default="")
