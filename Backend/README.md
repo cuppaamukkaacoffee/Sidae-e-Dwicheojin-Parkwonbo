@@ -88,7 +88,7 @@ POST:
 
 # /netscan/target/
 
-GET:
+POST:
 
 - header Authorization 항목에 'Token \<JWT>'
 
@@ -106,7 +106,7 @@ GET:
 
 # /netscan/result/
 
-GET:
+POST:
 
 - header Authorization 항목에 'Token \<JWT>'
 
@@ -121,8 +121,6 @@ GET:
   netscan 시, whois_flag, robot_flag를 설정하지 않아,  
   
   scan_session_id에 해당하는 whois, robot이 없을 경우 빈 JSON 보내줌  
-
-# /netscan/target/
 
  # ws://\<주소>:8000/ws/netscan/
 

@@ -14,7 +14,7 @@ from login.jwt import JwtHelper
 
 
 class TargetsAPIView(APIView):
-    def get(self, request):
+    def post(self, request):
 
         timestamp = ""
 
@@ -60,7 +60,7 @@ class TargetsAPIView(APIView):
 
 
 class ResultsAPIView(APIView):
-    def get(self, request):
+    def post(self, request):
         try:
             token = request.META["HTTP_AUTHORIZATION"]
         except KeyError:
