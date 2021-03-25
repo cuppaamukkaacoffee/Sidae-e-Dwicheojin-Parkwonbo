@@ -60,7 +60,7 @@ class ReportsAPIView(APIView):
             )
 
         reports = Reports.objects.filter(
-            user__contains=username,
+            user__exact=username,
             target__contains=target,
             sub_path__contains=sub_path,
             vulnerability__contains=vulnerability,
