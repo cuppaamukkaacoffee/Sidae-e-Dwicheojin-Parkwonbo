@@ -96,11 +96,9 @@ POST:
 
   - 'username': Token 소유주와 일치해야함 (필수)
 
-  - 'target': 타켓 서비스 주소 (필수, 복수 가능)  
-  ex) 'http://testhtml5.vulnweb.com/, http://testphp.vulnweb.com/'  
-    'http://domain/' 형식 지켜야됨, ','으로 타겟 구분
+  - 'target': 타켓 서비스 주소
 
-  - 'timestamp': 스캔한 날짜 (필수x)  
+  - 'timestamp': 스캔한 날짜
   ex) 2021-03-19  
 -> 결과 JSON 목록
 

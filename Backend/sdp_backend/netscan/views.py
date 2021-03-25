@@ -15,9 +15,9 @@ from login.jwt import JwtHelper
 
 class TargetsAPIView(APIView):
     def post(self, request):
-
+        username = ""
+        target = ""
         timestamp = ""
-
         try:
             token = request.META["HTTP_AUTHORIZATION"]
         except KeyError:
@@ -27,7 +27,7 @@ class TargetsAPIView(APIView):
             if key == "username":
                 username = request.data["username"]
             if key == "target":
-                target = str(request.data["target"]).replace(' ', '').split(',')
+                target = request.data["target"]
             if key == "timestamp":
                 timestamp = request.data["timestamp"]
 
@@ -50,7 +50,7 @@ class TargetsAPIView(APIView):
 
         target_result = Targets.objects.filter(
             username__exact=username,
-            target__in=target,
+            target__contains=target,
             timestamp__contains=timestamp,
         )
 
@@ -69,7 +69,7 @@ class ResultsAPIView(APIView):
             username = request.data['username']
             scan_session_id = request.data['scan_session_id']
         except:
-            return Response(data="usernamee, scan_session_id are needed")
+            return Response(data="username, scan_session_id are needed")
 
         jwt = JwtHelper()
         verification = jwt.validate(token)
