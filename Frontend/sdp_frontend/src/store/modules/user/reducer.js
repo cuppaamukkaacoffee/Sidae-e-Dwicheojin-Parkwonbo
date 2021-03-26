@@ -24,13 +24,17 @@ const initialState = {
   requests:[],
   responses:[],
   targets:[],
+  net_targets:[],
   port_from:"",
   port_to:"",
   scan_rate:"",
   whois_flag:true,
+  robot_flag:true,
+  robot_results:{},
   port_results:[],
   whois_results:{},
   ip_addresses:[],
+  net_results:{},
   sidebarShow : 'responsive',
   errorMsg : '',
   errorCode : '',
@@ -61,13 +65,17 @@ const user = handleActions(
         draft.requests = [];
         draft.responses = [];
         draft.targets = [];
+        draft.net_targets = [];
         draft.port_from = "";
         draft.port_to = "";
         draft.scan_rate = "";
         draft.whois_flag = true;
+        draft.robot_flag = true;
+        draft.robot_results = {};
         draft.port_results = [];
         draft.whois_results = {};
         draft.ip_addresses = [];
+        draft.net_results = {};
         draft.errorCode = '';
         draft.errorMsg = '';
         draft.sidebarShow = 'responsive';
@@ -178,13 +186,19 @@ const user = handleActions(
     [USER.SET_PORT_RESULTS]: (state, action) => {
       return produce(state, (draft) => {
         console.log('port_results in reducer => ', action.payload)
-        draft.reports.push(action.payload);
+        draft.port_results.push(action.payload);
       })
     },
     [USER.SET_WHOIS_RESULTS]: (state, action) => {
       return produce(state, (draft) => {
         console.log('whois_results in reducer => ', action.payload)
         draft.whois_results = action.payload;
+      })
+    },
+    [USER.SET_ROBOT_RESULTS]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('robot_results in reducer => ', action.payload)
+        draft.robot_results = action.payload;
       })
     },
     [USER.SET_IP_ADDRESSES]: (state, action) => {
@@ -233,6 +247,12 @@ const user = handleActions(
       return produce(state, (draft) => {
         console.log('whois_flag in reducer => ', action.payload)
         draft.whois_flag= action.payload
+      })
+    },
+    [USER.SET_ROBOT_FLAG]: (state, action) => {
+      return produce(state, (draft) => {
+        console.log('robot_flag in reducer => ', action.payload)
+        draft.robot_flag= action.payload
       })
     },
     
@@ -288,6 +308,32 @@ const user = handleActions(
     },
     [USER.TARGETS_CHECK_FAILED]: (state, action) => {
       console.log('TARGETS_CHECK_FAILED => ', action.payload);
+      return produce(state, (draft) => {
+        draft.errorMsg = '오류';
+        draft.errorCode = '404';
+      });
+    },
+    [USER.NET_TARGETS_CHECK_SUCCESS]: (state, action) => {
+      console.log('NET_TARGETS_CHECK_SUCCESS => ', action.payload);
+      return produce(state, (draft) => {
+        draft.net_targets = action.payload.targets;
+      });
+    },
+    [USER.NET_TARGETS_CHECK_FAILED]: (state, action) => {
+      console.log('NET_TARGETS_CHECK_FAILED => ', action.payload);
+      return produce(state, (draft) => {
+        draft.errorMsg = '오류';
+        draft.errorCode = '404';
+      });
+    },
+    [USER.NET_RESULTS_CHECK_SUCCESS]: (state, action) => {
+      console.log('NET_RESULTS_CHECK_SUCCESS => ', action.payload);
+      return produce(state, (draft) => {
+        draft.net_results = action.payload;
+      });
+    },
+    [USER.NET_RESULTS_CHECK_FAILED]: (state, action) => {
+      console.log('NET_RESULTS_CHECK_FAILED => ', action.payload);
       return produce(state, (draft) => {
         draft.errorMsg = '오류';
         draft.errorCode = '404';

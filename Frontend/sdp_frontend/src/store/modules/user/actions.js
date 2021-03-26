@@ -70,6 +70,12 @@ export const set_whois_results = createAction(SET_WHOIS_RESULTS);
 export const SET_WHOIS_FLAG = 'user/SET_WHOIS_FLAG';
 export const set_whois_flag = createAction(SET_WHOIS_FLAG);
 
+export const SET_ROBOT_FLAG = 'user/SET_ROBOT_FLAG';
+export const set_robot_flag = createAction(SET_ROBOT_FLAG);
+
+export const SET_ROBOT_RESULTS = 'user/SET_ROBOT_RESULTS';
+export const set_robot_results = createAction(SET_ROBOT_RESULTS);
+
 export const SET_PORT_RESULTS = 'user/SET_PORT_RESULTS';
 export const set_port_results = createAction(SET_PORT_RESULTS);
 
@@ -120,6 +126,17 @@ export const [
 ] = createRequestActionTypes('user/TARGETS_CHECK');
 export const targets_check = createAction(TARGETS_CHECK);
 
+export const [
+  NET_TARGETS_CHECK,
+  NET_TARGETS_CHECK_SUCCESS,
+  NET_TARGETS_CHECK_FAILED,
+] = createRequestActionTypes('user/NET_TARGETS_CHECK');
+export const net_targets_check = createAction(NET_TARGETS_CHECK);
 
-
+export const [
+  NET_RESULTS_CHECK,
+  NET_RESULTS_CHECK_SUCCESS,
+  NET_RESULTS_CHECK_FAILED,
+] = createRequestActionTypes('user/NET_RESULTS_CHECK');
+export const net_results_check = createAction(NET_RESULTS_CHECK);
 

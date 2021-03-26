@@ -47,3 +47,23 @@ export const targets_api = async () => {
   const response = await axios.post('/scan/query/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
   return response.data;
 };
+
+export const net_targets_api = async () => {
+  const token = window.sessionStorage.getItem('token');
+  const id = window.sessionStorage.getItem('id');
+  const data = {
+    username : id,
+  }
+  const response = await axios.post('/netscan/target/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
+  return response.data;
+};
+
+export const net_results_api = async (info) => {
+  const token = window.sessionStorage.getItem('token');
+  const data = {
+    username : info.username,
+    scan_session_id : info.scan_session_id
+  }
+  const response = await axios.post('/netscan/result/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
+  return response.data;
+};

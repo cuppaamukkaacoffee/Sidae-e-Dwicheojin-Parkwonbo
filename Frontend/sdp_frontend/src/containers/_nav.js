@@ -31,10 +31,22 @@ const _nav =  [
     ],
   },
   {
-    _tag: 'CSidebarNavItem',
+    _tag: 'CSidebarNavDropdown',
     name: 'Target',
+    route: '/targets',
     icon: 'cil-puzzle',
-    to: '/target',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Web scan',
+        to: '/targets/webscan',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Network scan',
+        to: '/targets/netscan',
+      },
+    ],
   },
   {
     _tag: 'CSidebarNavItem',

@@ -65,7 +65,9 @@ import * as userActions from 'src/store/modules/user/actions';
       port_results,
       scan_rate,
       whois_flag,
+      robot_flag,
       whois_results,
+      robot_results,
       ip_addresses,
       process,
       console,
@@ -77,7 +79,9 @@ import * as userActions from 'src/store/modules/user/actions';
         port_results : state.user.port_results,
         scan_rate : state.user.scan_rate,
         whois_flag : state.user.whois_flag,
+        robot_flag : state.user.robot_flag,
         whois_results : state.user.whois_results,
+        robot_results : state.user.robot_results,
         ip_addresses : state.user.ip_addresses,
         process : state.loading.process,
         console: state.loading.console,
@@ -105,6 +109,9 @@ import * as userActions from 'src/store/modules/user/actions';
         if(results.whois){
           dispatch(userActions.set_whois_results(results.whois))
         }
+        else if(results.robot){
+          dispatch(userActions.set_robot_results(results.robot))
+        }
         else if(results.collected_ip){
           dispatch(userActions.set_ip_addresses(results))
         }
@@ -120,10 +127,10 @@ import * as userActions from 'src/store/modules/user/actions';
           if(results.message == "collecting whois information..."){
             setCollapseMulti([true,false,false]);
           }
-          else if(results.message == "collecting ip addresses..."){
+          else if(results.message == "collecting robot.txt information..."){
             setCollapseMulti([false,true,false]);
           }
-          else if(results.message == "robots"){
+          else if(results.message == "collecting ip addresses..."){
             setCollapseMulti([false,false,true]);
           }
           else if(results.message == "all good"){
@@ -166,12 +173,13 @@ import * as userActions from 'src/store/modules/user/actions';
                                     "target": url,
                                     "port_range": `${port_from}-${port_to}`,
                                     "rate": scan_rate,
-                                    "whois_flag":whois_flag
+                                    "whois_flag":whois_flag,
+                                    "robot_flag":robot_flag
                                   }))
       }else{
         alert("양식 제대로")
       }
-     }, [url,port_from,port_to,scan_rate,whois_flag]);
+     }, [url,port_from,port_to,scan_rate,whois_flag, robot_flag]);
     
     const handleInputurl = (e) => {
       dispatch(userActions.set_url(e.target.value))
@@ -187,6 +195,9 @@ import * as userActions from 'src/store/modules/user/actions';
     }
     const handleWhois_flag = (e) => {
       dispatch(userActions.set_whois_flag(e.target.checked))
+    }
+    const handleRobot_flag = (e) => {
+      dispatch(userActions.set_robot_flag(e.target.checked))
     }
 
      return (
@@ -235,6 +246,14 @@ import * as userActions from 'src/store/modules/user/actions';
                         <CSwitch className={'mx-1'} variant={'3d'} color={'primary'} defaultChecked onChange={handleWhois_flag}/>
                       </CCol>
                     </CFormGroup>
+                    <CFormGroup row>
+                      <CCol md="3">
+                        <CLabel htmlFor="select">Robot Flag</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="9">
+                        <CSwitch className={'mx-1'} variant={'3d'} color={'primary'} defaultChecked onChange={handleRobot_flag}/>
+                      </CCol>
+                    </CFormGroup>
                 </CForm>
               </CCardBody>
               <CCardFooter>
@@ -258,9 +277,9 @@ import * as userActions from 'src/store/modules/user/actions';
                 <CButton color = {collapseMulti[0]? "dark":null} onClick={()=>{setCollapseMulti([true,false,false])}}>
                   <strong>Whois</strong></CButton>{' '}
                 <CButton color = {collapseMulti[1]? "dark":null} onClick={()=>{setCollapseMulti([false,true,false])}}>
+                  <strong>Robot</strong></CButton>{' '}
+                <CButton color = {collapseMulti[2]? "dark":null} onClick={()=>{setCollapseMulti([false,false,true])}}>
                   <strong>IP address / Port</strong></CButton>{' '}
-                <CButton color = {collapseMulti[3]? "dark":null} onClick={()=>{setCollapseMulti([false,false,true])}}>
-                  <strong>Robots</strong></CButton>{' '}
               </CCardHeader>
               <CCardBody style={{height:"600px",overflow: 'auto'}}>
                 
@@ -416,6 +435,13 @@ import * as userActions from 'src/store/modules/user/actions';
 
                 <CCollapse show={collapseMulti[1]}>
                   <CFade timeout ={300} in ={collapseMulti[1]}>
+                    {robot_results.txt === "" ? <p>No Robots.txt on {robot_results.target}</p>: <p style = {{whiteSpace:"pre-wrap"}}>{robot_results.txt}</p>}
+                   
+                  </CFade>
+                </CCollapse>
+
+                <CCollapse show={collapseMulti[2]}>
+                  <CFade timeout ={300} in ={collapseMulti[2]}>
                     <h4>IP Address</h4>
                     {ip_addresses.map((item,idx) => (
                           <CListGroupItem key={idx}>{item.collected_ip}</CListGroupItem>
@@ -440,12 +466,6 @@ import * as userActions from 'src/store/modules/user/actions';
                         )}
                         }
                     />
-                  </CFade>
-                </CCollapse>
-                
-                <CCollapse show={collapseMulti[2]}>
-                  <CFade timeout ={300} in ={collapseMulti[2]}>
-
                   </CFade>
                 </CCollapse>
                                                             
