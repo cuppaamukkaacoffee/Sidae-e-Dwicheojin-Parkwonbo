@@ -181,7 +181,7 @@ class ReportsQueryAPIView(APIView):
 
         if targets_only:
             targets = Targets.objects.filter(
-                username__contains=username,
+                username__exact=username,
                 target__contains=target,
                 id__contains=scan_session_id,
             )
@@ -193,7 +193,7 @@ class ReportsQueryAPIView(APIView):
             urls = CrawledUrls.objects.filter(
                 target__contains=target,
                 scan_session_id__contains=scan_session_id,
-                username__contains=username,
+                username__exact=username,
             )
             urls_serializer = CrawledUrlsSerializer(urls, many=True)
 
@@ -201,7 +201,7 @@ class ReportsQueryAPIView(APIView):
 
         reports = Reports.objects.filter(
             scan_session_id__contains=scan_session_id,
-            username__contains=username,
+            username__exact=username,
             target__contains=target,
             sub_path__contains=sub_path,
             vulnerability__contains=vulnerability,

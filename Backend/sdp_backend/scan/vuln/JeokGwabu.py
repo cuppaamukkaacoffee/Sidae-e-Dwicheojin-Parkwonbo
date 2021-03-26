@@ -113,7 +113,11 @@ async def scan_sql_injection(
                 print(f"{e} at {url} and {data}")
 
             http_response_raw = await res.read()
-            http_response = http_response_raw.decode("utf-8")
+            try: 
+                http_response = http_response_raw.decode("utf-8")
+            except Exception as e:
+                print("encoding exception swithcing codec...");
+                http_response = http_response_raw.decode("latin-1")
             http_length = len(http_response)
             http_status = res.status
 
@@ -211,7 +215,11 @@ async def scan_xss(
             form_details = get_form_details(form)
             res, body = await submit_form(session, form_details, url, payload)
             http_response_raw = await res.read()
-            http_response = http_response_raw.decode("utf-8")
+            try: 
+                http_response = http_response_raw.decode("utf-8")
+            except Exception as e:
+                print("encoding exception swithcing codec...");
+                http_response = http_response_raw.decode("latin-1")
             http_length = len(http_response)
             http_status = res.status
 

@@ -28,7 +28,11 @@ async def fire_payload(
     try:
         http_request = await session.get(url)
         http_response_raw = await http_request.read()
-        http_response = http_response_raw.decode("utf-8")
+        try: 
+            http_response = http_response_raw.decode("utf-8")
+        except Exception as e:
+            print("encoding exception swithcing codec...");
+            http_response = http_response_raw.decode("latin-1")
         http_length = len(http_response)
         http_status = http_request.status
 
