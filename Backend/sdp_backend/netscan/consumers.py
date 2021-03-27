@@ -160,7 +160,7 @@ class NetscanConsumer(WebsocketConsumer):
 
                 open_port = {
                     "id": hashlib.md5(
-                        (port_number + ip_address + verification.username).encode("utf-8")
+                        (port_number + ip_address + scan_session_id).encode("utf-8")
                     ).hexdigest(),
                     "scan_session_id": scan_session_id,
                     "username": verification.username,
@@ -197,21 +197,18 @@ class NetscanConsumer(WebsocketConsumer):
                                                     "username": verification.username,
                                                     "scan_session_id": scan_session_id,
                                                     "open_ports": open_ports})
-        try:
-            if ip_serializer.is_valid():
-                ip_serializer.save()
-        except Exception as e:
-            print(e)
-        try:
-            if port_serializer.is_valid():
-                port_serializer.save()
-        except Exception as e:
-            print(e)
-        try:
-            if target_serializer.is_valid():
-                target_serializer.save()
-        except Exception as e:
-            print(e)
+        if ip_serializer.is_valid():
+            ip_serializer.save()
+        else:
+            print(ip_serializer.errors)
+        if port_serializer.is_valid():
+            port_serializer.save()
+        else:
+            print(port_serializer.errors)
+        if target_serializer.is_valid():
+            target_serializer.save()
+        else:
+            print(target_serializer.errors)
 
         self.send(text_data=JSON.dumps({"status": "200"}))
         self.disconnect(message="all good")
