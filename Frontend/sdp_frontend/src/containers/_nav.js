@@ -55,10 +55,22 @@ const _nav =  [
     to: '/vulnerabilities',
   },
   {
-    _tag: 'CSidebarNavItem',
+    _tag: 'CSidebarNavDropdown',
     name: 'Result',
+    route: '/targets',
     icon: 'cil-laptop',
-    to: '/result',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Web scan',
+        to: '/webresult',
+      },
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Network scan',
+        to: '/netresult',
+      },
+    ],
   },
   {
     _tag: 'CSidebarNavItem',

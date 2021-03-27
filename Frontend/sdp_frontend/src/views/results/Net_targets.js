@@ -7,7 +7,7 @@ import {
 import * as userActions from 'src/store/modules/user/actions';
 import history from "src/utils/history";
 
-const fields = ['target','timestamp']
+const fields = ['target','open_ports','timestamp']
 
 const Net_targets = () => {
     const dispatch = useDispatch();
@@ -19,7 +19,8 @@ const Net_targets = () => {
     }), shallowEqual)
     
     useEffect(() => {
-        dispatch(userActions.net_targets_check())
+        const id = sessionStorage.getItem("id")
+        dispatch(userActions.net_targets_check({id:id}))
         return () => {
           dispatch(userActions.reset_msg());
         };

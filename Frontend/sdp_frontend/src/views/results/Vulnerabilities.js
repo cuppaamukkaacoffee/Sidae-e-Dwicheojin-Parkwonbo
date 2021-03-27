@@ -56,7 +56,7 @@ const Vulnerabilities = ({location}) => {
     const req = requests.find((el) => el.id === e.id);
     const res = responses.find((el) => el.id === e.id);
     history.push({
-      pathname:"/detail",
+      pathname:"/webdetail",
       state:{rep: e, req: req, res: res}
     })
   }

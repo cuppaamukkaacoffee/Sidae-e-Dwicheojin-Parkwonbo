@@ -42,14 +42,18 @@ const Dashboards = () => {
   const {
     db_data,
     targets,
+    net_targets,
     } = useSelector((state) => ({
     db_data: state.user.db_data,
     targets: state.user.targets,
+    net_targets : state.user.net_targets,
     }), shallowEqual)
  
   useEffect(() => {
-    dispatch(userActions.dashboard_data_check({id:sessionStorage.getItem('id'), with_headers: false}))
+    const id = sessionStorage.getItem('id')
+    dispatch(userActions.dashboard_data_check({id:id, with_headers: false}))
     dispatch(userActions.targets_check())
+    dispatch(userActions.net_targets_check({id:id}))
     return () => {
       dispatch(userActions.reset_msg());
     };
@@ -175,7 +179,7 @@ const Dashboards = () => {
     <CRow>
       <CCol sm="12" md="6">
         <CRow>
-          <CCol sm="12" md="6">
+          <CCol sm="12" md="4">
             <CWidgetDropdown
               color="danger"
               header={vul_length}
@@ -187,13 +191,25 @@ const Dashboards = () => {
               
            </CWidgetDropdown>
           </CCol>
-          <CCol sm="12" md="6">
+          <CCol sm="12" md="4">
             <CWidgetDropdown
               color="warning"
               header={String(targets.length)}
-              text="Total Scans Conducted"
+              text="Web Scans Conducted"
               footerSlot={
                 <CIcon name="cil-speedometer" height="50"/>
+              }
+            >
+              
+           </CWidgetDropdown>
+          </CCol>
+          <CCol sm="12" md="4">
+            <CWidgetDropdown
+              color="info"
+              header={String(net_targets.length)}
+              text="Network Scans Conducted"
+              footerSlot={
+                <CIcon name="cil-globe-alt" height="50"/>
               }
             >
               
@@ -289,6 +305,26 @@ const Dashboards = () => {
                             }}/>
                   </CTabPane>
                   <CTabPane>
+                    <CDataTable
+                      items={net_targets}
+                      fields={fields}
+                      size="sm"
+                      scopedSlots = {{
+                        'target':
+                          (item)=>(
+                            <td>
+                              <CLink 
+                                style={{color: 'red'}} 
+                                to={{
+                                  pathname: "/netdetail",
+                                  state: item
+                                }}
+                              >
+                                {item.target}
+                              </CLink>
+                            </td>
+                          ),
+                              }}/>
                   </CTabPane>
               </CTabContent>
             </CCardBody>

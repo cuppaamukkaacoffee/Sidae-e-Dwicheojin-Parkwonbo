@@ -48,11 +48,11 @@ export const targets_api = async () => {
   return response.data;
 };
 
-export const net_targets_api = async () => {
+export const net_targets_api = async (info) => {
   const token = window.sessionStorage.getItem('token');
-  const id = window.sessionStorage.getItem('id');
   const data = {
-    username : id,
+    username : info.id,
+    target : info.url
   }
   const response = await axios.post('/netscan/target/', JSON.stringify(data), {headers: {"Content-Type": `application/json`,"Authorization": `Token ${token}`,}});
   return response.data;

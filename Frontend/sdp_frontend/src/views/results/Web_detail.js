@@ -16,7 +16,7 @@ import CIcon from '@coreui/icons-react'
 import * as content from './Detail_content';
   
   
-const Detail = ({location}) => {
+const Web_detail = ({location}) => {
   const dispatch = useDispatch();
   const [Des,setDes] = useState(true);
   const [Attack,setAttack] = useState(true);
@@ -234,5 +234,5 @@ const Detail = ({location}) => {
   )
 }
 
-export default Detail
+export default Web_detail
   

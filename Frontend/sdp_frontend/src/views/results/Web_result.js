@@ -34,7 +34,7 @@ import * as userActions from 'src/store/modules/user/actions';
 
 const fields = ['target','sub_path', 'url', 'result_string','vulnerability','scan_type','status','timestamp']
 
-const Result = () => {
+const Web_result = () => {
     const dispatch = useDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [collapse, setCollapse] = useState(false);
@@ -125,9 +125,14 @@ const Result = () => {
     
     
     const handleSubmit_results = useCallback(() =>{
-        setCollapse(false);
-        dispatch(userActions.reset_r())
-        dispatch(userActions.results_check({id : id, url : url, scan_type: scan_type,vul : vul, result_string : result_string, with_headers : true}))
+        if(id === sessionStorage.getItem("id")){
+            setCollapse(false);
+            dispatch(userActions.reset_r())
+            dispatch(userActions.results_check({id : id, url : url, scan_type: scan_type,vul : vul, result_string : result_string, with_headers : true}))
+        }
+        else{
+            alert("아이디를 다시 입력하세요")
+        }
       }, [id ,url, vul, result_string, scan_type])
 
     
@@ -196,7 +201,7 @@ const Result = () => {
     return (
     <>
     <CRow>
-        <CCol xs="10" md="5">
+        <CCol xs="12" md="5">
             <CCard>
                 <CCardHeader>
                 Web Scan Results
@@ -275,7 +280,7 @@ const Result = () => {
                 </CCardFooter>
             </CCard>
         </CCol>
-        <CCol xs="10" md="7">
+        <CCol xs="12" md="7">
             <CCard style={{height:"420px",overflow: 'auto'}}>
             <CCardBody>
             <CTabs>
@@ -329,7 +334,7 @@ const Result = () => {
         </CCol>
     </CRow>
     <CRow>
-        <CCol xs="10" md="12">
+        <CCol xs="12" md="12">
         <CCard>
             <CCardBody style={{height:"280px",overflow: 'auto'}}>
                 <CDataTable
@@ -375,4 +380,4 @@ const Result = () => {
 )
 }
 
-export default Result
+export default Web_result

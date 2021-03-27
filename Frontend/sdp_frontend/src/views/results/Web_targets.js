@@ -15,7 +15,7 @@ const fields = ['target','timestamp','xss','sqli','open_redirect','windows_direc
   
   
   
-const Target = () => {
+const Web_target = () => {
   const dispatch = useDispatch();
 
   const {
@@ -158,4 +158,4 @@ const Target = () => {
   )
 }
 
-export default Target
+export default Web_target

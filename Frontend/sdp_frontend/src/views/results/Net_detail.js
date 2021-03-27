@@ -132,7 +132,7 @@ const Net_detail = ({location}) => {
             <span style={{fontWeight:"bold",fontSize:"18px"}}>{robot?<CIcon size="md" name="cilChevronDoubleUp"/>:<CIcon size="sm" name="cilChevronDoubleDown"/>}Robot</span>
             </CButton>
             <CCollapse show={robot} style={{whiteSpace:"pre-wrap", marginLeft : "20px"}}>
-                {net_results.robot && <p>{net_results.robot.txt}</p>}
+                {net_results.robot !== undefined ? (net_results.robot.txt === "" ? <p>No Robots.txt on {net_results.robot.target}</p>: <p style = {{whiteSpace:"pre-wrap"}}>{net_results.robot.txt}</p>) : null}
             </CCollapse>
             <hr style={{width:"100%"}}/>
 
