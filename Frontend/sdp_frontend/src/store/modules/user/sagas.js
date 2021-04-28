@@ -1,38 +1,55 @@
-import {takeLatest} from 'redux-saga/effects';
-import createRequestSaga from '../../../libs/createRequestSaga';
-import * as usersAPI from '../../../libs/api/users';
-import * as USER from './actions';
+import { takeLatest } from "redux-saga/effects";
+import createRequestSaga from "../../../libs/createRequestSaga";
+import * as usersAPI from "../../../libs/api/users";
+import * as USER from "./actions";
 import history from "../../../utils/history";
 
+const login = createRequestSaga(USER.LOGIN, usersAPI.login_api);
 
-const login = createRequestSaga(USER.LOGIN, usersAPI.login_api,);
+const register = createRequestSaga(USER.REGISTER, usersAPI.register_api);
 
-const register = createRequestSaga(USER.REGISTER, usersAPI.register_api,);
+const vul_results_check = createRequestSaga(
+  USER.VUL_RESULTS_CHECK,
+  usersAPI.results_api
+);
 
-const vul_results_check = createRequestSaga(USER.VUL_RESULTS_CHECK, usersAPI.results_api,);
+const results_check = createRequestSaga(
+  USER.RESULTS_CHECK,
+  usersAPI.results_api
+);
 
-const results_check = createRequestSaga(USER.RESULTS_CHECK, usersAPI.results_api,);
+const dashboard_data_check = createRequestSaga(
+  USER.DASHBOARD_DATA_CHECK,
+  usersAPI.results_api
+);
 
-const dashboard_data_check = createRequestSaga(USER.DASHBOARD_DATA_CHECK, usersAPI.results_api,);
+const targets_check = createRequestSaga(
+  USER.TARGETS_CHECK,
+  usersAPI.targets_api
+);
 
-const targets_check = createRequestSaga(USER.TARGETS_CHECK, usersAPI.targets_api,);
+const net_targets_check = createRequestSaga(
+  USER.NET_TARGETS_CHECK,
+  usersAPI.net_targets_api
+);
 
-const net_targets_check = createRequestSaga(USER.NET_TARGETS_CHECK, usersAPI.net_targets_api,);
-
-const net_results_check = createRequestSaga(USER.NET_RESULTS_CHECK, usersAPI.net_results_api,);
+const net_results_check = createRequestSaga(
+  USER.NET_RESULTS_CHECK,
+  usersAPI.net_results_api
+);
 
 function* goToHomeSaga() {
-  history.push('/dashboard');
+  history.push("/dashboard");
 }
 
 function* goToLoginSaga() {
   alert("회원가입 완료");
-  history.push('/login');
+  history.push("/login");
 }
 
-function* tokenExpired(){
+function* tokenExpired() {
   sessionStorage.clear();
-  history.push('/login');
+  history.push("/login");
 }
 
 export default function* rootSaga() {

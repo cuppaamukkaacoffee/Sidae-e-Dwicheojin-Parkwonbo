@@ -1,13 +1,13 @@
-import {handleActions} from 'redux-actions';
-import * as LOADING from './actions';
-import produce from 'immer';
+import { handleActions } from "redux-actions";
+import * as LOADING from "./actions";
+import produce from "immer";
 
 const initialState = {
   loading: false,
-  progress : 0,
-  total : 1,
-  console : "",
-  process : 0,
+  progress: 0,
+  total: 1,
+  console: "",
+  process: 0,
 };
 
 const loading = handleActions(
@@ -20,39 +20,39 @@ const loading = handleActions(
     [LOADING.FINISH_LOADING]: (state, action) => ({
       ...state,
       loading: false,
-      progress : 0,
-      total : 1,
-      console : "",
-      process : 0,
+      progress: 0,
+      total: 1,
+      console: "",
+      process: 0,
       [action.payload]: false,
     }),
     [LOADING.ADD_PROGRESS]: (state, action) => {
       return produce(state, (draft) => {
-       draft.progress += 1;
-      })
+        draft.progress += 1;
+      });
     },
     [LOADING.ADD_TOTAL]: (state, action) => {
       return produce(state, (draft) => {
-       draft.total += 1;
-      })
+        draft.total += 1;
+      });
     },
     [LOADING.ADD_TOTAL2]: (state, action) => {
       return produce(state, (draft) => {
-       draft.total += 2;
-      })
+        draft.total += 2;
+      });
     },
     [LOADING.SET_PROCESS]: (state, action) => {
       return produce(state, (draft) => {
-       draft.process = action.payload;
-      })
+        draft.process = action.payload;
+      });
     },
     [LOADING.SET_LOADING_CONSOLE]: (state, action) => {
       return produce(state, (draft) => {
-       draft.console = action.payload;
-      })
+        draft.console = action.payload;
+      });
     },
   },
-  initialState,
+  initialState
 );
 
 export default loading;

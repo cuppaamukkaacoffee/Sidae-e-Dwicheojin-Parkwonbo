@@ -1,5 +1,5 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   CCreateElement,
   CSidebar,
@@ -10,18 +10,17 @@ import {
   CSidebarMinimizer,
   CSidebarNavDropdown,
   CSidebarNavItem,
-} from '@coreui/react'
+} from "@coreui/react";
 
-import CIcon from '@coreui/icons-react'
+import CIcon from "@coreui/icons-react";
 
 // sidebar nav config
-import navigation from './_nav'
-import * as userActions from '../store/modules/user/actions';
-
+import navigation from "./_nav";
+import * as userActions from "../store/modules/user/actions";
 
 const TheSidebar = () => {
-  const dispatch = useDispatch()
-  const show = useSelector(state => state.user.sidebarShow)
+  const dispatch = useDispatch();
+  const show = useSelector((state) => state.user.sidebarShow);
 
   return (
     <CSidebar
@@ -38,13 +37,13 @@ const TheSidebar = () => {
             CSidebarNavDivider,
             CSidebarNavDropdown,
             CSidebarNavItem,
-            CSidebarNavTitle
+            CSidebarNavTitle,
           }}
         />
       </CSidebarNav>
-      <CSidebarMinimizer className="c-d-md-down-none"/>
+      <CSidebarMinimizer className="c-d-md-down-none" />
     </CSidebar>
-  )
-}
+  );
+};
 
-export default React.memo(TheSidebar)
+export default React.memo(TheSidebar);

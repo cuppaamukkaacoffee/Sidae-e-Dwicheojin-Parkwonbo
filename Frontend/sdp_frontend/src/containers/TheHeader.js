@@ -1,5 +1,5 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   CHeader,
   CToggler,
@@ -9,32 +9,33 @@ import {
   CHeaderNavLink,
   CSubheader,
   CBreadcrumbRouter,
-  CLink
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+  CLink,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
 
 // routes config
-import routes from '../routes'
+import routes from "../routes";
 
-import { 
-  TheHeaderDropdown,
-}  from './index'
-import * as userActions from '../store/modules/user/actions';
-
+import { TheHeaderDropdown } from "./index";
+import * as userActions from "../store/modules/user/actions";
 
 const TheHeader = () => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector(state => state.user.sidebarShow)
+  const dispatch = useDispatch();
+  const sidebarShow = useSelector((state) => state.user.sidebarShow);
 
   const toggleSidebar = () => {
-    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
-    dispatch(userActions.set_sidebar(val))
-  }
+    const val = [true, "responsive"].includes(sidebarShow)
+      ? false
+      : "responsive";
+    dispatch(userActions.set_sidebar(val));
+  };
 
   const toggleSidebarMobile = () => {
-    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive'
-    dispatch(userActions.set_sidebar(val))
-  }
+    const val = [false, "responsive"].includes(sidebarShow)
+      ? true
+      : "responsive";
+    dispatch(userActions.set_sidebar(val));
+  };
 
   return (
     <CHeader withSubheader>
@@ -49,31 +50,28 @@ const TheHeader = () => {
         onClick={toggleSidebar}
       />
       <CHeaderBrand className="mx-auto d-lg-none" to="/">
-        <CIcon name="logo" height="48" alt="Logo"/>
+        <CIcon name="logo" height="48" alt="Logo" />
       </CHeaderBrand>
 
       <CHeaderNav className="d-md-down-none mr-auto">
-        <CHeaderNavItem className="px-3" >
+        <CHeaderNavItem className="px-3">
           <CHeaderNavLink to="/dashboard">Dashboard</CHeaderNavLink>
         </CHeaderNavItem>
-        
       </CHeaderNav>
 
       <CHeaderNav className="px-3">
-        <TheHeaderDropdown/>
+        <TheHeaderDropdown />
       </CHeaderNav>
 
       <CSubheader className="px-3 justify-content-between">
-        <CBreadcrumbRouter 
-          className="border-0 c-subheader-nav m-0 px-0 px-md-3" 
-          routes={routes} 
+        <CBreadcrumbRouter
+          className="border-0 c-subheader-nav m-0 px-0 px-md-3"
+          routes={routes}
         />
-          <div className="d-md-down-none mfe-2 c-subheader-nav">
-      
-          </div>
+        <div className="d-md-down-none mfe-2 c-subheader-nav"></div>
       </CSubheader>
     </CHeader>
-  )
-}
+  );
+};
 
-export default TheHeader
+export default TheHeader;
