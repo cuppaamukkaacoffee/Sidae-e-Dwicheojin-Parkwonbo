@@ -1,5 +1,4 @@
 import axios from "axios";
-import { jsonHeader, urls, naverNewsHeader } from "../reqConf";
 
 export const login_api = async (info) => {
   let data = {

@@ -8,17 +8,27 @@ const Web_result = React.lazy(() => import("./views/results/Web_result"));
 const Net_result = React.lazy(() => import("./views/results/Net_result"));
 const Web_targets = React.lazy(() => import("./views/results/Web_targets"));
 const Net_targets = React.lazy(() => import("./views/results/Net_targets"));
-const Vulnerabilities = React.lazy(() =>
-  import("./views/results/Vulnerabilities")
-);
-const Report = React.lazy(() => import("./views/results/Report"));
+const Vulnerabilities = React.lazy(() => import("./views/results/Vulnerabilities"));
 const Web_detail = React.lazy(() => import("./views/results/Web_detail"));
 const Net_detail = React.lazy(() => import("./views/results/Net_detail"));
 
 const routes = [
-  { path: "/", exact: true, name: "Home" },
-  { path: "/dashboard", name: "Dashboard", component: Dashboard },
-  { path: "/user", exact: true, name: "User Profile", component: User },
+  { 
+    path: "/", 
+    exact: true, 
+    name: "Home" 
+  },
+  { 
+    path: "/dashboard", 
+    name: "Dashboard", 
+    component: Dashboard 
+  },
+  { 
+    path: "/user", 
+    exact: true, 
+    name: "User Profile", 
+    component: User 
+  },
   {
     path: "/scans/webscan",
     exact: true,
@@ -61,7 +71,6 @@ const routes = [
     name: "Vulnerabilities",
     component: Vulnerabilities,
   },
-  { path: "/report", exact: true, name: "Report", component: Report },
   {
     path: "/webdetail",
     exact: true,

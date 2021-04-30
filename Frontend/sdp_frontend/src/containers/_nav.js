@@ -74,12 +74,6 @@ const _nav = [
   },
   {
     _tag: "CSidebarNavItem",
-    name: "Report",
-    icon: "cil-moon",
-    to: "/report",
-  },
-  {
-    _tag: "CSidebarNavItem",
     name: "User",
     icon: "cil-user",
     to: "/user",

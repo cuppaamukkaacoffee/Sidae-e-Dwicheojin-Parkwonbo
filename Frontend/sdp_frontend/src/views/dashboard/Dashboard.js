@@ -21,7 +21,6 @@ import {
   CNavItem,
   CNavLink,
   CButton,
-  CBadge,
 } from "@coreui/react";
 import { CChartBar, CChartDoughnut } from "@coreui/react-chartjs";
 import CIcon from "@coreui/icons-react";
@@ -180,9 +179,9 @@ const Dashboards = () => {
       for (let i = 0; i < 30; i++) {
         if (i < 10) {
           let num = numberPad(i + 1, 2);
-          data[i] = filterItems_all(`2021-03-${num}`).length;
+          data[i] = filterItems_all(`2021-05-${num}`).length;
         } else {
-          data[i] = filterItems_all(`2021-03-${i + 1}`).length;
+          data[i] = filterItems_all(`2021-05-${i + 1}`).length;
         }
       }
     }
@@ -233,9 +232,9 @@ const Dashboards = () => {
       for (let i = 0; i < 30; i++) {
         if (i < 10) {
           let num = numberPad(i + 1, 2);
-          data[i] = filterItems_vul(`2021-03-${num}`).length;
+          data[i] = filterItems_vul(`2021-05-${num}`).length;
         } else {
-          data[i] = filterItems_vul(`2021-03-${i + 1}`).length;
+          data[i] = filterItems_vul(`2021-05-${i + 1}`).length;
         }
       }
     }

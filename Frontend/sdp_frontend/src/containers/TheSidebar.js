@@ -12,8 +12,6 @@ import {
   CSidebarNavItem,
 } from "@coreui/react";
 
-import CIcon from "@coreui/icons-react";
-
 // sidebar nav config
 import navigation from "./_nav";
 import * as userActions from "../store/modules/user/actions";
@@ -28,7 +26,8 @@ const TheSidebar = () => {
       onShowChange={(val) => dispatch(userActions.set_sidebar(val))}
     >
       <CSidebarBrand className="d-md-down-none" to="/dashboard">
-        박원보
+        <h4>SDP</h4><br/>
+        <strong>scanner</strong>
       </CSidebarBrand>
       <CSidebarNav>
         <CCreateElement
