@@ -25,7 +25,7 @@ SECRET_KEY = "e44y*+1rg@!*fo056z5za$l4x#d&+s2+mu@ibps-xk*k0w^0_7"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['app','localhost']
 
 
 # Application definition
@@ -82,20 +82,12 @@ WSGI_APPLICATION = "sdp_backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "sdp_database",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "localhost",
+        "HOST": "localhost", #배포할때 db
         "PORT": "5432",
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'djangodatabase',
-        # 'USER': 'dbadmin',
-        # 'PASSWORD': '12345',
-        # 'HOST': 'localhost',
-        # 'PORT': '3306',
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
