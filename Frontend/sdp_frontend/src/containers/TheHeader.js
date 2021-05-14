@@ -9,8 +9,8 @@ import {
   CHeaderNavLink,
   CSubheader,
   CBreadcrumbRouter,
+  CButton
 } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
 
 // routes config
 import routes from "../routes";
@@ -48,8 +48,8 @@ const TheHeader = () => {
         className="ml-3 d-md-down-none"
         onClick={toggleSidebar}
       />
-      <CHeaderBrand className="mx-auto d-lg-none" to="/">
-        <CIcon name="logo" height="48" alt="Logo" />
+      <CHeaderBrand className="mx-auto d-lg-none" to="/dashboard">
+        <strong style = {{fontSize: '25px', marginLeft: '20px'}}>SDPscanner</strong>
       </CHeaderBrand>
 
       <CHeaderNav className="d-md-down-none mr-auto">

@@ -287,7 +287,7 @@ const Dashboards = () => {
       <CRow>
         <CCol sm="12" md="6">
           <CRow>
-            <CCol sm="12" md="4">
+            <CCol sm="4" md="4">
               <CWidgetDropdown
                 color="danger"
                 header={vul_length}
@@ -295,7 +295,7 @@ const Dashboards = () => {
                 footerSlot={<CIcon name="cilBellExclamation" height="50" />}
               ></CWidgetDropdown>
             </CCol>
-            <CCol sm="12" md="4">
+            <CCol sm="4" md="4">
               <CWidgetDropdown
                 color="warning"
                 header={String(targets.length)}
@@ -303,7 +303,7 @@ const Dashboards = () => {
                 footerSlot={<CIcon name="cil-speedometer" height="50" />}
               ></CWidgetDropdown>
             </CCol>
-            <CCol sm="12" md="4">
+            <CCol sm="4" md="4">
               <CWidgetDropdown
                 color="info"
                 header={String(net_targets.length)}

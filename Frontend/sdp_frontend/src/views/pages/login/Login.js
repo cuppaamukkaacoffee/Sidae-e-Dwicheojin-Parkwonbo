@@ -5,7 +5,6 @@ import {
   CButton,
   CCard,
   CCardBody,
-  CCardGroup,
   CCol,
   CContainer,
   CForm,
@@ -48,11 +47,12 @@ const Login = () => {
   }, [id, pw]);
 
   return (
+    <>
+    <CButton style = {{fontSize: '25px', marginLeft: '20px'}} onClick={() => {window.location.reload()}}><strong>SDPscanner</strong></CButton>
     <div className="c-app c-default-layout flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol md="8">
-            <CCardGroup>
+          <CCol sm= '12' md="6">     
               <CCard className="p-4">
                 <CCardBody>
                   <CForm>
@@ -96,44 +96,25 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs="6" className="text-right">
-                        <CButton color="link" className="px-0">
-                          Forgot password?
-                        </CButton>
+                        <Link to="/register">
+                          <CButton
+                            className="mt-3"
+                            active
+                            tabIndex={-1}
+                          >
+                            Register Now!
+                          </CButton>
+                        </Link>
                       </CCol>
                     </CRow>
                   </CForm>
                 </CCardBody>
               </CCard>
-              <CCard
-                className="text-white bg-primary py-5 d-md-down-none"
-                style={{ width: "44%" }}
-              >
-                <CCardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.
-                    </p>
-                    <Link to="/register">
-                      <CButton
-                        color="primary"
-                        className="mt-3"
-                        active
-                        tabIndex={-1}
-                      >
-                        Register Now!
-                      </CButton>
-                    </Link>
-                  </div>
-                </CCardBody>
-              </CCard>
-            </CCardGroup>
           </CCol>
         </CRow>
       </CContainer>
     </div>
+    </>
   );
 };
 

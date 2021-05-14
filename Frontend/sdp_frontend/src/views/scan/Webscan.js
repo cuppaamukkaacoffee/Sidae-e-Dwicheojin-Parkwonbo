@@ -92,8 +92,11 @@ const Webscan = () => {
   );
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    "ws://localhost:8000/ws/scan/"
+    "ws://localhost:8000/ws/scan/" 
   );
+  /*
+    배포할때 -> "wss://sdp-test.sdp-scanner.site/ws/scan/"
+  */
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
