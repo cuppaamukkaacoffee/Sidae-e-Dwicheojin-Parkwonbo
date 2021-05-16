@@ -1,13 +1,13 @@
 
 ### Prerequisities
 ----------------------------
-###Docker
+### Docker
 
 * [Windows](https://docs.docker.com/windows/started)
 * [macOS](https://docs.docker.com/mac/started/)
 * [Linux](https://docs.docker.com/linux/started/)
 
-###Docker Compose
+### Docker Compose
 
 ### Windows and macOS
 
@@ -26,13 +26,13 @@ pip install docker-compose
 ```
 ### 사용방법
 ----------------------------
-(1) 이 저장소를 복사합니다
+(1) 이 저장소를 복사합니다\n
 복사하기전에 Window는 git config --global core.autocrlf input 명령어 실행
 ```bash
 git clone https://github.com/cuppaamukkaacoffee/Sidae-e-Dwicheojin-Parkwonbo.git
 ```
 
-(2) docker-compose.yml 실행합니다
+(2) docker-compose.yml 실행
 ```bash
 cd .\Sidae-e-Dwicheojin-Parkwonbo\ 
 docker compose -f ./Backend/sdp_backend/docker-compose.yml -f ./Frontend/sdp_frontend/docker-compose.yml up
