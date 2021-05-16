@@ -40,7 +40,7 @@ docker compose -f ./Frontend/sdp_frontend/docker-compose.yml up
 
 (3) 모든 것이 시작되면 호스트 컴퓨터에서 http : // localhost : 3000 / 을 통해 웹 애플리케이션에 액세스 할 수 있습니다.
 ```bash
-open http://localhost:8000/
+open http://localhost:3000/
 ```
 
 ### 배포
