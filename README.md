@@ -26,8 +26,7 @@ pip install docker-compose
 ```
 ### 사용방법
 ----------------------------
-(1) 이 저장소를 복사합니다\n
-복사하기전에 Window는 git config --global core.autocrlf input 명령어 실행
+(1) 이 저장소를 복사합니다 (복사하기전에 Window는 git config --global core.autocrlf input 명령어 실행)
 ```bash
 git clone https://github.com/cuppaamukkaacoffee/Sidae-e-Dwicheojin-Parkwonbo.git
 ```
