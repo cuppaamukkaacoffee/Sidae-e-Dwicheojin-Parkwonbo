@@ -18,7 +18,7 @@ coreschema==0.0.4
 cryptography==3.4.6
 daphne==3.0.1
 defusedxml==0.7.0rc2
-Django==3.1.6
+Django>=3.1.6
 django-cors-headers==3.0.2
 django-filter==2.1.0
 django-queryset-csv==1.0.2
