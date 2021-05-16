@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  backend:
+    image: sdp_backend_image
+    build: .
+    ports:
+      - "8000:8000"
+    environment: 
+      - DJANGO_DB_HOST=db
+      - DJANGO_DEBUG=True
+    depends_on:
+      - db
+    container_name: backend
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=sdp_database  
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./docker/data:/var/lib/postgresql/data
+    container_name: db

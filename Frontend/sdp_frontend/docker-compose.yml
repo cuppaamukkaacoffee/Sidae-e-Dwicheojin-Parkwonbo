@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  frontend:
+    image: sdp_frontend_image
+    build: .
+    ports:
+      - "3000:80"
+    container_name: frontend
+    networks:
+      - sdp_backend_default
+
+networks:
+    sdp_backend_default:
+        external: true

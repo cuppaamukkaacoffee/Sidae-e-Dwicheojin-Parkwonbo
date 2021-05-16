@@ -1,7 +1,14 @@
-FROM python:3
+FROM python:3.8
 
-RUN apt-get update \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update 
+RUN apt-get install -y dnsutils
+RUN apt-get install -y masscan
+RUN apt-get install -y libpcap0.8-dev
+
+ENV DOCKERIZE_VERSION v0.2.0  
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \  
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
 WORKDIR /app
 
 COPY . /app
