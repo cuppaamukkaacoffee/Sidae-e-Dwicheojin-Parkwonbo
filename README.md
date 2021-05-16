@@ -31,10 +31,11 @@ pip install docker-compose
 git clone https://github.com/cuppaamukkaacoffee/Sidae-e-Dwicheojin-Parkwonbo.git
 ```
 
-(2) docker-compose.yml 실행
+(2) docker-compose.yml 실행 (sdp_backend폴더에서 먼저 docker compose up 실행후 sdp_frontend 에서 docker compose up 실행)
 ```bash
-cd .\Sidae-e-Dwicheojin-Parkwonbo\ 
-docker compose -f ./Backend/sdp_backend/docker-compose.yml -f ./Frontend/sdp_frontend/docker-compose.yml up
+cd ./Sidae-e-Dwicheojin-Parkwonbo/
+docker compose -f ./Backend/sdp_backend/docker-compose.yml up
+docker compose -f ./Frontend/sdp_frontend/docker-compose.yml up
 ```
 
 (3) 모든 것이 시작되면 호스트 컴퓨터에서 http : // localhost : 3000 / 을 통해 웹 애플리케이션에 액세스 할 수 있습니다.
