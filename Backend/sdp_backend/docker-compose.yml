@@ -9,7 +9,7 @@ services:
     environment: 
       - DJANGO_DB_HOST=db
       - DJANGO_DEBUG=True
-      - DJANGO_SETTING_MODULE=sdp_backend.settings
+      - DJANGO_SETTINGS_MODULE=sdp_backend.settings
     depends_on:
       - db
     container_name: backend
