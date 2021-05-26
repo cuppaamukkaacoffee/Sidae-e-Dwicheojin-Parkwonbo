@@ -155,9 +155,19 @@ const Vulnerabilities = ({ location }) => {
             </CCardBody>
             <CCardFooter>
               <CPagination
+                className="d-md-down-none"
                 size="sm"
                 activePage={currentPage1}
                 limit={10}
+                pages={url_fuzz_pages}
+                align="center"
+                onActivePageChange={setCurrentPage1}
+              />
+              <CPagination
+                className="d-lg-none"
+                size="sm"
+                activePage={currentPage1}
+                limit={6}
                 pages={url_fuzz_pages}
                 align="center"
                 onActivePageChange={setCurrentPage1}
@@ -202,9 +212,19 @@ const Vulnerabilities = ({ location }) => {
             </CCardBody>
             <CCardFooter>
               <CPagination
+                className="d-md-down-none"
                 size="sm"
                 activePage={currentPage2}
                 limit={10}
+                pages={form_fuzz_pages}
+                align="center"
+                onActivePageChange={(e) => setCurrentPage2(e)}
+              />
+              <CPagination
+                className="d-lg-none"
+                size="sm"
+                activePage={currentPage2}
+                limit={6}
                 pages={form_fuzz_pages}
                 align="center"
                 onActivePageChange={(e) => setCurrentPage2(e)}
@@ -249,6 +269,16 @@ const Vulnerabilities = ({ location }) => {
             </CCardBody>
             <CCardFooter>
               <CPagination
+                className="d-md-down-none"
+                size="sm"
+                activePage={currentPage3}
+                limit={10}
+                pages={traversal_check_pages}
+                align="center"
+                onActivePageChange={setCurrentPage3}
+              />
+              <CPagination
+                className="d-lg-none"
                 size="sm"
                 activePage={currentPage3}
                 limit={10}

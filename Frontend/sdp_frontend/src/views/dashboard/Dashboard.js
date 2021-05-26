@@ -285,35 +285,56 @@ const Dashboards = () => {
   return (
     <>
       <CRow>
-        <CCol sm="12" md="6">
+        <CCol xs = "12" sm="12" md="6">
           <CRow>
-            <CCol sm="4" md="4">
+            <CCol xs = "4" sm="4" md="4">
               <CWidgetDropdown
+                className="d-lg-none" 
+                color="danger"
+                header={vul_length}
+                text="Vul nebilities"
+              ></CWidgetDropdown>
+              <CWidgetDropdown
+                className="d-md-down-none" 
                 color="danger"
                 header={vul_length}
                 text="Vulnerabilities"
                 footerSlot={<CIcon name="cilBellExclamation" height="50" />}
               ></CWidgetDropdown>
             </CCol>
-            <CCol sm="4" md="4">
+            <CCol xs = "4" sm="4" md="4">
               <CWidgetDropdown
+                className="d-lg-none"
+                color="warning"
+                header={String(targets.length)}
+                text="Web Scans"
+              ></CWidgetDropdown>
+              <CWidgetDropdown
+                className="d-md-down-none" 
                 color="warning"
                 header={String(targets.length)}
                 text="Web Scans Conducted"
                 footerSlot={<CIcon name="cil-speedometer" height="50" />}
               ></CWidgetDropdown>
             </CCol>
-            <CCol sm="4" md="4">
+            <CCol xs = "4" sm="4" md="4">
               <CWidgetDropdown
+                className="d-lg-none"
                 color="info"
                 header={String(net_targets.length)}
-                text="Network Scans Conducted"
+                text="Network Scans"
+              ></CWidgetDropdown>
+              <CWidgetDropdown
+                className="d-md-down-none" 
+                color="info"
+                header={String(net_targets.length)}
+                text="NetworkScans"
                 footerSlot={<CIcon name="cil-globe-alt" height="50" />}
               ></CWidgetDropdown>
             </CCol>
           </CRow>
 
-          <CCard>
+          <CCard className="d-md-down-none">
             <CCardBody>
               <CChartDoughnut
                 datasets={datasets_doughnut}
@@ -369,12 +390,14 @@ const Dashboards = () => {
               <CNav variant="tabs">
                 <CNavItem>
                   <CNavLink style={{ color: "black" }}>
-                    Recently Web Scanned Target
+                    <span className="d-lg-none">Web Target</span>
+                    <span className="d-md-down-none">Recently Web Scanned Target</span>
                   </CNavLink>
                 </CNavItem>
                 <CNavItem>
                   <CNavLink style={{ color: "black" }}>
-                    Recently Network Scanned Target
+                    <span className="d-lg-none">Network Target</span>
+                    <span className="d-md-down-none">Recently Network Scanned Target</span>
                   </CNavLink>
                 </CNavItem>
               </CNav>

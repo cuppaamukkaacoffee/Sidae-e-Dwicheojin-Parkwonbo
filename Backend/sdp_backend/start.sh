@@ -1,5 +1,5 @@
-﻿#!/bin/sh
-dockerize -wait tcp://db:5432 -timeout 20s
+﻿cker#!/bin/sh
+dockerize -wait tcp://db:5432 -timeout 50s
 
 python manage.py makemigrations
 python manage.py migrate

@@ -92,7 +92,7 @@ const Webscan = () => {
   );
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    "ws://localhost:8000/ws/scan/" 
+    "wss://sdp-test.sdp-scanner.site/ws/scan/" 
   );
   /*
     배포할때 -> "wss://sdp-test.sdp-scanner.site/ws/scan/"
@@ -529,9 +529,19 @@ const Webscan = () => {
             {scan_pages && (
               <CCardFooter>
                 <CPagination
+                  className="d-md-down-none"
                   size="sm"
                   activePage={currentPage}
                   limit={10}
+                  pages={scan_pages}
+                  align="center"
+                  onActivePageChange={setCurrentPage}
+                />
+                <CPagination
+                  className="d-lg-none"
+                  size="sm"
+                  activePage={currentPage}
+                  limit={6}
                   pages={scan_pages}
                   align="center"
                   onActivePageChange={setCurrentPage}
