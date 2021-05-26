@@ -87,6 +87,7 @@ DATABASES = {
         "USER": "postgres",
         "PASSWORD": "postgres",
         "HOST": "db", #배포할때 db
+        # "HOST": 'localhost',
         "PORT": "5432",
     }
 }
