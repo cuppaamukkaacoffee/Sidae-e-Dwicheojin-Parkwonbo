@@ -42,6 +42,11 @@ docker-compose -f ./Frontend/sdp_frontend/docker-compose.yml up
 ```bash
 open http://localhost:3000/
 ```
-
-### 배포
-https://sdp-test.sdp-scanner.site/
+### 디자인
+----------------------------
+![image](https://user-images.githubusercontent.com/22341324/122683525-bb76e700-d23a-11eb-8b46-f4ae2b63b375.png)
+![image](https://user-images.githubusercontent.com/22341324/122683527-bdd94100-d23a-11eb-959b-408c56321bd2.png)
+![image](https://user-images.githubusercontent.com/22341324/122683531-bfa30480-d23a-11eb-9cdb-7a62b34d9a22.png)    
+![image](https://user-images.githubusercontent.com/22341324/122683534-c29df500-d23a-11eb-9e75-6c6a4021cad9.png)
+![image](https://user-images.githubusercontent.com/22341324/122683535-c467b880-d23a-11eb-84cf-6cb6231a60d1.png)
+![image](https://user-images.githubusercontent.com/22341324/122683537-c598e580-d23a-11eb-905d-543130e1def9.png)
