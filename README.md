@@ -42,6 +42,12 @@ docker-compose -f ./Frontend/sdp_frontend/docker-compose.yml up
 ```bash
 open http://localhost:3000/
 ```
+  
+### 설계
+---------------
+![image](https://user-images.githubusercontent.com/22341324/129678503-95c61c8e-f5e7-49df-8be7-911db4a350fe.png)
+![스크린샷 2021-08-17 오후 3 58 38](https://user-images.githubusercontent.com/22341324/129678680-52464aa4-cf78-4a3f-80c9-5ff3de692e54.png)
+
 ### 디자인
 ----------------------------
 ![image](https://user-images.githubusercontent.com/22341324/122683525-bb76e700-d23a-11eb-8b46-f4ae2b63b375.png)
