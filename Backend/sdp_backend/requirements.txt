@@ -62,7 +62,7 @@ smmap==3.0.5
 social-auth-app-django==4.0.0
 social-auth-core==4.0.3
 soupsieve==2.1
-sqlparse==0.4.1
+sqlparse>=0.4.2
 tldextract==2.2.0
 toml==0.10.2
 truffleHog==2.1.11
